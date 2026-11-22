@@ -80,6 +80,8 @@ Decided 2026-11-22: **Slidev, in the Vibe Coding style.** Do not use PowerPoint 
   - Slides students should not see (practice answers, the closing 「下一步」 preview) carry `hostOnly: true`; `make-print.mjs` drops them from `slides.print.md`, which the QA exports use.
 - **Per deck:** `outline.md` is approved by the instructor before `slides.md` is written (instructional-design §6). Every slide has ★/○/△ and Traditional Chinese speaker notes. Every shown number, image, VRAM figure and timing comes from a recorded Colab T4 run (`research/lab-runs.md`); never fabricate output.
 - **QA** (from inside the deck): `npm run build`; `npm run export:png` and inspect every PNG; `npm run export` (PDF, internal check only); `node ../.claude/skills/slide-order-sync/check-order.cjs .`; `python -X utf8 ../scripts/scan-zh.py .`; run every notebook top to bottom on Colab T4. Do not claim a render, run or inspection that did not happen.
+- **Deck index and status:** [planning/COURSE-PLAN.md](planning/COURSE-PLAN.md) (one deck per session, 01–24).
+- **Lab notebooks** are built from percent-format sources: `python -X utf8 scripts/py2nb.py <deck>/materials/src/labNN-topic.py` writes the student notebook (TODO blocks emptied) and `-solution.ipynb`, and syntax-checks the solution. **Outline slide tables** are generated with `node scripts/outline-rows.mjs <deck> --write`.
 - **Not ported (yet):** Vibe Coding's student site and online judge (`public-site/`, `publish-site.mjs`, `deploy-site.mjs`). Decide how students receive slides and notebooks (Colab links, GitHub repo, a site) before production.
 
 ### Skills (`.claude/skills/`) and agent

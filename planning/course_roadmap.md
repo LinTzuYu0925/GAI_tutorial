@@ -1020,7 +1020,7 @@ This keeps 個資法 out of scope, and it is safe to send to free-tier APIs.
 - [ ] **iPAS mapping.** Check against the official 學習指引 (the indicator page returned 404).
 - [ ] **Company name** (曜嶼電子 is a placeholder).
 - [x] **Slide format:** decided 2026-11-22. Slidev in the Vibe Coding style (CLAUDE.md, Slides).
-- [ ] **Deck split.** One deck per day or one per session? The slide plan proposes it.
+- [x] **Deck split:** decided 2026-11-23. One deck per session, numbered 01–24 (see [COURSE-PLAN.md](COURSE-PLAN.md)).
 - [ ] **Delivery channel.** How do students receive slides and notebooks? The Vibe Coding student site is not ported yet (CLAUDE.md).
 - [ ] **Class size.** It decides whether D6-4 demos are live or recorded.
 - [ ] **Calendar.** Are the six days consecutive 8-hour days? If so, D6-3's capstone build time is essential.

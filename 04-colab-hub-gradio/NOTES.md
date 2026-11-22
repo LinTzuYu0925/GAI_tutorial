@@ -1,35 +1,40 @@
 # D1-4 · 斷線不怕、主管點得到 · 工作筆記
 
-最後更新：（日期）。
+最後更新：2026-11-23。
 
 ## 1. 檔案
 
 | 檔案 | 用途 |
 |---|---|
-| `outline.md` | 大綱（講師核准後才製作投影片） |
-| `slides.md` | 投影片（N 頁，其中 M 頁 hostOnly） |
-| `components/` | 練習頁輸入欄位 `FillIn`、`FillClear`、`answerStore`；提示詞複製 `PromptBox`、`PromptBlank`（從 `templates/deck/` 複製） |
-| `teaching-plan.md` | 時間表 |
-| `materials/` | Lab 筆記本（學員版、解答版）、輸出 |
-| `research/sources.md`、`research/lab-runs.md` | 查證紀錄；Colab T4 實跑紀錄 |
-
-建置：本資料夾 `npm run dev`、`npm run build`、`npm run export:png`、`npm run export`。不要在此執行 `npm install`。
+| `outline.md` | 大綱（自動核准） |
+| `slides.md` | 投影片（30 頁，其中 3 頁 hostOnly）；含第一天總整理、檢核、作業 |
+| `materials/src/lab04-checkpoint-gradio.py` | 筆記本原始檔 |
+| `materials/lab04-checkpoint-gradio.ipynb`、`-solution.ipynb` | Lab L1-4 |
 
 ## 2. 進度
 
-- [ ] 大綱核准
-- [ ] 投影片、Lab 筆記本
-- [ ] Colab T4 從頭跑完每本筆記本（記錄於 `research/lab-runs.md`）
-- [ ] build、匯出 PDF／PNG 並逐頁檢視、`check-order.cjs`、`scan-zh.py`
+- [x] 大綱、投影片、筆記本
+- [x] 本機 CPU 煙霧測試（FakeData；Part A 與 predict）
+- [ ] Colab T4 實跑
+- [x] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
 - [ ] slide-reviewer 審查
 
 ## 3. 決定
 
 | 日期 | 內容 |
 |---|---|
+| 2026-11-23 | 用 `STOP_AFTER` 模擬斷線，不要求學員真的中斷執行階段 |
+| 2026-11-23 | 圖表標題用英文類別名（Colab 預設沒有中文字型） |
+| 2026-11-23 | 第一天的 iPAS 檢核與作業放在本 deck 最後 |
 
 ## 4. 本單元詞彙（中文統一）
 
-（新術語：英文、中文翻譯、首次出現頁。之後的單元把這些當成已學過的術語。）
-
-## 5. 翻譯略過與待講師注意
+| 英文 | 中文 | 首次出現頁 |
+|---|---|---|
+| checkpoint | 檢查點 | 5 |
+| resume | 續訓（接著訓練） | 6 |
+| model card | 模型卡 | 8 |
+| safetensors | （保留英文） | 9 |
+| VRAM | 顯示卡記憶體（保留英文） | 10 |
+| out of memory | 記憶體不足 | 14 |
+| license | 授權 | 26 |

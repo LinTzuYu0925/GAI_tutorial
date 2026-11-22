@@ -148,7 +148,14 @@ for p, i in zip(top.values, top.indices):
 
 # %%
 import matplotlib.pyplot as plt
-plt.rcParams["font.family"] = ["Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", "sans-serif"]
+from matplotlib import font_manager
+# Colab 預設沒有中文字型：安裝 Noto CJK，否則 token 會顯示成方框
+import subprocess, glob
+if not glob.glob("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"):
+    subprocess.run("apt-get -qq install -y fonts-noto-cjk > /dev/null", shell=True)
+for f in glob.glob("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"):
+    font_manager.fontManager.addfont(f)
+    plt.rcParams["font.family"] = font_manager.FontProperties(fname=f).get_name()
 labels = [tok.decode(int(i)) for i in top.indices]
 fig, axes = plt.subplots(1, 3, figsize=(12, 3), sharey=True)
 for ax, T in zip(axes, [0.5, 1.0, 2.0]):

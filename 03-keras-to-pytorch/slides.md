@@ -634,15 +634,15 @@ for step in range(100):
 
 <div class="mcq">
 
-1. PyTorch 影像 tensor 的慣用排列？（　）<br><span class="opts">(A) [B, H, W, C]　(B) [B, C, H, W]　(C) [C, B, H, W]　(D) [H, W, C, B]</span>
-2. 每一批訓練開始前要呼叫哪一個，避免梯度累加？（　）<br><span class="opts">(A) <code>loss.backward()</code>　(B) <code>optimizer.step()</code>　(C) <code>optimizer.zero_grad()</code>　(D) <code>model.eval()</code></span>
-3. <code>model.eval()</code> 的作用？（　）<br><span class="opts">(A) 開始訓練　(B) 關閉 Dropout 等訓練專用行為　(C) 刪除梯度　(D) 存檔</span>
-4. 載入 <code>state_dict</code> 前必須先做什麼？（　）<br><span class="opts">(A) 建立同樣架構的模型　(B) 重新訓練　(C) 安裝 Keras　(D) 把資料轉成 NumPy</span>
+1. PyTorch 影像 tensor 的慣用排列？（　）<br><span class="opts">A. [B, H, W, C]　B. [B, C, H, W]　C. [C, B, H, W]　D. [H, W, C, B]</span>
+2. 每一批訓練開始前要呼叫哪一個，避免梯度累加？（　）<br><span class="opts">A. <code>loss.backward()</code>　B. <code>optimizer.step()</code>　C. <code>optimizer.zero_grad()</code>　D. <code>model.eval()</code></span>
+3. <code>model.eval()</code> 的作用？（　）<br><span class="opts">A. 開始訓練　B. 關閉 Dropout 等訓練專用行為　C. 刪除梯度　D. 存檔</span>
+4. 載入 <code>state_dict</code> 前必須先做什麼？（　）<br><span class="opts">A. 建立同樣架構的模型　B. 重新訓練　C. 安裝 Keras　D. 把資料轉成 NumPy</span>
 
 </div>
 
 <!--
-★ 檢核（4 分）。答案：1 (B)、2 (C)、3 (B)、4 (A)。
+★ 檢核（4 分）。答案：1 B、2 C、3 B、4 A。
 -->
 
 ---

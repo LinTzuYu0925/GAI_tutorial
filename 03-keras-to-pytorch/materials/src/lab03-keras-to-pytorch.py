@@ -111,11 +111,11 @@ print("參數量：", sum(p.numel() for p in model.parameters()))
 
 # 逐層印出 shape（對答案用）
 h = xb[:64].to(device)
-print(f"{'input':28s} {tuple(h.shape)}")
+print(f"{'input':62s} {tuple(h.shape)}")
 for layer in list(model.features) + list(model.classifier):
     h = layer(h)
     if not isinstance(layer, (nn.ReLU, nn.Dropout)):
-        print(f"{layer.__class__.__name__ + str(tuple(getattr(layer, 'kernel_size', ()))):28s} {tuple(h.shape)}")
+        print(f"{str(layer)[:60]:62s} {tuple(h.shape)}")
 
 # %% [markdown]
 # ## 常見錯誤：忘了 `zero_grad()`
@@ -123,12 +123,12 @@ for layer in list(model.features) + list(model.classifier):
 
 # %%
 loss_fn = nn.CrossEntropyLoss()
-w = model.classifier[-1].weight
+b = model.classifier[-1].bias   # 最後一層的偏差：梯度一定不是 0
 xs, ys = xb[:8].to(device), yb[:8].to(device)
 model.eval()  # 關掉 Dropout，讓兩次計算一樣
 model.zero_grad()
-loss_fn(model(xs), ys).backward(); g1 = w.grad[0, 0].item()
-loss_fn(model(xs), ys).backward(); g2 = w.grad[0, 0].item()
+loss_fn(model(xs), ys).backward(); g1 = b.grad[0].item()
+loss_fn(model(xs), ys).backward(); g2 = b.grad[0].item()
 print(f"第一次 backward 後：{g1:.6f}\n沒有 zero_grad 再一次：{g2:.6f}（約為 2 倍＝梯度被加總了）")
 model.zero_grad()
 model.train()

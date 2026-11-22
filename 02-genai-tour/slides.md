@@ -684,15 +684,15 @@ hostOnly: true
 
 <div class="mcq">
 
-1. 把溫度 T 從 1.0 調到 0.2，文字輸出通常會？（　）<br><span class="opts">(A) 更多樣　(B) 更穩定、更重複　(C) 變成英文　(D) 速度變快十倍</span>
-2. 固定 seed 的主要目的？（　）<br><span class="opts">(A) 提高畫質　(B) 讓結果可以重現　(C) 降低記憶體　(D) 避免商標</span>
-3. 模型輸出的 <code>logits</code> 經過哪個函式變成機率？（　）<br><span class="opts">(A) ReLU　(B) softmax　(C) MSE　(D) sigmoid 後再相加</span>
-4. 判斷一個模型能不能商用，最可靠的做法？（　）<br><span class="opts">(A) 看下載次數　(B) 問同學　(C) 讀模型卡的授權欄位與授權全文　(D) 看模型大小</span>
+1. 把溫度 T 從 1.0 調到 0.2，文字輸出通常會？（　）<br><span class="opts">A. 更多樣　B. 更穩定、更重複　C. 變成英文　D. 速度變快十倍</span>
+2. 固定 seed 的主要目的？（　）<br><span class="opts">A. 提高畫質　B. 讓結果可以重現　C. 降低記憶體　D. 避免商標</span>
+3. 模型輸出的 <code>logits</code> 經過哪個函式變成機率？（　）<br><span class="opts">A. ReLU　B. softmax　C. MSE　D. sigmoid 後再相加</span>
+4. 判斷一個模型能不能商用，最可靠的做法？（　）<br><span class="opts">A. 看下載次數　B. 問同學　C. 讀模型卡的授權欄位與授權全文　D. 看模型大小</span>
 
 </div>
 
 <!--
-★ 檢核（4 分）。答案：1 (B)、2 (B)、3 (B)、4 (C)。
+★ 檢核（4 分）。答案：1 B、2 B、3 B、4 C。
 -->
 
 ---

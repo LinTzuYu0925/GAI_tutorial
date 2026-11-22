@@ -257,3 +257,20 @@
 .steps .num { text-indent: 0; }
 .wrapcode pre, .wrapcode .slidev-code { white-space: pre-wrap !important; word-break: break-all; font-size: 14px !important; }
 .wrapcode pre code { white-space: pre-wrap !important; font-size: 14px !important; }
+
+/* Ticket card (需求單): every session opens with one (roadmap §4). */
+.ticket { border: 2px solid var(--primary); border-radius: 12px; overflow: hidden; font-size: 18px; line-height: 1.4; }
+.ticket .ticket-head { background: var(--primary); color: #fff; padding: 6px 16px; font-weight: 700; display: flex; justify-content: space-between; }
+.ticket .ticket-head span { font-weight: 400; font-size: 15px; opacity: .9; }
+.ticket dl { display: grid; grid-template-columns: 9.5em 1fr; gap: 3px 14px; padding: 8px 16px 10px; margin: 0; }
+.ticket dt { color: var(--primary); font-weight: 700; }
+.ticket dd { margin: 0; }
+.fiction { display: inline-block; border: 1.5px solid var(--warm-accent); color: var(--warm-accent); border-radius: 6px; padding: 0 6px; font-size: 14px; font-weight: 700; }
+/* Six-step loop chips */
+.loop6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.loop6 > div { border: 1.5px solid var(--border); border-radius: 10px; padding: 8px; text-align: center; font-size: 17px; line-height: 1.35; background: #fff; }
+.loop6 > div b { display: block; color: var(--primary); font-size: 19px; }
+.loop6 > div small { display: block; color: var(--muted-text); font-size: 14px; }
+.mcq { font-size: 19px; line-height: 1.45; }
+.mcq ol { margin-top: 2px; }
+.mcq .opts { color: var(--muted-text); font-size: 17px; }

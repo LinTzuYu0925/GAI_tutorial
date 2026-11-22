@@ -93,7 +93,7 @@ def main(path: str):
     stem = src.stem
     for student, name in ((True, f"{stem}.ipynb"), (False, f"{stem}-solution.ipynb")):
         (out_dir / name).write_text(
-            json.dumps(notebook(cells, student), ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+            json.dumps(notebook(cells, student), ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"
         )
     # Syntax check of the solution code (shell and magic lines removed).
     code = "\n".join(

@@ -1,0 +1,192 @@
+# Source of lab02-genai-tour(.ipynb / -solution.ipynb). Build: python -X utf8 scripts/py2nb.py <this file>
+
+# %% [markdown]
+# # Lab L1-2：今晚就要文案和產品圖（D1-2）
+#
+# **需求單 #D1-2**（虛構公司：曜嶼電子，行銷部）：新款藍牙耳機今晚上架預告，需要三版文案（每版 ≤ 80 字）與一張 512×512 產品情境圖，而且**同樣設定要能重現同一張圖**。
+#
+# | Part | 做什麼 | 模型 |
+# |---|---|---|
+# | A | 用 `pipeline` 寫文案 | Qwen2.5-0.5B-Instruct（開放權重） |
+# | B | 產生產品圖，固定 seed | SD1.5 ＋ LCM-LoRA（4 步） |
+# | C | 呼叫一次雲端 LLM（沒有金鑰就跳過） | Claude（`anthropic` 套件） |
+# | D | 打開黑盒子：下一個 token 的機率、溫度 | Part A 的模型 |
+#
+# **執行階段**：功能表「執行階段 → 變更執行階段類型 → T4 GPU」。
+#
+# > 狀態：本筆記本尚未在 Colab T4 實跑；版本號在講師實跑後釘定（見 `research/lab-runs.md`）。
+
+# %%
+# 第 1 格：安裝套件並確認 GPU（講師實跑後把版本釘死，例如 diffusers==x.y.z）
+%pip install -q -U transformers diffusers accelerate peft anthropic python-dotenv
+import torch, platform
+print("torch", torch.__version__, "| python", platform.python_version())
+if torch.cuda.is_available():
+    free, total = torch.cuda.mem_get_info()
+    print("GPU:", torch.cuda.get_device_name(0), f"| 可用 VRAM {free/1e9:.1f} / {total/1e9:.1f} GB")
+else:
+    print("沒有 GPU：Part A、D 可以在 CPU 跑（較慢）；Part B 請看解答筆記本的已存輸出")
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DTYPE = torch.float16 if DEVICE == "cuda" else torch.float32
+
+# %% [markdown]
+# ## Part A：三行程式寫文案
+# `pipeline` 把「tokenizer → 模型 → 抽樣 → 解碼」包在一起。先把產品規格寫成一段文字（虛構規格）。
+
+# %%
+from transformers import pipeline
+
+SPEC = "產品：曜嶼 Breeze 藍牙耳機（虛構）。特色：通勤降噪、續航 30 小時、10 分鐘快充可聽 2 小時、重量 5 公克。"
+messages = [
+    {"role": "system", "content": "你是曜嶼電子的行銷文案寫手，只用台灣繁體中文，不提其他品牌。"},
+    {"role": "user", "content": SPEC + "請寫一段 80 字以內的上架文案。"},
+]
+
+# >>> TODO: 用 pipeline("text-generation") 載入 Qwen/Qwen2.5-0.5B-Instruct，dtype=DTYPE、device=DEVICE，存成 gen
+gen = pipeline("text-generation", model="Qwen/Qwen2.5-0.5B-Instruct", dtype=DTYPE, device=DEVICE)
+# <<< TODO
+
+copies = []
+for i in range(3):
+    out = gen(messages, max_new_tokens=120, do_sample=True, temperature=0.8)
+    text = out[0]["generated_text"][-1]["content"]
+    copies.append(text)
+    print(f"--- 第 {i+1} 版（{len(text)} 字）---\n{text}\n")
+
+# %% [markdown]
+# ## Part B：一張產品情境圖（固定 seed）
+# SD1.5 原本要 25–50 步；載入 LCM-LoRA 後 4 步就能出圖。`generator` 的 seed 固定，圖就能重現。
+
+# %%
+from diffusers import DiffusionPipeline, LCMScheduler
+
+pipe = DiffusionPipeline.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5", torch_dtype=DTYPE).to(DEVICE)
+pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)
+pipe.load_lora_weights("latent-consistency/lcm-lora-sdv1-5")
+
+PROMPT = "product photo of minimalist white wireless earbuds on a wooden desk, morning light, commuter lifestyle, high detail"
+NEG = "logo, text, watermark, brand name"
+SEED = 42
+
+# >>> TODO: 建立 torch.Generator(DEVICE).manual_seed(SEED)，用 4 步、guidance_scale=1.0 產生一張圖，存成 img
+g = torch.Generator(DEVICE).manual_seed(SEED)
+img = pipe(PROMPT, negative_prompt=NEG, num_inference_steps=4, guidance_scale=1.0, generator=g).images[0]
+# <<< TODO
+
+import os
+os.makedirs("outputs", exist_ok=True)
+img.save(f"outputs/product_seed{SEED}.png")
+img
+
+# %% [markdown]
+# **可重現嗎？** 用同一個 seed 再產生一次，逐像素比較。
+
+# %%
+import numpy as np
+g2 = torch.Generator(DEVICE).manual_seed(SEED)
+img2 = pipe(PROMPT, negative_prompt=NEG, num_inference_steps=4, guidance_scale=1.0, generator=g2).images[0]
+diff = np.abs(np.asarray(img, dtype=np.int16) - np.asarray(img2, dtype=np.int16)).max()
+print("兩張圖最大像素差：", diff, "（0 代表完全相同）")
+
+# %% [markdown]
+# ## Part C：第一次呼叫雲端 LLM（選做）
+# 金鑰**不寫在程式裡**：放在 Colab 左側「🔑 密鑰（Secrets）」，名稱 `ANTHROPIC_API_KEY`，或放在 `.env` 檔（Vibe Coding 單元 12 學過）。
+# 沒有金鑰：這一格會印出備案訊息，改用 Part A 的開放模型，不影響後面。
+
+# %%
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+key = os.environ.get("ANTHROPIC_API_KEY")
+try:
+    from google.colab import userdata
+    key = key or userdata.get("ANTHROPIC_API_KEY")
+except Exception:
+    pass
+
+if key:
+    import anthropic
+    client = anthropic.Anthropic(api_key=key)
+    msg = client.messages.create(
+        model="claude-opus-5-5",  # 講師決定課堂用哪個模型與金鑰（見 outline.md 待講師決定）
+        max_tokens=1024,
+        system=messages[0]["content"],
+        messages=[{"role": "user", "content": messages[1]["content"]}],
+    )
+    cloud_copy = "".join(b.text for b in msg.content if b.type == "text")
+    print(cloud_copy)
+    print("用量：輸入", msg.usage.input_tokens, "tokens，輸出", msg.usage.output_tokens, "tokens")
+else:
+    print("沒有 API 金鑰：跳過雲端呼叫，使用 Part A 的開放模型文案（備案）。")
+
+# %% [markdown]
+# ## Part D：打開黑盒子——下一個 token 的機率
+# 給模型一段開頭，看它對「下一個 token」的機率分布。
+
+# %%
+tok, model = gen.tokenizer, gen.model
+prefix = "這款降噪耳機最大的特色是"
+ids = tok(prefix, return_tensors="pt").to(model.device)
+print("input_ids shape:", tuple(ids["input_ids"].shape))
+
+# >>> TODO: 在 torch.no_grad() 下把 ids 丟進 model，取出 logits，印出 shape；再取最後一個位置的 logits 存成 last
+with torch.no_grad():
+    logits = model(**ids).logits
+print("logits shape:", tuple(logits.shape), "| vocab_size =", model.config.vocab_size)
+last = logits[0, -1].float()
+# <<< TODO
+
+probs = torch.softmax(last, dim=-1)
+top = torch.topk(probs, 5)
+for p, i in zip(top.values, top.indices):
+    print(f"{tok.decode(int(i))!r:>8}  {p.item():.3f}")
+
+# %% [markdown]
+# ### 溫度：把分布變尖或變平
+# softmax(z / T)：T < 1 讓高的更高（變尖），T > 1 讓分布變平。
+
+# %%
+import matplotlib.pyplot as plt
+plt.rcParams["font.family"] = ["Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", "sans-serif"]
+labels = [tok.decode(int(i)) for i in top.indices]
+fig, axes = plt.subplots(1, 3, figsize=(12, 3), sharey=True)
+for ax, T in zip(axes, [0.5, 1.0, 2.0]):
+    pT = torch.softmax(last / T, dim=-1)[top.indices].cpu()
+    ax.bar(range(5), pT)
+    ax.set_xticks(range(5), [repr(l) for l in labels], rotation=30)
+    ax.set_title(f"T = {T}")
+plt.tight_layout(); plt.savefig("outputs/temperature_bars.png", dpi=120); plt.show()
+
+# %% [markdown]
+# ### 練習（投影片「練習：溫度高低，文案怎麼變？」）
+# 同一個提示，三種溫度各生成 3 次。先在投影片寫下預測，再執行。
+
+# %%
+for T in [0.2, 1.0, 1.5]:
+    print(f"===== T = {T} =====")
+    for k in range(3):
+        out = gen(messages, max_new_tokens=60, do_sample=True, temperature=T)
+        print(f"[{k+1}]", out[0]["generated_text"][-1]["content"].replace("\n", " "))
+
+# %% [markdown]
+# ### seed：讓文字也能重現
+
+# %%
+for k in range(2):
+    torch.manual_seed(0)
+    out = gen(messages, max_new_tokens=60, do_sample=True, temperature=1.0)
+    print(f"[seed 0 第 {k+1} 次]", out[0]["generated_text"][-1]["content"].replace("\n", " "))
+
+# %% [markdown]
+# ## Ship：存檔＋授權欄
+# 交付物要附上模型授權（從模型卡讀出來，不要憑記憶寫）。
+
+# %%
+from huggingface_hub import model_info
+
+with open("outputs/copies.txt", "w", encoding="utf-8") as f:
+    f.write("\n\n".join(copies))
+for repo in ["Qwen/Qwen2.5-0.5B-Instruct", "stable-diffusion-v1-5/stable-diffusion-v1-5", "latent-consistency/lcm-lora-sdv1-5"]:
+    card = model_info(repo).card_data
+    print(f"{repo:48s} license = {card.get('license') if card else '（模型卡沒有填）'}")

@@ -42,7 +42,7 @@
 | 4 | Frame：為什麼 CNN 分類器做不到？ | ★ | Frame | No labels for defects nobody has seen yet | Classifier needs every class; new defect → forced into a known class | Classifier diagram with "？" class | — | DL pp.38–55 | — |
 | 5 | 換個問法：只學「正常長什麼樣」 | ★ | Frame | Model normal; anything unusual is suspicious | Good-only training; analogy: 老師傅看久了，一眼看出怪怪的 | Analogy picture | — | — | — |
 | 6 | Try：講師訓練好的 AE 標出瑕疵 | ★ | Try | The AE's heatmap lights up where the defect is | Input / reconstruction / heatmap for 2 boards | Placeholders until instructor run | L2-1 part D | — | S1 |
-| 7 | AE 一頁回顧 → 今天的主角圖 | ★ | Open | Encoder squeezes, decoder rebuilds; z is the bottleneck | Recap in one line + the day's recurring diagram with shapes [B,3,128,128]→[B,64,16,16]→[B,3,128,128] | Recurring encoder–decoder diagram | L2-1 model | DL pp.72–79 | — |
+| 7 | AE 一頁回顧 → 今天的主角圖 | ★ | Open | Encoder squeezes, decoder rebuilds; z is the bottleneck | Recap in one line + the day's recurring diagram with shapes [B,3,128,128]→[B,128,8,8]→[B,3,128,128] | Recurring encoder–decoder diagram | L2-1 model | DL pp.72–79 | — |
 | 8 | 為什麼重建誤差能抓瑕疵？ | ★ | Open | It rebuilds what it has seen; a defect is rebuilt as "normal" | Defect board → reconstruction without the scratch → difference = scratch | Before/during/after strip | L2-1 | — | — |
 | 9 | 解碼器怎麼放大：ConvTranspose vs Upsample | ★ | Open | Two ways to go 16→32; same output shape | Code for both + shapes | Code | L2-1 | DL p.74 | S2 |
 | 10 | 重建誤差熱力圖 | ★ | Open | Per-pixel \|x − x̂\|², averaged over channels → heatmap; mean → one score | Formula with Chinese reading; code 3 lines | Code + placeholder heatmap | L2-1 | — | — |

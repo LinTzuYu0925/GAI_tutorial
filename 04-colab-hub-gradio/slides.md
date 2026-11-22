@@ -438,7 +438,7 @@ gr.Interface(fn=predict,
 <div class="src">回顧：數據代理人 pp.50–61（Plotly Dash，同樣的想法）；Gradio 文件（S7）</div>
 
 <!--
-★ Gradio（5 分）：x[None] 讀作「在最前面加一個 batch 維度」。分享網址的有效期限依 Gradio 版本（待確認），正式上線在 D6-3 講 HF Spaces。
+★ Gradio（5 分）：x[None] 讀作「在最前面加一個 batch 維度」。gr.Interface 適合「一個輸入、一個輸出」；需要多個按鈕、分頁或自訂版面時改用 gr.Blocks（期末專題會用到，D6-3 示範）。分享網址的有效期限依 Gradio 版本（待確認），正式上線在 D6-3 講 HF Spaces。
 -->
 
 ---

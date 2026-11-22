@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.slidev/
+*.local
+slides.print.md
+slides.web.md
+.claude/settings.local.json
+.ipynb_checkpoints/
+__pycache__/

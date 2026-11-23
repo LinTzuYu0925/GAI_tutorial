@@ -66,7 +66,7 @@ class: cover
 
 # 今天結束時，你能夠……
 
-1. **執行**文字生成 `pipeline` 與 fp16 的 `DiffusionPipeline`（Colab T4）
+1. **執行**文字生成 `pipeline` 與 fp16（半精度：每個數字用 16 位元存，省一半 VRAM）的 `DiffusionPipeline`（Colab T4）
 2. **呼叫**一次雲端 LLM，而且金鑰不寫在程式裡
 3. **說明**輸出為什麼每次不同：從下一個 token 的機率抽樣；溫度改變機率的形狀
 4. **重現**同一個輸出（seed），並從模型卡**讀出**授權
@@ -134,7 +134,7 @@ torch.cuda.get_device_name(0)  # 'Tesla T4'
 
 <div class="eyebrow">01 · Try · 文字</div>
 
-# 三行程式寫文案：<code>pipeline</code>
+# 三個步驟寫文案：<code>pipeline</code>
 
 <div class="grid grid-cols-[1.25fr_1fr] gap-5 mt-1">
 <div>
@@ -148,7 +148,7 @@ out = gen(messages, max_new_tokens=120,
           do_sample=True, temperature=0.8)
 ```
 
-<div class="muted mt-1" style="font-size:16px"><code>messages</code>：system 給角色，user 給規格與任務（筆記本 Part A）</div>
+<div class="muted mt-1" style="font-size:16px"><code>messages</code>：system 給角色，user 給規格與任務（筆記本 Part A）。<code>dtype</code>：用 fp16 存權重；<code>do_sample=True</code>：照機率抽籤，不是每次拿最大的</div>
 
 </div>
 <div>
@@ -255,9 +255,11 @@ print("".join(b.text for b in msg.content
 ```python
 ids = tok("這款降噪耳機最大的特色是",
           return_tensors="pt")
-logits = model(**ids).logits   # 每個位置一排分數
-probs = softmax(logits[0, -1]) # 最後一個位置
-torch.topk(probs, 5)
+with torch.no_grad():
+    logits = model(**ids).logits   # 每個位置一排分數
+last = logits[0, -1]           # 最後一個位置
+probs = torch.softmax(last, dim=-1)
+top = torch.topk(probs, 5)     # 取機率最高的 5 個
 ```
 
 </div>
@@ -293,7 +295,7 @@ logits 讀作「還沒變成機率的分數」，softmax 把分數變成加起�
 <table class="mt-6" style="font-size:18px">
 <thead><tr><th style="width:26%">設定</th><th>怎麼選下一個 token</th><th style="width:28%">結果</th></tr></thead>
 <tbody>
-<tr><td><code>do_sample=False</code></td><td>永遠選機率最高的（greedy）</td><td>每次都一樣</td></tr>
+<tr><td><code>do_sample=False</code></td><td>永遠選機率最高的（貪婪法，greedy）</td><td>每次都一樣</td></tr>
 <tr><td><code>do_sample=True</code></td><td>照機率抽籤</td><td>每次不同</td></tr>
 </tbody>
 </table>
@@ -361,7 +363,6 @@ $$p_i = \mathrm{softmax}\!\left(\frac{z_i}{T}\right)$$
 <tr><td>T ＝ 0.2</td><td class="blank"><FillIn id="temp.t02-pred" hint="例：幾乎一樣……" /></td><td class="blank"><FillIn id="temp.t02-same" /></td><td class="blank"><FillIn id="temp.t02-ok" /></td></tr>
 <tr><td>T ＝ 1.0</td><td class="blank"><FillIn id="temp.t10-pred" /></td><td class="blank"><FillIn id="temp.t10-same" /></td><td class="blank"><FillIn id="temp.t10-ok" /></td></tr>
 <tr><td>T ＝ 1.5</td><td class="blank"><FillIn id="temp.t15-pred" /></td><td class="blank"><FillIn id="temp.t15-same" /></td><td class="blank"><FillIn id="temp.t15-ok" hint="例：開始出現……" /></td></tr>
-<tr><td>你的 GPU</td><td class="blank" colspan="3"><FillIn id="temp.gpu" hint="例：Tesla T4……" /></td></tr>
 </tbody>
 </table>
 
@@ -399,7 +400,7 @@ hostOnly: true
 
 <div class="eyebrow">03 · Adapt（調成我們的）</div>
 
-# seed：讓「隨機」可以重現
+# seed（亂數種子）：讓「隨機」可以重現
 
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-1">
 <div>
@@ -418,7 +419,7 @@ out = gen(messages, do_sample=True, ...)
 <div style="font-size:18px">
 
 <div class="node node--primary"><strong>會重現</strong><small>同 seed ＋ 同提示詞 ＋ 同參數 ＋ 同套件版本 ＋ 同類 GPU</small></div>
-<div class="node node--warm mt-3"><strong>可能不同</strong><small>換 GPU、換版本、換步數，同一個 seed 也可能出不同的圖</small></div>
+<div class="node node--warm mt-3"><strong>可能不同</strong><small>換 GPU、換套件版本，或用到不保證結果一致的 GPU 運算，同一個 seed 也可能出不同的圖</small></div>
 
 </div>
 </div>
@@ -463,7 +464,9 @@ messages = [
 img = pipe(PROMPT, negative_prompt="logo, text, watermark, brand name", ...)
 ```
 
-<div class="takeaway mt-4">負面提示詞幫忙守住驗收第 2 項（沒有他牌商標），但仍然要人工看圖。</div>
+<div class="node node--warm mt-3" style="font-size:18px"><strong>注意：今天的設定它沒有作用</strong><small>diffusers 在 guidance_scale ≤ 1 時不做 guidance，負面提示會被忽略；LCM 用 1.0，所以驗收第 2 項靠「看圖＋換 seed」。D4-2 用 guidance 大於 1 的設定時才有效</small></div>
+
+<div class="takeaway mt-3">負面提示要搭配 guidance 才有用；不管有沒有用，最後都要人工看圖。</div>
 
 <div class="src">D4-2 會解釋它為什麼有用（和 guidance 有關）</div>
 
@@ -598,11 +601,11 @@ hostOnly: true
 
 <div class="steps" style="font-size:17px">
   <div><span class="num">1</span>依序執行，遇到 <code># TODO</code> 自己填（或請 Agent 填，再逐行讀懂）</div>
-  <div><span class="num">2</span>三個 TODO（Part A、B、D）的寫法在投影片第 6、7、9 頁</div>
+  <div><span class="num">2</span>三個 TODO（Part A、B、D）的寫法在「三個步驟寫文案」、「一張產品情境圖」、「為什麼每次文案都不一樣？」三頁</div>
   <div><span class="num">3</span>每格跑完先看輸出，再往下</div>
 </div>
 
-<div class="muted mt-2" style="font-size:16px">沒有 Agent 額度：照第 6、7、9 頁的程式填。卡住：打開 <code>-solution.ipynb</code>。</div>
+<div class="muted mt-2" style="font-size:16px">沒有 Agent 額度：照上面三頁的程式填。卡住：打開 <code>-solution.ipynb</code>。</div>
 
 </div>
 </div>
@@ -620,7 +623,8 @@ hostOnly: true
 <table style="font-size:17px">
 <thead><tr><th style="width:30%">稽核問題</th><th>具體動作</th><th style="width:28%">應該是</th></tr></thead>
 <tbody>
-<tr><td>字數 ≤ 80？規格對嗎？</td><td>看印出的字數；對照「續航 30 小時」</td><td>三版都過，或改提示再跑</td></tr>
+<tr><td>字數 ≤ 80？規格對嗎？</td><td>看印出的字數；對照「續航 30 小時」</td><td>常常不過：改提示、調低 max_new_tokens，或挑一版再人工修</td></tr>
+<tr><td>有沒有簡體字？</td><td>逐字看；或跑 scan 工具</td><td>小模型常混進簡體字，要改掉</td></tr>
 <tr><td>圖有沒有商標或文字？</td><td>放大看圖</td><td>沒有；有就換 seed</td></tr>
 <tr><td>能重現嗎？</td><td>看「最大像素差」</td><td>0（講師實跑確認）</td></tr>
 <tr><td>能商用嗎？</td><td>最後一格印出 license</td><td>讀出來的值，不憑記憶</td></tr>

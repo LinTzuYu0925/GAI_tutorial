@@ -286,3 +286,4 @@
 
 /* Tensor shape inside a node: keep on one line */
 .node small.nw { white-space: nowrap; font-size: 15px; }
+.nw { white-space: nowrap; }

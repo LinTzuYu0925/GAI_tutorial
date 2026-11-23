@@ -49,7 +49,7 @@ class: cover
   <dl>
     <dt>問題</dt><dd>第四天要大量生成 512px 商品圖，一張 T4 跑得動嗎？</dd>
     <dt>現況痛點</dt><dd>直接在像素上生成太貴：一張 512×512 彩色圖有 786,432 個數字</dd>
-    <dt>成功指標（KPI）</dt><dd>壓縮比與重建品質（PSNR，第 22 頁）；潛在空間內插是否平滑</dd>
+    <dt>成功指標（KPI）</dt><dd>壓縮比與重建品質（PSNR：峰值訊噪比，越高越像）；潛在空間內插是否平滑</dd>
     <dt>可用資料</dt><dd>Fashion-MNIST（代替型錄縮圖）；一張 CC0 街景照片</dd>
     <dt>限制與法規</dt><dd>Colab T4；照片要自有或 CC0</dd>
     <dt>為何現有工具不夠</dt><dd>D2-1 的自編碼器的潛在空間有「洞」：隨便取一點，解碼出來是垃圾</dd>
@@ -101,7 +101,7 @@ class: cover
 </div>
 </div>
 
-<div class="takeaway mt-3">786,432 ÷ 16,384 ＝ 48：先壓縮，生成的成本就少了好幾十倍。</div>
+<div class="takeaway mt-3">786,432 ÷ 16,384 ＝ 48：先壓縮，生成時每一步要處理的數字少 48 倍。</div>
 
 <!--
 ★ Frame（4 分）：連回 D1-4 的 VRAM 估算：數字個數 × 每個的 bytes。只是一張圖的「資料」，還不含模型本身。
@@ -145,7 +145,7 @@ class: cover
 
 - 把每張圖壓成 2 個數字，畫成一個點
 - 同一類聚在一起；類和類之間是**空的**
-- 範圍也沒有規定：可能從 −15 到 +6
+- 範圍也沒有規定：點可能散得很遠、偏到一邊
 - 在空的地方取一點交給解碼器 → 它從沒學過那裡 → **垃圾**
 
 </div>
@@ -154,7 +154,7 @@ class: cover
 <div class="takeaway mt-3">AE 只學「壓縮再還原」，從沒被要求「每一點都要能解碼」。所以不能隨便取點生成。</div>
 
 <!--
-★ AE 的洞（5 分）：這是 D2-1 的 AE（只是換成 2 維，方便畫圖）。講師本機 CPU 試跑：AE 的座標範圍大約 z1 −15～6、z2 −8～4，各類之間有明顯空隙（數字以 T4 實跑為準）。
+★ AE 的洞（5 分）：這是 D2-1 的 AE（只是換成 2 維，方便畫圖）。實際範圍等 T4 實跑後再說（第 11 頁練習會讓學員先預測）。
 問學員：「如果要生成一雙新的鞋子，你要在這張圖的哪裡取點？」→ 不知道，因為沒有規則。
 -->
 
@@ -162,12 +162,12 @@ class: cover
 
 <div class="eyebrow">02 · Open · 今天的主角圖</div>
 
-# 瓶頸變成一團雲：編碼器輸出 μ 和 σ
+# VAE（變分自編碼器）：瓶頸變成一團雲
 
 <div class="flex items-center justify-center gap-2 mt-4" style="font-size:18px">
   <div class="node" style="width:15%">輸入 x<small class="nw">&#91;B,1,28,28&#93;</small></div><span class="arrow">→</span>
   <div class="node node--primary" style="width:16%"><strong>Encoder</strong></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:24%"><strong>μ 和 σ</strong><small>中心與寬度：一團雲</small></div><span class="arrow">→</span>
+  <div class="node node--warm" style="width:24%"><strong>μ 和 σ</strong><small>各 &#91;B,2&#93;：一團雲</small></div><span class="arrow">→</span>
   <div class="node node--warm" style="width:13%"><strong>抽一點 z</strong></div><span class="arrow">→</span>
   <div class="node node--secondary" style="width:16%"><strong>Decoder</strong></div>
 </div>
@@ -201,7 +201,7 @@ eps = torch.randn_like(std)     # ε：從標準常態分布抽
 z = mu + std * eps              # 從雲裡抽一點
 ```
 
-<div class="muted mt-2" style="font-size:17px">讀作：先在「標準的雲」裡抽 ε，再放大 σ 倍、移到 μ。</div>
+<div class="muted mt-2" style="font-size:17px">讀作：先在「標準的雲」裡抽 ε，再放大 σ 倍、移到 μ。<code>logvar</code>＝log σ²：存 log 再取 exp，寬度就不會變成負的。<br><strong>照著算</strong>：μ ＝ 2、σ ＝ 0.5、抽到 ε ＝ −1 → z ＝ 2 ＋ 0.5 × (−1) ＝ 1.5</div>
 
 </div>
 <div style="font-size:18px">
@@ -243,13 +243,14 @@ Lab 的第一個 TODO 就是這三行。
 <div style="font-size:18px">
 
 ```python
-recon = binary_cross_entropy(x_hat, x)        # 還原得像不像
-kl = -0.5 * sum(1 + logvar - mu**2 - logvar.exp())
-loss = recon + beta * kl                      # beta 預設 1
+recon = F.binary_cross_entropy(x_hat, x, reduction="sum") / len(x)
+kl = -0.5 * torch.sum(1 + logvar - mu**2 - logvar.exp()) / len(x)
+loss = recon + beta * kl          # beta 預設 1
 ```
 
 - **重建**：和 D2-1 一樣，越像越好
-- **KL**：每團雲和「標準的雲」差多遠；把雲拉回中心、撐開一點寬度
+- **KL（KL 散度）**：每團雲和「標準的雲」差多遠。讀法：<code>mu**2</code> 把中心拉向 0；<code>logvar</code> 那兩項把寬度拉向 1
+- 不是越小越好：KL ＝ 0 代表雲完全不看輸入
 
 </div>
 </div>
@@ -270,12 +271,12 @@ loss = recon + beta * kl                      # beta 預設 1
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
 <div class="node"><strong>真正想要的</strong><small>讓訓練資料出現的機率最大（D1-3 附錄的「最大概似」）；但對 VAE 來說，這個機率算不出來</small></div>
-<div class="node node--primary"><strong>退而求其次</strong><small>最佳化它的一個<strong>下界</strong>：ELBO（證據下界）。重建－KL 正好就是 ELBO，所以「損失＝重建＋KL」就是在把下界往上推</small></div>
+<div class="node node--primary"><strong>退而求其次</strong><small>最佳化它的一個<strong>下界</strong>：ELBO（證據下界）。ELBO ＝ −重建損失 − KL，所以「損失＝重建損失＋KL」越小，下界就越高</small></div>
 </div>
 
-<div class="takeaway mt-6">看到 ELBO 這個字時記得：就是今天這一行「重建＋KL」，只是正負號相反。</div>
+<div class="takeaway mt-6">看到 ELBO 這個字時記得：就是今天這一行「重建損失＋KL」再加一個負號。</div>
 
-<div class="src">推導見附錄（第 16 頁，△）；roadmap §11 數學地圖</div>
+<div class="src">推導見附錄「ELBO 從哪裡來」（△）；roadmap §11 數學地圖</div>
 
 <!--
 ★ 命名（3 分）：ELBO（Evidence Lower BOund，證據下界）。只講文字，不推導。iPAS 題目可能出現 ELBO 這個詞，學員要知道它對應到哪一行程式。
@@ -292,9 +293,9 @@ loss = recon + beta * kl                      # beta 預設 1
 <table class="fill tight vlines mt-1">
 <thead><tr><th style="width:38%">問題</th><th>AE（沒有 KL）</th><th>VAE（有 KL）</th></tr></thead>
 <tbody>
-<tr><td>點的中心大約在哪？</td><td>沒有規定，可能偏到一邊</td><td>接近 (0, 0)</td></tr>
+<tr><td>點的中心大約在哪？</td><td>沒有規定，可能偏到一邊</td><td>接近 (0, 0)（KL 把中心拉向 0）</td></tr>
 <tr><td>座標的範圍大約多大？</td><td class="blank"><FillIn id="kl.ae-range" hint="例：比 ±3 大或小……" /></td><td class="blank"><FillIn id="kl.vae-range" /></td></tr>
-<tr><td>類和類之間的空隙</td><td class="blank"><FillIn id="kl.ae-gap" /></td><td class="blank"><FillIn id="kl.vae-gap" /></td></tr>
+<tr><td>哪兩類最可能挨在一起？為什麼？</td><td class="blank"><FillIn id="kl.ae-gap" /></td><td class="blank"><FillIn id="kl.vae-gap" /></td></tr>
 <tr><td>在 (0, 0) 附近取點解碼，會是什麼？</td><td class="blank"><FillIn id="kl.ae-decode" /></td><td class="blank"><FillIn id="kl.vae-decode" /></td></tr>
 </tbody>
 </table>
@@ -317,7 +318,7 @@ hostOnly: true
 <thead><tr><th style="width:36%">問題</th><th>AE</th><th>VAE</th></tr></thead>
 <tbody>
 <tr><td>範圍</td><td>大而且不對稱（沒有東西限制它）</td><td>大約 ±3 以內（KL 拉向 N(0, 1)）</td></tr>
-<tr><td>空隙</td><td>明顯，有大片空白</td><td>較少，類和類相連</td></tr>
+<tr><td>挨在一起的類</td><td colspan="2">長得像的類：例如 Sneaker／Sandal／Ankle boot（都是鞋）、Pullover／Coat／Shirt（上衣）。兩種模型都會，VAE 的群之間空隙較小</td></tr>
 <tr><td>(0, 0) 附近解碼</td><td>可能是幾類混在一起的模糊圖</td><td>看得出是某種衣物</td></tr>
 </tbody>
 </table>
@@ -334,30 +335,30 @@ hostOnly: true
 
 # 取樣與內插：每一點都解碼得出東西
 
-<div class="grid grid-cols-2 gap-6 mt-2">
+<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2">
 <div>
 
 ```python
-z = torch.randn(16, 2)          # 從 N(0, I) 抽 16 點
-new_items = vae.decode(z)       # 16 件「新商品」
+z = torch.randn(16, 2)        # 從 N(0, I) 抽 16 點
+new_items = vae.decode(z)
 
-za, zb = mu[0], mu[1]           # 兩件商品的中心
+za, zb = mu[0], mu[1]         # 兩件商品
 strip = [vae.decode(za + (zb - za) * t)
          for t in torch.linspace(0, 1, 10)]
 ```
 
-<div class="muted mt-1" style="font-size:16px">讀作：取樣＝從標準的雲裡抽；內插＝兩點之間等距取 10 點</div>
+<div class="muted mt-1" style="font-size:16px">讀作：N(0, I)＝每一維都是平均 0、寬度 1 的常態分布（I 是單位矩陣）；內插＝兩點之間等距取 10 點</div>
 
 </div>
 <div>
 
-<div class="placeholder" style="height:110px">16 張取樣<small>講師實跑後替換</small></div>
-<div class="placeholder mt-3" style="height:110px">鞋子 → 毛衣 的 10 步內插<small>講師實跑後替換</small></div>
+<div class="placeholder" style="height:90px;min-height:0">16 張取樣<small>講師實跑後替換</small></div>
+<div class="placeholder mt-2" style="height:90px;min-height:0">鞋子 → 毛衣 的 10 步內插<small>講師實跑後替換</small></div>
 
 </div>
 </div>
 
-<div class="takeaway mt-3">因為訓練時 KL 把雲拉向 N(0, I)，生成時從 N(0, I) 抽點才有意義：訓練和生成用的是同一團雲。</div>
+<div class="takeaway mt-2">訓練時 KL 把雲拉向 N(0, I)，所以生成時從 N(0, I) 抽點才有意義。</div>
 
 <!--
 ★ 取樣與內插（6 分）：內插（interpolation）的中間幾格會是「半鞋半毛衣」——這就是「潛在空間平滑」的意思，也是需求單的 KPI 之一。
@@ -370,7 +371,7 @@ strip = [vae.decode(za + (zb - za) * t)
 # 為什麼 VAE 的圖有點糊？
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
-<div class="node node--warm"><strong>原因</strong><small>同一團雲裡的點都要還原成同一張圖；解碼器只好畫「幾種可能的平均」，平均就會糊</small></div>
+<div class="node node--warm"><strong>原因</strong><small>不同圖片的雲會互相重疊：同一個 z 可能來自好幾張不同的圖，解碼器只好畫「它們的平均」，平均就會糊</small></div>
 <div class="node"><strong>後來的解法</strong><small>SD 的 VAE 解碼器多加了對抗損失（D3-1 的 GAN）和感知損失，讓細節銳利；真正的生成交給擴散模型（D3）</small></div>
 </div>
 
@@ -419,7 +420,9 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 
 </div>
 
-<div class="takeaway mt-6">不考推導。只要記得：最後一行就是 lab07 的 <code>-(recon + kl)</code>。</div>
+<div class="muted mt-3" style="font-size:17px">q(z|x)＝編碼器給的雲；p(x|z)＝解碼器；p(z)＝N(0, I)</div>
+
+<div class="takeaway mt-3">不考推導。只要記得：最後一行就是 lab07 的 <code>-(recon + kl)</code>。</div>
 
 <!--
 △ 備用（3 分）：只有學員問「下界是怎麼來的」才用。q(z|x) 是編碼器給的雲，p(z) 是 N(0, I)，p(x|z) 是解碼器。
@@ -434,7 +437,7 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 <div class="grid grid-cols-[1fr_1.15fr] gap-6 mt-2" style="font-size:19px">
 <div>
 
-**打開筆記本**：<code>lab07-vae.ipynb</code>（在 <code>materials/</code>）<br>
+**打開筆記本**：<code>lab07-vae.ipynb</code>（在 <code>materials/</code>）→ Open in Colab<br>
 執行階段：**T4 GPU**
 
 1. AE 的潛在空間真的有洞嗎？
@@ -487,36 +490,7 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 
 <div class="eyebrow">05 · Lab L2-3</div>
 
-# Lab 3／7：執行到散佈圖，對照你的預測
-
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2" style="font-size:18px">
-<div>
-
-執行第 1–4 步後，回到第 11 頁的練習：
-
-1. 你預測對了幾格？
-2. AE 的網格裡，哪一區是「垃圾」？在散佈圖上那一區有沒有點？
-3. VAE 的網格從左上到右下，衣物是怎麼「漸漸變過去」的？
-
-</div>
-<div>
-
-<div class="node node--primary"><strong>看圖的訣竅</strong><small>網格的每一格就是散佈圖上的一個座標：把兩張圖疊在腦中對照</small></div>
-
-</div>
-</div>
-
-<div class="takeaway mt-4">洞不是比喻：網格上的垃圾，就落在散佈圖上沒有點的地方。</div>
-
-<!--
-★ 對照（5 分）：AE 的網格只涵蓋 ±3；AE 的點可能大多不在這個範圍，所以網格上很多格是「沒學過的地方」。
--->
-
----
-
-<div class="eyebrow">05 · Lab L2-3</div>
-
-# Lab 4／7：Specify
+# Lab 3／7：Specify
 
 <div style="font-size:18px" class="mt-2">
 
@@ -536,7 +510,7 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 
 <div class="eyebrow">05 · Lab L2-3</div>
 
-# Lab 5／7：Generate → Execute
+# Lab 4／7：Generate → Execute
 
 <PromptBox>
 這是 PyTorch 筆記本，請只填四個 # TODO：<br>
@@ -553,7 +527,37 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 </div>
 
 <!--
-★ 執行（約 20 分）。
+★ 執行（約 20 分）：先讓學員填 ①② 再執行訓練格；①② 沒填，第 2 步會出現 NameError（z、kl 沒有定義），這是正常的提醒。
+常見錯誤：KL 少了負號（loss 越訓練越大）；用 Python 內建 sum 而不是 torch.sum（不會錯，但讀起來容易和 numpy 混淆）。
+-->
+
+---
+
+<div class="eyebrow">05 · Lab L2-3</div>
+
+# Lab 5／7：執行到散佈圖，對照你的預測
+
+<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2" style="font-size:18px">
+<div>
+
+填完 TODO、執行第 1–4 步後，回到「練習：KL 會讓散佈圖變成什麼樣子？」：
+
+1. 你預測對了幾格？
+2. AE 的網格裡，哪一區是「垃圾」？在散佈圖上那一區有沒有點？
+3. VAE 的網格從左上到右下，衣物是怎麼「漸漸變過去」的？
+
+</div>
+<div>
+
+<div class="node node--primary"><strong>看圖的訣竅</strong><small>網格的每一格就是散佈圖上的一個座標：把兩張圖疊在腦中對照</small></div>
+
+</div>
+</div>
+
+<div class="takeaway mt-4">洞不是比喻：網格上的垃圾，就落在散佈圖上沒有點的地方。</div>
+
+<!--
+★ 對照（5 分）：AE 的網格只涵蓋 ±3；AE 的點可能大多不在這個範圍，所以網格上很多格是「沒學過的地方」。
 -->
 
 ---
@@ -593,7 +597,7 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 <tr><td>還原品質 PSNR</td><td>講師實跑後填入</td><td>第 6 步</td></tr>
 <tr><td>編碼＋解碼時間（T4、fp16）</td><td>講師實跑後填入</td><td>第 6 步</td></tr>
 <tr><td>VRAM 峰值</td><td>講師實跑後填入</td><td>第 6 步</td></tr>
-<tr><td>已知弱點</td><td>小字、細線變形</td><td>差異圖</td></tr>
+<tr><td>已知弱點</td><td>講師實跑後填入（看差異圖最亮處）</td><td>差異圖</td></tr>
 </tbody>
 </table>
 

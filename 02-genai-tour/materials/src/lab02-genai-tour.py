@@ -173,7 +173,7 @@ plt.tight_layout(); plt.savefig("outputs/temperature_bars.png", dpi=120); plt.sh
 for T in [0.2, 1.0, 1.5]:
     print(f"===== T = {T} =====")
     for k in range(3):
-        out = gen(messages, max_new_tokens=60, do_sample=True, temperature=T)
+        out = gen(messages, max_new_tokens=60, do_sample=True, temperature=T, top_k=0, top_p=1.0)  # 關掉模型預設的 top_k／top_p，只看溫度的效果
         print(f"[{k+1}]", out[0]["generated_text"][-1]["content"].replace("\n", " "))
 
 # %% [markdown]

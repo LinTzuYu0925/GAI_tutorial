@@ -23,7 +23,7 @@ class: cover
 
 # 斷線不怕、主管點得到
 
-<p class="subtitle">檢查點、Hugging Face Hub、VRAM 估算，最後做出一個能點的網頁</p>
+<p class="subtitle">檢查點、Hugging Face Hub、VRAM（顯示卡記憶體）估算，最後做出一個能點的網頁</p>
 
 <div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">Colab 限制</span><span class="arrow">→</span>
@@ -49,7 +49,7 @@ class: cover
     <dt>問題</dt><dd>訓練到一半 Colab 斷線就全部重來；主管想要自己點得到的展示</dd>
     <dt>現況痛點</dt><dd>上週白訓練一天；成果只有截圖</dd>
     <dt>成功指標（KPI）</dt><dd>斷線後從最後一個 epoch 接著訓練；給主管一個能上傳圖片的網址</dd>
-    <dt>可用資料</dt><dd>D1-3 的 CIFAR-10 分類器</dd>
+    <dt>可用資料</dt><dd>D1-3 的 CIFAR-10 分類器；下一步想換成 Hub 上的現成模型（先確認 T4 放得下、授權能用）</dd>
     <dt>限制與法規</dt><dd>免費 Colab（連線時間、閒置中斷、GPU 額度都有限）；模型授權</dd>
     <dt>為何現有工具不夠</dt><dd>模型只在記憶體裡，斷線就沒了；筆記本不是給主管用的介面</dd>
   </dl>
@@ -147,11 +147,12 @@ torch.save({"epoch": epoch,
 </div>
 
 ```python
+start_epoch, history = 1, []
 if os.path.exists(CKPT):
     ck = torch.load(CKPT, map_location=device)
     model.load_state_dict(ck["model"])
     optimizer.load_state_dict(ck["optimizer"])
-    start_epoch = ck["epoch"] + 1
+    start_epoch, history = ck["epoch"] + 1, ck["history"]
 for epoch in range(start_epoch, EPOCHS + 1): ...
 ```
 
@@ -194,7 +195,7 @@ model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B-Instruct",
 <div>
 
 ```text
-Qwen/Qwen2.5-0.5B-Instruct
+Qwen/Qwen2.5-0.5B-Instruct   （示意；筆記本 Part B 印出真的清單）
 ├── config.json
 ├── model.safetensors
 ├── tokenizer.json …
@@ -242,7 +243,7 @@ Qwen/Qwen2.5-0.5B-Instruct
 
 ---
 
-<div class="eyebrow">03 · Measure（量化驗收）· VRAM</div>
+<div class="eyebrow">03 · Measure（量測驗收）· VRAM</div>
 
 # VRAM 估算：參數量 × 每個參數的位元組
 
@@ -333,14 +334,14 @@ hostOnly: true
 <thead><tr><th style="width:28%">項目</th><th style="width:20%">T4</th><th>所以我們……</th></tr></thead>
 <tbody>
 <tr><td>fp16（半精度）</td><td>✓ 支援</td><td>推論一律用 <code>torch.float16</code></td></tr>
-<tr><td>bf16</td><td>✗ 沒有原生支援</td><td>看到教學用 <code>bfloat16</code>，改成 fp16（D5-4 微調特別注意）</td></tr>
-<tr><td>FlashAttention-2</td><td>✗ 需要更新的 GPU</td><td>不要開 <code>attn_implementation="flash_attention_2"</code></td></tr>
+<tr><td>bf16（另一種 16 位元格式：範圍大、精度低）</td><td>✗ 沒有原生支援</td><td>看到教學用 <code>bfloat16</code>，改成 fp16（D5-4 微調特別注意）</td></tr>
+<tr><td>FlashAttention-2（較快的注意力計算；注意力在 D5 教）</td><td>✗ 需要更新的 GPU</td><td>不要開 <code>attn_implementation="flash_attention_2"</code></td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-4">網路上的範例常為新 GPU 寫；搬到 T4 前先檢查這三項。</div>
 
-<div class="src">T4 為 Turing 架構（compute capability 7.5）；FlashAttention-2 支援 Ampere 以上（S5、S6，待確認）</div>
+<div class="src">T4 屬於 Turing 世代 GPU；FlashAttention-2 需要 Ampere（A100 那一代）以上（S5、S6，待確認）</div>
 
 <!--
 ★ T4（4 分）：學員用 AI Agent 寫程式時，Agent 常常預設 bf16 或 flash attention——這是 T4 上最常見的報錯來源。
@@ -354,7 +355,7 @@ hostOnly: true
 
 <div class="flex items-center gap-2 mt-4" style="font-size:18px">
   <div class="node node--primary" style="width:23%"><strong>① batch 變小</strong><small>64 → 32 → 16</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:23%"><strong>② 改 fp16</strong><small>權重少一半</small></div><span class="arrow">→</span>
+  <div class="node node--primary" style="width:23%"><strong>② 改 fp16</strong><small>推論：權重少一半；訓練改用混合精度（D5-4）</small></div><span class="arrow">→</span>
   <div class="node node--primary" style="width:23%"><strong>③ 釋放記憶體</strong><small><code>del</code>、<code>gc.collect()</code>、<code>empty_cache()</code></small></div><span class="arrow">→</span>
   <div class="node node--warm" style="width:23%"><strong>④ 重新啟動</strong><small>執行階段 → 重新啟動</small></div>
 </div>
@@ -412,9 +413,11 @@ for ax, img, p in zip(axes.flat, x[:16], pred):
 <div>
 
 ```python
+@torch.no_grad()
 def predict(img):            # 收到一張 PIL 圖
+    model.eval()             # 關掉 Dropout
     x = tf(img.convert("RGB").resize((32, 32)))
-    p = torch.softmax(model(x[None].to(device)), 1)[0]
+    p = torch.softmax(model(x.unsqueeze(0).to(device)), 1)[0]
     return {CLASSES[i]: float(p[i]) for i in range(10)}
 
 gr.Interface(fn=predict,
@@ -438,7 +441,7 @@ gr.Interface(fn=predict,
 <div class="src">回顧：數據代理人 pp.50–61（Plotly Dash，同樣的想法）；Gradio 文件（S7）</div>
 
 <!--
-★ Gradio（5 分）：x[None] 讀作「在最前面加一個 batch 維度」。gr.Interface 適合「一個輸入、一個輸出」；需要多個按鈕、分頁或自訂版面時改用 gr.Blocks（期末專題會用到，D6-3 示範）。分享網址的有效期限依 Gradio 版本（待確認），正式上線在 D6-3 講 HF Spaces。
+★ Gradio（5 分）：unsqueeze(0) 讀作「在最前面加一個 batch 維度」（和 x[None] 一樣）。gr.Interface 適合「一個輸入、一個輸出」；需要多個按鈕、分頁或自訂版面時改用 gr.Blocks（期末專題會用到，D6-3 示範）。分享網址的有效期限依 Gradio 版本（待確認），正式上線在 D6-3 講 HF Spaces。
 -->
 
 ---
@@ -530,7 +533,7 @@ gr.Interface(fn=predict,
 
 <div class="eyebrow">06 · Lab L1-4 · 練習</div>
 
-# 練習：<code>predict</code> 裡每一步的輸入與輸出
+# Lab 3／6 · 練習：<code>predict</code> 裡每一步的輸入與輸出
 
 <div class="muted" style="font-size:17px">不用 AI。主管上傳一張 800×600 的照片（PIL 圖）</div>
 
@@ -633,7 +636,7 @@ hostOnly: true
 <tr><td>優化器也接回來了嗎？</td><td>找 <code>optimizer.load_state_dict</code></td><td>有</td></tr>
 <tr><td>估算 vs 實測？</td><td>看 Part B 的表</td><td>實測略大於估算（講師實跑填入）</td></tr>
 <tr><td>灰階圖會不會壞？</td><td>上傳一張黑白照片</td><td>正常顯示前 3 名</td></tr>
-<tr><td>網頁的預測和筆記本一致嗎？</td><td>同一張測試圖兩邊各跑一次</td><td>機率相同</td></tr>
+<tr><td>網頁的預測和筆記本一致嗎？</td><td>先執行 <code>model.train()</code>，再用同一張圖呼叫 <code>predict</code> 兩次</td><td>兩次機率相同（predict 自己有 eval）</td></tr>
 </tbody>
 </table>
 
@@ -645,7 +648,7 @@ hostOnly: true
 
 ---
 
-<div class="eyebrow">07 · Measure & Risk</div>
+<div class="eyebrow">07 · Measure & Risk（風險）</div>
 
 # 授權家族：這個模型可以拿來賺錢嗎？
 

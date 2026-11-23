@@ -274,3 +274,4 @@
 .mcq { font-size: 19px; line-height: 1.45; }
 .mcq ol { margin-top: 2px; }
 .mcq .opts { color: var(--muted-text); font-size: 17px; }
+.nw { white-space: nowrap; }

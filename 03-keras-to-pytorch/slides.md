@@ -82,10 +82,10 @@ class: cover
 # 為什麼要搬到 PyTorch？
 
 <div class="grid grid-cols-4 gap-3 mt-4" style="font-size:18px">
-  <div class="node node--primary"><strong>transformers</strong><small>LLM、Tokenizer（D1-2、D5）</small></div>
-  <div class="node node--primary"><strong>diffusers</strong><small>擴散模型（D3、D4）</small></div>
-  <div class="node node--primary"><strong>peft</strong><small>LoRA 微調（D4-3、D5-4）</small></div>
-  <div class="node node--primary"><strong>trl</strong><small>LLM 微調（D5-4）</small></div>
+  <div class="node node--primary"><strong>transformers</strong><small>LLM、Tokenizer<br><span class="nw">D1-2、D5</span></small></div>
+  <div class="node node--primary"><strong>diffusers</strong><small>擴散模型<br><span class="nw">D3、D4</span></small></div>
+  <div class="node node--primary"><strong>peft</strong><small>LoRA 微調<br><span class="nw">D4-3、D5-4</span></small></div>
+  <div class="node node--primary"><strong>trl</strong><small>LLM 微調<br><span class="nw">D5-4</span></small></div>
 </div>
 
 <div class="node mt-5" style="font-size:18px"><strong>PyTorch</strong><small>這四個套件的模型都是 <code>torch.nn.Module</code>；訓練、微調都寫 PyTorch 迴圈</small></div>
@@ -118,7 +118,7 @@ model.fit(x_train, y_train, batch_size=64, epochs=10)
 
 <div class="takeaway mt-3">你已經會每一步；只是 <code>fit()</code> 一行把「訓練迴圈」藏起來了。</div>
 
-<div class="src">回顧：DL pp.38–55（CNN）、LabDay3-2。實際層數以 DL 課筆記本為準（待講師核對），Dropout 省略未列</div>
+<div class="src">回顧：DL pp.38–55（CNN）、LabDay3-2；Dropout 省略未列</div>
 
 <!--
 ★ 回顧（4 分）：請學員打開自己 DL 課的 LabDay3-2，對照層數。若不同，筆記本的 Net 與 Keras 參考版要一起改。
@@ -165,7 +165,7 @@ model.fit(x_train, y_train, batch_size=64, epochs=10)
 x = torch.rand(64, 3, 32, 32)
 x.dtype, x.device     # float32, cpu
 x = x.to("cuda")      # 搬到 GPU
-model = Net().to("cuda")
+model = Net().to("cuda")   # Net 在下一頁定義
 y = model(x)          # 兩個都在 cuda 才能算
 ```
 
@@ -173,6 +173,7 @@ y = model(x)          # 兩個都在 cuda 才能算
 <div style="font-size:18px">
 
 - **dtype**：每個數字怎麼存（float32、float16）
+- **device（裝置）**：資料和模型放在 CPU 還是 GPU
 - **device**：放在哪裡算（cpu、cuda）
 - <code>.to(...)</code> 讀作「搬到……」
 
@@ -241,7 +242,7 @@ class Net(nn.Module):
 - `__init__`：**建**好每一層
 - `forward`：**接**線，資料怎麼流
 - `Conv2d(3, 32, 3)` 讀作「輸入 3 通道、輸出 32 通道、3×3 卷積核」
-- `padding=1` ＝ Keras 的 `"same"`
+- `padding=1` ＝ Keras 的 `"same"`（3×3、stride 1 時）
 
 </div>
 </div>
@@ -261,6 +262,7 @@ class Net(nn.Module):
 
 # 練習：預測每一層的輸出 shape
 
+<div class="muted" style="font-size:16px"><strong>照著做</strong>（不同的層）：<code>Conv2d(3, 8, 5)</code> 輸入 &#91;1, 3, 28, 28&#93; → 沒有 padding，5×5 每邊少 2 → &#91;1, 8, 24, 24&#93;</div>
 <div class="muted" style="font-size:17px">不用 AI、先不執行。3×3 卷積：<code>padding=1</code> 大小不變；沒有 padding 每邊少 1。池化 2×2：高寬除以 2（無條件捨去）</div>
 
 <table class="fill tight vlines mt-1">
@@ -342,7 +344,7 @@ x.shape, y.shape   # [64, 3, 32, 32], [64]
 <div class="takeaway mt-3">Dataset 回答「一筆」，DataLoader 負責「一批一批、打亂地給」。</div>
 
 <!--
-★ DataLoader（5 分）：Vibe 13 寫過 Dataset 類別，這裡用 torchvision 現成的。之後 D2 會自己寫一個讀 PCB 影像的 Dataset。
+★ DataLoader（5 分）：這裡用 torchvision 現成的 Dataset。之後 D2 會自己寫一個讀 PCB 影像的 Dataset。
 -->
 
 ---
@@ -392,8 +394,8 @@ for x, y in train_loader:
 
 <div class="flex items-center gap-4 mt-4" style="font-size:19px">
   <div class="node" style="width:30%"><strong>第一次 backward</strong><small>某個參數的梯度 ＝ g</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:30%"><strong>沒清，再 backward</strong><small>梯度 ＝ g ＋ g ＝ 2g</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:30%"><strong>結果</strong><small>每一步都走太大、loss 亂跳</small></div>
+  <div class="node node--warm" style="width:30%"><strong>沒清，再 backward</strong><small>同一批再算一次：梯度 ＝ g ＋ g ＝ 2g</small></div><span class="arrow">→</span>
+  <div class="node node--warm" style="width:30%"><strong>結果</strong><small>梯度變成過去所有批次的總和，方向被舊批次帶偏，訓練變差</small></div>
 </div>
 
 <div class="placeholder mt-4" style="height:90px">筆記本「常見錯誤」格印出的兩個梯度值<small>講師實跑後替換（第二個約為第一個的 2 倍）</small></div>
@@ -463,7 +465,7 @@ model2.load_state_dict(torch.load("cifar_cnn.pt"))   # 再把權重放進去
 
 <div class="eyebrow">附錄 · 選修</div>
 
-# Broadcasting：shape 不同也能相減
+# Broadcasting（廣播）：shape 不同也能相減
 
 ```python
 x = torch.rand(64, 3, 32, 32)
@@ -474,14 +476,14 @@ x_norm = x - mean     # [64, 3, 32, 32]：mean 自動「複製」到每張圖、
 <div class="takeaway mt-4">從最後一維往前對齊；大小是 1 的維度會自動延伸。</div>
 
 <!--
-○ Broadcasting（3 分）：NumPy 規則相同（Vibe 12a）。0.49 等數字只是示範用的平均值，不是 CIFAR-10 的實際統計。
+○ Broadcasting（3 分）：NumPy 的規則相同（DL 課的 NumPy 範例常用到，但沒有正式講規則）。0.49 等數字只是示範用的平均值，不是 CIFAR-10 的實際統計。
 -->
 
 ---
 
 <div class="eyebrow">附錄 · 選修</div>
 
-# 暖身：用梯度下降找平均值
+# 加碼：用梯度下降找平均值
 
 <div class="grid grid-cols-[1.2fr_1fr] gap-5 mt-1">
 <div>
@@ -499,7 +501,7 @@ for step in range(100):
 <div style="font-size:18px">
 
 - 讓平方誤差最小的 μ，就是資料平均
-- 也是「讓資料出現機率最大」（最大概似）的最簡單例子
+- 假設資料是常態分布時，這也是「讓資料出現機率最大」（最大概似，maximum likelihood）的最簡單例子
 - D5-2 的交叉熵是同一個想法
 
 </div>
@@ -557,7 +559,7 @@ for step in range(100):
 <div class="steps mt-3" style="font-size:17px">
   <div><span class="num">1</span>把 Agent 的程式貼進對應的 TODO 格，<strong>逐行讀懂</strong>再執行</div>
   <div><span class="num">2</span>執行到訓練格，觀察每個 epoch 的 loss 與準確率（每 epoch 時間待實測）</div>
-  <div><span class="num">3</span>沒有 Agent 額度：照投影片第 9、12、13 頁自己填；卡住開 <code>-solution.ipynb</code></div>
+  <div><span class="num">3</span>沒有 Agent 額度：照「先回顧 Keras 版」與「nn.Module」兩頁（架構）、「Dataset 與 DataLoader」、「訓練一步＝五行」自己填；卡住開 <code>-solution.ipynb</code></div>
 </div>
 
 <!--
@@ -573,7 +575,7 @@ for step in range(100):
 <table style="font-size:17px">
 <thead><tr><th style="width:30%">稽核問題</th><th>具體動作</th><th style="width:30%">應該是</th></tr></thead>
 <tbody>
-<tr><td>架構一樣嗎？</td><td>對照 Keras 版每一層；比參數量</td><td>層數、通道、Dropout 都一樣</td></tr>
+<tr><td>架構一樣嗎？</td><td>對照 Keras 版每一層；比參數量</td><td>層數、通道、Dropout 都一樣；參數 1,250,858（本機已確認）</td></tr>
 <tr><td>輸入範圍一樣嗎？</td><td>印出一個 batch 的最小、最大值</td><td>0 到 1（和 <code>/255.0</code> 一樣）</td></tr>
 <tr><td>loss 有下降嗎？</td><td>看訓練曲線</td><td>每個 epoch 往下</td></tr>
 <tr><td>評估有關 Dropout 嗎？</td><td>找 <code>model.eval()</code></td><td>在 <code>evaluate</code> 裡</td></tr>

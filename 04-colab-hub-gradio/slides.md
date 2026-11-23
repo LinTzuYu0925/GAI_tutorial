@@ -25,7 +25,7 @@ class: cover
 
 <p class="subtitle">檢查點、Hugging Face Hub、VRAM 估算，最後做出一個能點的網頁</p>
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-8">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">Colab 限制</span><span class="arrow">→</span>
   <span class="chip">檢查點與續訓</span><span class="arrow">→</span>
   <span class="chip">Hub 與模型卡</span><span class="arrow">→</span>
@@ -563,10 +563,10 @@ hostOnly: true
 <thead><tr><th style="width:34%">步驟</th><th>輸出</th><th>為什麼</th></tr></thead>
 <tbody>
 <tr><td>convert＋resize</td><td>PIL 32×32 RGB</td><td>和訓練資料一樣</td></tr>
-<tr><td><code>tf(...)</code></td><td>[3, 32, 32]，0–1</td><td>CHW、和訓練時同樣的範圍</td></tr>
-<tr><td><code>.unsqueeze(0)</code></td><td>[1, 3, 32, 32]</td><td>模型要一個 batch</td></tr>
-<tr><td><code>model(x)</code></td><td>[1, 10]</td><td>10 類的分數</td></tr>
-<tr><td><code>softmax(..., 1)[0]</code></td><td>[10]，總和 1</td><td>變成機率，拿掉 batch 維度</td></tr>
+<tr><td><code>tf(...)</code></td><td>&#91;3, 32, 32&#93;，0–1</td><td>CHW、和訓練時同樣的範圍</td></tr>
+<tr><td><code>.unsqueeze(0)</code></td><td>&#91;1, 3, 32, 32&#93;</td><td>模型要一個 batch</td></tr>
+<tr><td><code>model(x)</code></td><td>&#91;1, 10&#93;</td><td>10 類的分數</td></tr>
+<tr><td><code>softmax(..., 1)&#91;0&#93;</code></td><td>&#91;10&#93;，總和 1</td><td>變成機率，拿掉 batch 維度</td></tr>
 </tbody>
 </table>
 
@@ -673,7 +673,7 @@ hostOnly: true
 
 # 第一天：從「能做什麼」到「做出能點的東西」
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-4">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
   <span class="chip">D1-1 用例畫布</span><span class="arrow">→</span>
   <span class="chip">D1-2 文字與影像生成</span><span class="arrow">→</span>
   <span class="chip">D1-3 PyTorch 迴圈</span><span class="arrow">→</span>

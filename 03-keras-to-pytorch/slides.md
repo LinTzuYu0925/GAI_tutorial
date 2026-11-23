@@ -25,7 +25,7 @@ class: cover
 
 <p class="subtitle">同一個 CIFAR-10 CNN，換一個框架，自己寫訓練迴圈</p>
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-8">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">為什麼搬</span><span class="arrow">→</span>
   <span class="chip">對照表</span><span class="arrow">→</span>
   <span class="chip">Tensor</span><span class="arrow">→</span>
@@ -67,7 +67,7 @@ class: cover
 # 今天結束時，你能夠……
 
 1. **對照** Keras 的每一步在 PyTorch 叫什麼
-2. **預測**卷積網路每一層的輸出 shape（[B, C, H, W]），不靠 AI
+2. **預測**卷積網路每一層的輸出 shape（&#91;B, C, H, W&#93;），不靠 AI
 3. **寫出並解釋**訓練一步的五行程式
 4. **移植** LabDay3-2 的 CNN，比較準確率，存成 <code>state_dict</code>
 
@@ -196,8 +196,8 @@ y = model(x)          # 兩個都在 cuda 才能算
 # 通道放哪裡？Keras 放最後，PyTorch 放前面
 
 <div class="grid grid-cols-2 gap-8 mt-4" style="font-size:19px">
-<div class="node"><strong>Keras：[B, H, W, C]</strong><small>[64, 32, 32, 3]：64 張、32×32、3 個顏色通道</small></div>
-<div class="node node--primary"><strong>PyTorch：[B, C, H, W]</strong><small>[64, 3, 32, 32]：通道排在高寬前面</small></div>
+<div class="node"><strong>Keras：&#91;B, H, W, C&#93;</strong><small>&#91;64, 32, 32, 3&#93;：64 張、32×32、3 個顏色通道</small></div>
+<div class="node node--primary"><strong>PyTorch：&#91;B, C, H, W&#93;</strong><small>&#91;64, 3, 32, 32&#93;：通道排在高寬前面</small></div>
 </div>
 
 ```python
@@ -266,7 +266,7 @@ class Net(nn.Module):
 <table class="fill tight vlines mt-1">
 <thead><tr><th style="width:36%">層</th><th>我預測的輸出 shape</th><th>實際（筆記本印出）</th></tr></thead>
 <tbody>
-<tr><td>輸入</td><td>[64, 3, 32, 32]</td><td>[64, 3, 32, 32]</td></tr>
+<tr><td>輸入</td><td>&#91;64, 3, 32, 32&#93;</td><td>&#91;64, 3, 32, 32&#93;</td></tr>
 <tr><td><code>Conv2d(3, 32, 3, padding=1)</code></td><td class="blank"><FillIn id="shape.c1" hint="例：[64, ?, ?, ?]……" /></td><td class="blank"><FillIn id="shape.c1-real" /></td></tr>
 <tr><td><code>Conv2d(32, 32, 3)</code></td><td class="blank"><FillIn id="shape.c2" /></td><td class="blank"><FillIn id="shape.c2-real" /></td></tr>
 <tr><td><code>MaxPool2d(2)</code></td><td class="blank"><FillIn id="shape.p1" /></td><td class="blank"><FillIn id="shape.p1-real" /></td></tr>
@@ -294,13 +294,13 @@ hostOnly: true
 <table class="tight vlines" style="font-size:18px">
 <thead><tr><th style="width:40%">層</th><th>輸出 shape</th><th>為什麼</th></tr></thead>
 <tbody>
-<tr><td>輸入</td><td>[64, 3, 32, 32]</td><td>—</td></tr>
-<tr><td><code>Conv2d(3, 32, 3, padding=1)</code></td><td>[64, 32, 32, 32]</td><td>通道 3→32；padding 保持 32</td></tr>
-<tr><td><code>Conv2d(32, 32, 3)</code></td><td>[64, 32, 30, 30]</td><td>沒有 padding：32−2</td></tr>
-<tr><td><code>MaxPool2d(2)</code></td><td>[64, 32, 15, 15]</td><td>30÷2</td></tr>
-<tr><td>第二個卷積區塊</td><td>[64, 64, 6, 6]</td><td>15 → 15 → 13 → 6（13÷2 捨去）</td></tr>
-<tr><td><code>Flatten()</code></td><td>[64, 2304]</td><td>64×6×6</td></tr>
-<tr><td>兩個 <code>Linear</code></td><td>[64, 10]</td><td>10 類的分數</td></tr>
+<tr><td>輸入</td><td>&#91;64, 3, 32, 32&#93;</td><td>—</td></tr>
+<tr><td><code>Conv2d(3, 32, 3, padding=1)</code></td><td>&#91;64, 32, 32, 32&#93;</td><td>通道 3→32；padding 保持 32</td></tr>
+<tr><td><code>Conv2d(32, 32, 3)</code></td><td>&#91;64, 32, 30, 30&#93;</td><td>沒有 padding：32−2</td></tr>
+<tr><td><code>MaxPool2d(2)</code></td><td>&#91;64, 32, 15, 15&#93;</td><td>30÷2</td></tr>
+<tr><td>第二個卷積區塊</td><td>&#91;64, 64, 6, 6&#93;</td><td>15 → 15 → 13 → 6（13÷2 捨去）</td></tr>
+<tr><td><code>Flatten()</code></td><td>&#91;64, 2304&#93;</td><td>64×6×6</td></tr>
+<tr><td>兩個 <code>Linear</code></td><td>&#91;64, 10&#93;</td><td>10 類的分數</td></tr>
 </tbody>
 </table>
 
@@ -521,7 +521,7 @@ for step in range(100):
 <div>
 
 <strong>【目標】</strong>把 LabDay3-2 的 CNN 搬到 PyTorch<br>
-<strong>【輸入與輸出】</strong>CIFAR-10 [B, 3, 32, 32] → 10 類分數 [B, 10]<br>
+<strong>【輸入與輸出】</strong>CIFAR-10 &#91;B, 3, 32, 32&#93; → 10 類分數 &#91;B, 10&#93;<br>
 <strong>【限制】</strong>架構、epoch 數、batch 大小和 Keras 版一樣；Colab T4<br>
 <strong>【驗收】</strong>① 逐層 shape 和練習頁一致　② loss 每個 epoch 下降　③ 準確率和 Keras 差距 ≤ 2 個百分點　④ 存檔載回後準確率不變
 
@@ -610,9 +610,9 @@ for step in range(100):
 
 # 今天學到的概念鏈
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-4">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
   <span class="chip">Tensor／device</span><span class="arrow">→</span>
-  <span class="chip">[B, C, H, W]</span><span class="arrow">→</span>
+  <span class="chip">&#91;B, C, H, W&#93;</span><span class="arrow">→</span>
   <span class="chip">nn.Module</span><span class="arrow">→</span>
   <span class="chip">DataLoader</span><span class="arrow">→</span>
   <span class="chip">五行迴圈</span><span class="arrow">→</span>
@@ -634,7 +634,7 @@ for step in range(100):
 
 <div class="mcq">
 
-1. PyTorch 影像 tensor 的慣用排列？（　）<br><span class="opts">A. [B, H, W, C]　B. [B, C, H, W]　C. [C, B, H, W]　D. [H, W, C, B]</span>
+1. PyTorch 影像 tensor 的慣用排列？（　）<br><span class="opts">A. &#91;B, H, W, C&#93;　B. &#91;B, C, H, W&#93;　C. &#91;C, B, H, W&#93;　D. &#91;H, W, C, B&#93;</span>
 2. 每一批訓練開始前要呼叫哪一個，避免梯度累加？（　）<br><span class="opts">A. <code>loss.backward()</code>　B. <code>optimizer.step()</code>　C. <code>optimizer.zero_grad()</code>　D. <code>model.eval()</code></span>
 3. <code>model.eval()</code> 的作用？（　）<br><span class="opts">A. 開始訓練　B. 關閉 Dropout 等訓練專用行為　C. 刪除梯度　D. 存檔</span>
 4. 載入 <code>state_dict</code> 前必須先做什麼？（　）<br><span class="opts">A. 建立同樣架構的模型　B. 重新訓練　C. 安裝 Keras　D. 把資料轉成 NumPy</span>

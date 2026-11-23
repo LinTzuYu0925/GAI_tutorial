@@ -25,7 +25,7 @@ class: cover
 
 <p class="subtitle">自己在 Colab T4 跑文字模型和影像模型，而且能重現</p>
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-8">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">開 T4</span><span class="arrow">→</span>
   <span class="chip">文案</span><span class="arrow">→</span>
   <span class="chip">產品圖</span><span class="arrow">→</span>
@@ -324,7 +324,7 @@ $$p_i = \mathrm{softmax}\!\left(\frac{z_i}{T}\right)$$
 <div>
 
 <table style="font-size:17px">
-<thead><tr><th>分數 z ＝ [2, 1, 0]</th><th>T ＝ 0.5</th><th>T ＝ 1</th><th>T ＝ 2</th></tr></thead>
+<thead><tr><th>分數 z ＝ &#91;2, 1, 0&#93;</th><th>T ＝ 0.5</th><th>T ＝ 1</th><th>T ＝ 2</th></tr></thead>
 <tbody>
 <tr><td>token A</td><td><strong>0.87</strong></td><td>0.67</td><td>0.51</td></tr>
 <tr><td>token B</td><td>0.12</td><td>0.24</td><td>0.31</td></tr>
@@ -542,7 +542,7 @@ img = pipe(PROMPT, negative_prompt="logo, text, watermark, brand name", ...)
 <table class="fill vlines mt-1">
 <thead><tr><th style="width:18%">塊</th><th>輸入</th><th>輸出（型別或 shape）</th><th>做什麼（一句話）</th></tr></thead>
 <tbody>
-<tr><td>tokenizer</td><td>字串</td><td><code>input_ids</code>：[1, n]</td><td>把文字切成 token ID</td></tr>
+<tr><td>tokenizer</td><td>字串</td><td><code>input_ids</code>：&#91;1, n&#93;</td><td>把文字切成 token ID</td></tr>
 <tr><td>model</td><td class="blank"><FillIn id="io.model-in" hint="例：一排整數……" /></td><td class="blank"><FillIn id="io.model-out" hint="例：幾維、每維多大……" /></td><td class="blank"><FillIn id="io.model-do" /></td></tr>
 <tr><td>取最後位置＋softmax</td><td class="blank"><FillIn id="io.sm-in" /></td><td class="blank"><FillIn id="io.sm-out" /></td><td class="blank"><FillIn id="io.sm-do" /></td></tr>
 <tr><td>抽樣</td><td class="blank"><FillIn id="io.samp-in" /></td><td class="blank"><FillIn id="io.samp-out" /></td><td class="blank"><FillIn id="io.samp-do" /></td></tr>
@@ -566,10 +566,10 @@ hostOnly: true
 <table class="vlines" style="font-size:18px">
 <thead><tr><th style="width:18%">塊</th><th>輸入</th><th>輸出</th><th>做什麼</th></tr></thead>
 <tbody>
-<tr><td>tokenizer</td><td>字串</td><td><code>input_ids</code>：[1, n]</td><td>把文字切成 token ID</td></tr>
-<tr><td>model</td><td><code>input_ids</code> [1, n]</td><td><code>logits</code> [1, n, vocab_size]</td><td>每個位置對每個 token 打分數</td></tr>
-<tr><td>最後位置＋softmax</td><td><code>logits[0, -1]</code> [vocab_size]</td><td>機率 [vocab_size]，總和 1</td><td>分數變機率</td></tr>
-<tr><td>抽樣</td><td>機率 [vocab_size]</td><td>1 個 token ID</td><td>照機率抽一個</td></tr>
+<tr><td>tokenizer</td><td>字串</td><td><code>input_ids</code>：&#91;1, n&#93;</td><td>把文字切成 token ID</td></tr>
+<tr><td>model</td><td><code>input_ids</code> &#91;1, n&#93;</td><td><code>logits</code> &#91;1, n, vocab_size&#93;</td><td>每個位置對每個 token 打分數</td></tr>
+<tr><td>最後位置＋softmax</td><td><code>logits&#91;0, -1&#93;</code> &#91;vocab_size&#93;</td><td>機率 &#91;vocab_size&#93;，總和 1</td><td>分數變機率</td></tr>
+<tr><td>抽樣</td><td>機率 &#91;vocab_size&#93;</td><td>1 個 token ID</td><td>照機率抽一個</td></tr>
 </tbody>
 </table>
 
@@ -660,7 +660,7 @@ hostOnly: true
 
 # 今天學到的概念鏈
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-4">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
   <span class="chip">開 T4</span><span class="arrow">→</span>
   <span class="chip">pipeline 文案</span><span class="arrow">→</span>
   <span class="chip">SD1.5 產品圖</span><span class="arrow">→</span>

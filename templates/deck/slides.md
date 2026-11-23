@@ -25,7 +25,7 @@ class: cover
 
 <p class="subtitle">（副標：本單元要做出什麼）</p>
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-8">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">概念一</span><span class="arrow">→</span>
   <span class="chip">概念二</span><span class="arrow">→</span>
   <span class="chip">Lab</span><span class="arrow">→</span>
@@ -113,7 +113,7 @@ x_hat = decoder(z)    # 再還原
 
 # 今天學到的概念鏈
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-4">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
   <span class="chip">概念一</span><span class="arrow">→</span>
   <span class="chip">概念二</span><span class="arrow">→</span>
   <span class="chip">Lab</span><span class="arrow">→</span>

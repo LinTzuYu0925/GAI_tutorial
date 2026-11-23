@@ -15,7 +15,7 @@
 # | 5 | 門檻：驗證集上漏檢 ≤ 5% | 測試集的過殺率、漏檢率 |
 # | 6 | Gradio 檢測站（第二天的交付） | 網頁 |
 #
-# > 狀態：本筆記本尚未在 Colab T4 實跑；VisA 下載網址與壓縮檔結構待確認（見 `research/sources.md`）。
+# > 狀態：本筆記本尚未在 Colab T4 實跑。VisA 網址、壓縮檔結構與張數已於 2026-11-24 確認（見 `research/sources.md`）。
 
 # %%
 # 第 1 格：環境
@@ -33,11 +33,11 @@ EPOCHS = 30         # 沒有 GPU：改成 3
 
 # %% [markdown]
 # ## 1. 資料：VisA PCB1
-# 預設從官方網址下載整包 VisA（檔案很大，下載時間待實測），只解壓 `pcb1`。
+# 預設從官方網址下載整包 VisA（約 1.9 GB，下載時間待實測），只解壓 `pcb1`（良品 1004 張、不良品 100 張）。
 # 講師若已經把 PCB1 放到雲端硬碟，把 `PCB1_DIR` 改成那個資料夾即可跳過下載。
 
 # %%
-VISA_URL = "https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar"  # 待確認
+VISA_URL = "https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar"  # 約 1.9 GB（2026-11-24 確認）
 PCB1_DIR = "visa/pcb1"   # 或講師提供的路徑，例如 /content/drive/MyDrive/GAI/visa/pcb1
 
 if not os.path.isdir(PCB1_DIR):
@@ -86,6 +86,13 @@ class PCBDataset(Dataset):
 t0 = time.time()
 ds = {k: PCBDataset(v) for k, v in split.items()}
 print("讀取並縮小完成", f"{time.time()-t0:.0f}s", "| 一張圖", tuple(ds["train"][0][0].shape))
+
+# 資料陷阱：VisA PCB1 的良品約八成是「倒過來」拍的（針腳朝上），不良品幾乎都是正的（講師本機檢查，2026-11-24）。
+# 不處理的話，模型可能學到「方向不對＝瑕疵」，AUROC 會好看得不真實。
+# 解法：訓練集加入旋轉 180° 的版本，兩種方向都算「正常」。
+ds["train"].x = torch.cat([ds["train"].x, ds["train"].x.flip(-2, -1)])
+ds["train"].y = torch.cat([ds["train"].y, ds["train"].y])
+print("加入 180° 旋轉後，訓練良品", len(ds["train"]), "張")
 train_loader = DataLoader(ds["train"], batch_size=32, shuffle=True)
 
 # %% [markdown]

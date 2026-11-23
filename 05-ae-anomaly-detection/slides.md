@@ -25,7 +25,7 @@ class: cover
 
 <p class="subtitle">只看過良品的自編碼器，把「重建不好」變成瑕疵分數</p>
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-8">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">只有良品</span><span class="arrow">→</span>
   <span class="chip">自編碼器</span><span class="arrow">→</span>
   <span class="chip">重建誤差</span><span class="arrow">→</span>
@@ -48,9 +48,9 @@ class: cover
 <div class="ticket mt-2">
   <div class="ticket-head">【需求單 #D2-1】部門：製造品保部（A 線）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
-    <dt>問題</dt><dd>AOI 把太多好板判成不良（過殺），新型瑕疵卻會漏掉（漏檢）</dd>
+    <dt>問題</dt><dd>AOI（自動光學檢測）把太多好板判成不良（過殺），新型瑕疵卻會漏掉（漏檢）</dd>
     <dt>現況痛點</dt><dd>每天人工複判大量過殺板；新瑕疵每月出現，來不及標註</dd>
-    <dt>成功指標（KPI）</dt><dd>漏檢率 ≤ 5% 的前提下，過殺率比現況低；附 AUROC</dd>
+    <dt>成功指標（KPI）</dt><dd>漏檢率 ≤ 5% 的前提下，過殺率比現況低；附 AUROC（排序品質指標，第 16 頁）</dd>
     <dt>可用資料</dt><dd>數百張良品；瑕疵很少、沒有新瑕疵（用公開資料集 VisA PCB1 代替）</dd>
     <dt>限制與法規</dt><dd>Colab T4；資料集授權（VisA：CC BY 4.0，待確認）</dd>
     <dt>為何現有工具不夠</dt><dd>CNN 分類器需要每一類瑕疵都有標註，沒看過的瑕疵分不出來</dd>
@@ -83,23 +83,16 @@ class: cover
 
 # 為什麼 DL 課的 CNN 分類器做不到？
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-3">
-<div>
-
-<div class="flex items-center gap-2" style="font-size:18px">
-  <div class="node">新型瑕疵的板子<small>訓練時從沒出現</small></div><span class="arrow">→</span>
-  <div class="node">CNN 分類器<small>只認得「良品、刮傷、短路」</small></div><span class="arrow">→</span>
-  <div class="node node--warm">硬塞進一類<small>常被判成「良品」</small></div>
+<div class="flex items-center justify-center gap-3 mt-4" style="font-size:18px">
+  <div class="node" style="width:28%">新型瑕疵的板子<small>訓練時從沒出現</small></div><span class="arrow">→</span>
+  <div class="node" style="width:28%">CNN 分類器<small>只認得「良品、刮傷、短路」</small></div><span class="arrow">→</span>
+  <div class="node node--warm" style="width:28%">硬塞進一類<small>常被判成「良品」</small></div>
 </div>
 
-</div>
-<div style="font-size:18px">
-
-- 分類器只能回答**看過的類別**
-- 新瑕疵沒有標註，也來不及標
-- 瑕疵樣本又少：資料嚴重不平衡
-
-</div>
+<div class="grid grid-cols-3 gap-4 mt-5" style="font-size:18px">
+<div class="node">分類器只能回答<strong>看過的類別</strong></div>
+<div class="node">新瑕疵沒有標註，也來不及標</div>
+<div class="node">瑕疵樣本又少：資料嚴重不平衡</div>
 </div>
 
 <div class="takeaway mt-6">問題不在 CNN 不夠好，而是「沒看過的類別」根本不在它的選項裡。</div>
@@ -107,7 +100,7 @@ class: cover
 <div class="src">回顧：DL pp.38–55（CNN 分類）</div>
 
 <!--
-★ Frame（4 分）：請學員回想 D1-3 的 CIFAR-10：如果輸入一張「船」以外的新東西（例如蛋糕），分類器還是會從 10 類裡挑一個。
+★ Frame（4 分）：請學員回想 D1-3 的 CIFAR-10：如果輸入一張 10 類以外的新東西（例如蛋糕），分類器還是會從 10 類裡挑一個。
 -->
 
 ---
@@ -116,37 +109,47 @@ class: cover
 
 # 換個問法：只學「正常長什麼樣」
 
-<div class="grid grid-cols-2 gap-8 mt-4" style="font-size:19px">
+<div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-1 items-start">
+<div>
+  <img class="photo" src="/pcb1-grid9.jpg" alt="九片 HC-SR04 板子的照片，其中一片有焊錫熔化的瑕疵" style="width:100%">
+  <div class="shot-cap">九片 A 線的板子，只有一片有問題：是哪一片？</div>
+</div>
+<div style="font-size:18px">
+
 <div class="node"><strong>舊問法（分類）</strong><small>「這是哪一種瑕疵？」→ 需要每一種瑕疵的樣本</small></div>
-<div class="node node--primary"><strong>新問法（異常偵測）</strong><small>「這片板子和平常的良品像不像？」→ 只需要良品</small></div>
+<div class="node node--primary mt-3"><strong>新問法（異常偵測）</strong><small>「這片和平常的良品像不像？」→ 只需要良品</small></div>
+<div class="node node--secondary mt-3"><strong>類比：老師傅</strong><small>看久了好板，任何「怪怪的」地方一眼就看出來——就算那種瑕疵他從沒見過</small></div>
+
+</div>
 </div>
 
-<div class="node node--secondary mt-5" style="font-size:18px"><strong>類比：老師傅</strong><small>每天看幾千片好板，看久了，任何「怪怪的」地方一眼就看出來——就算那種瑕疵他從沒見過</small></div>
+<div class="takeaway mt-3">生成模型學的是「良品通常長什麼樣」（D1-1 的 p_data），不像的就是可疑。</div>
 
-<div class="takeaway mt-4">生成模型學的是「良品通常長什麼樣」（D1-1 的 p_data），不像的就是可疑。</div>
+<div class="src">VisA PCB1（Zou et al., 2022，CC BY 4.0，S1）：良品 0612、0640、0661、0689、0702、0733、0758、0790 與不良品 016，講師裁切</div>
 
 <!--
-★ 換問法（3 分）：連回 D1-1 第 8 頁的分布圖：良品是黑點，模型學出藍色區域；落在區域外的板子就可疑。
+★ 換問法（4 分）：先讓學員挑（30 秒）。答案是第 6 張：Echo、Gnd 兩支針腳的焊錫熔化（下一頁有放大）。挑不出來很正常——這就是老師傅花好幾年學的事。
+再連回 D1-1 第 8 頁的分布圖：良品是黑點，模型學出藍色區域；落在區域外的板子就可疑。
 -->
 
 ---
 
 <div class="eyebrow">01 · Try（先用現成的）</div>
 
-# 講師訓練好的自編碼器：熱力圖亮在瑕疵上
+# 講師訓練好的自編碼器：熱力圖會亮在瑕疵上嗎？
 
 <div class="grid grid-cols-3 gap-4 mt-2">
-<div><div class="placeholder" style="height:190px">輸入（不良品）<small>VisA PCB1，講師實跑後替換</small></div></div>
+<div><img class="photo" src="/pcb1-grid9-zoom.jpg" alt="上一頁第 6 張的放大：Echo、Gnd 針腳的焊錫熔化" style="height:190px;width:100%"><div class="shot-cap">輸入：上一頁第 6 張（放大）</div></div>
 <div><div class="placeholder" style="height:190px">重建<small>講師實跑後替換</small></div></div>
 <div><div class="placeholder" style="height:190px">誤差熱力圖<small>講師實跑後替換</small></div></div>
 </div>
 
-<div class="takeaway mt-4">先看結果：重建圖「修好」了瑕疵，所以輸入和重建的差，剛好落在瑕疵上。</div>
+<div class="takeaway mt-4">先猜再看：如果重建圖把瑕疵「修好」了，輸入和重建的差就會落在瑕疵上。</div>
 
-<div class="src">資料：VisA（Zou et al., 2022），CC BY 4.0（待確認）；模型為講師以 lab05 訓練的檢查點</div>
+<div class="src">資料：VisA PCB1 不良品 016（Zou et al., 2022，CC BY 4.0，S1）；模型為講師以 lab05 訓練的檢查點</div>
 
 <!--
-★ 示範（5 分）：用 lab05 解答筆記本的「熱力圖」格（或講師檢查點）。如果某一張熱力圖沒亮在瑕疵上，也直接給學員看——這是誠實的基準線，第 19 頁會說明原因。
+★ 示範（5 分）：用 lab05 解答筆記本的「熱力圖」格（或講師檢查點）。如果某一張熱力圖沒亮在瑕疵上，也直接給學員看——這是誠實的基準線，第 20 頁會說明原因。
 -->
 
 ---
@@ -156,11 +159,11 @@ class: cover
 # 自編碼器：壓扁，再還原
 
 <div class="flex items-center justify-center gap-2 mt-4" style="font-size:18px">
-  <div class="node" style="width:16%">輸入 x<small>[B, 3, 128, 128]</small></div><span class="arrow">→</span>
+  <div class="node" style="width:16%">輸入 x<small class="nw">&#91;B,3,128,128&#93;</small></div><span class="arrow">→</span>
   <div class="node node--primary" style="width:18%"><strong>Encoder</strong><small>每層高寬減半</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:16%"><strong>瓶頸 z</strong><small>[B, 128, 8, 8]</small></div><span class="arrow">→</span>
+  <div class="node node--warm" style="width:16%"><strong>瓶頸 z</strong><small class="nw">&#91;B,128,8,8&#93;</small></div><span class="arrow">→</span>
   <div class="node node--secondary" style="width:18%"><strong>Decoder</strong><small>每層高寬加倍</small></div><span class="arrow">→</span>
-  <div class="node" style="width:16%">重建 x̂<small>[B, 3, 128, 128]</small></div>
+  <div class="node" style="width:16%">重建 x̂<small class="nw">&#91;B,3,128,128&#93;</small></div>
 </div>
 
 <div class="grid grid-cols-2 gap-6 mt-6" style="font-size:18px">
@@ -188,21 +191,21 @@ x̂ 讀作「x hat」：模型重建出來的 x。
 
 # 只學過良品，所以會把瑕疵「修掉」
 
-<div class="flex items-center justify-center gap-3 mt-5" style="font-size:18px">
-  <div class="node" style="width:26%"><strong>① 輸入</strong><small>有一道刮痕的板子</small></div><span class="arrow">→</span>
-  <div class="node node--secondary" style="width:26%"><strong>② 重建</strong><small>模型沒看過刮痕，畫出「正常」的那一塊</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:26%"><strong>③ 相減</strong><small>|x − x̂| 只在刮痕處很大</small></div>
+<div class="grid grid-cols-[1.4fr_1fr] gap-5 mt-2 items-start">
+<div class="grid grid-cols-[1.6fr_1fr] gap-3">
+  <div><img class="photo" src="/pcb1-bent-outline.jpg" alt="一片 Trig 針腳彎掉的 HC-SR04 板子，綠線圈出人工標註" style="width:100%"><div class="shot-cap">真實不良品：綠線＝人工標註</div></div>
+  <div><img class="photo" src="/pcb1-bent-zoom.jpg" alt="放大：Trig 針腳往左彎" style="width:100%"><div class="shot-cap">放大：彎掉的針腳</div></div>
+</div>
+<div style="font-size:17px">
+  <div class="node"><strong>① 輸入</strong><small>有一支彎針的板子</small></div>
+  <div class="node node--secondary mt-2"><strong>② 重建</strong><small>模型沒看過彎針，畫出「正常」的直針</small></div>
+  <div class="node node--warm mt-2"><strong>③ 相減</strong><small>(x − x̂)² 只在彎針處很大</small></div>
+</div>
 </div>
 
-<table class="mt-6" style="font-size:18px">
-<thead><tr><th style="width:24%"></th><th>良品</th><th>不良品</th></tr></thead>
-<tbody>
-<tr><td>重建得像嗎？</td><td>像（看過很多）</td><td>瑕疵處不像</td></tr>
-<tr><td>誤差</td><td>小</td><td>瑕疵處大</td></tr>
-</tbody>
-</table>
+<div class="takeaway mt-3">誤差大＝「這裡和模型學到的良品不一樣」；綠線就是我們希望熱力圖亮起來的地方。</div>
 
-<div class="takeaway mt-3">誤差大＝「這裡和模型學到的良品不一樣」。</div>
+<div class="src">VisA PCB1 不良品 001 與遮罩（CC BY 4.0，S1），講師裁切</div>
 
 <!--
 ★ 機制（5 分）：這頁是整堂的核心。用「修圖」比喻：模型是只會修成良品樣子的修圖師。
@@ -220,11 +223,12 @@ x̂ 讀作「x hat」：模型重建出來的 x。
 
 ```python
 # 方法一：轉置卷積（本 Lab 用）
-nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1)
+nn.ConvTranspose2d(128, 64, 4,
+                   stride=2, padding=1)
 # [B, 128, 16, 16] → [B, 64, 32, 32]
 ```
 
-<div class="muted" style="font-size:17px">讀作：「學出來的放大」——放大的方式也是參數</div>
+<div class="muted" style="font-size:17px">讀作：4＝核大小、stride 2＝高寬加倍；「學出來的放大」——放大的方式也是參數</div>
 
 </div>
 <div>
@@ -259,14 +263,14 @@ nn.Conv2d(128, 64, 3, padding=1)
 <div>
 
 ```python
-def anomaly_map(x):
+def anomaly_map(x):      # 筆記本裡另有 model.eval() 與 no_grad
     x_hat = model(x)
     return ((x - x_hat) ** 2).mean(dim=1)
     # [B, 3, 128, 128] → [B, 128, 128]
 
 def score(x):
     m = anomaly_map(x).flatten(1)      # [B, 16384]
-    k = int(m.shape[1] * 0.01)         # 最大的 1%
+    k = max(1, int(m.shape[1] * 0.01)) # 最大的 1%
     return m.topk(k, dim=1).values.mean(dim=1)
 ```
 
@@ -284,7 +288,7 @@ def score(x):
 
 <!--
 ★ 誤差圖（6 分）：mean(dim=1) 讀作「沿著第 1 維（通道）取平均」。topk 讀作「拿最大的 k 個」。
-這個分數設計是本 Lab 的選擇，不是標準答案；SSIM 等替代方法見第 18 頁。
+這個分數設計是本 Lab 的選擇，不是標準答案；SSIM 等替代方法見第 19 頁。
 -->
 
 ---
@@ -297,14 +301,14 @@ def score(x):
 <div>
 
 <svg viewBox="0 0 460 230" style="width:100%">
-  <defs><marker id="ax5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4b5563"/></marker></defs>
-  <line x1="30" y1="190" x2="440" y2="190" stroke="#4b5563" stroke-width="1.5" marker-end="url(#ax5)"/>
-  <text x="380" y="215" style="font-size:16px" fill="#4b5563">分數 →</text>
-  <path d="M40,190 C80,190 90,60 140,60 C190,60 200,190 260,190 Z" fill="#e7f5f2" stroke="#16847a" stroke-width="2"/>
-  <path d="M200,190 C250,190 270,110 310,110 C350,110 370,190 420,190 Z" fill="#fff2e3" stroke="#b85c20" stroke-width="2" stroke-dasharray="6 4"/>
-  <text x="100" y="50" style="font-size:17px" fill="#16847a">良品</text>
-  <text x="290" y="100" style="font-size:17px" fill="#b85c20">不良品</text>
-  <text x="205" y="180" style="font-size:14px" fill="#4b5563">重疊</text>
+  <defs><marker id="ax5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted-text)"/></marker></defs>
+  <line x1="30" y1="190" x2="440" y2="190" stroke="var(--muted-text)" stroke-width="1.5" marker-end="url(#ax5)"/>
+  <text x="380" y="215" style="font-size:16px" fill="var(--muted-text)">分數 →</text>
+  <path d="M40,190 C80,190 90,60 140,60 C190,60 200,190 260,190 Z" fill="var(--soft-teal)" stroke="var(--secondary)" stroke-width="2"/>
+  <path d="M200,190 C250,190 270,110 310,110 C350,110 370,190 420,190 Z" fill="var(--soft-amber)" stroke="var(--warm-accent)" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="100" y="50" style="font-size:17px" fill="var(--secondary)">良品</text>
+  <text x="290" y="100" style="font-size:17px" fill="var(--warm-accent)">不良品</text>
+  <text x="196" y="215" style="font-size:17px" fill="var(--muted-text)">↑ 重疊</text>
 </svg>
 
 </div>
@@ -327,18 +331,45 @@ def score(x):
 
 ---
 
-<div class="eyebrow">04 · Adapt（調成我們的）· 門檻</div>
+<div class="eyebrow">04 · Measure（量測驗收）· 門檻</div>
 
 # 門檻：一條線決定判良或判不良
 
-<div class="grid grid-cols-2 gap-6 mt-2">
-<div class="node"><strong>線往左移（門檻低）</strong><small>更多板子被判不良 → 漏檢少，但過殺多（好板也被攔下）</small></div>
-<div class="node"><strong>線往右移（門檻高）</strong><small>更少板子被判不良 → 過殺少，但漏檢多（瑕疵被放過）</small></div>
+<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-1 items-center">
+<div>
+
+<svg viewBox="0 0 460 235" style="width:100%" aria-label="良品與不良品的分數分布，中間一條垂直門檻線">
+  <line x1="30" y1="190" x2="440" y2="190" stroke="var(--muted-text)" stroke-width="1.5"/>
+  <path d="M40,190 C80,190 90,60 140,60 C190,60 200,190 260,190 Z" fill="var(--soft-teal)" stroke="var(--secondary)" stroke-width="2"/>
+  <path d="M200,190 C250,190 270,110 310,110 C350,110 370,190 420,190 Z" fill="var(--soft-amber)" stroke="var(--warm-accent)" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="232" y1="30" x2="232" y2="195" stroke="var(--primary)" stroke-width="3"/>
+  <text x="240" y="40" style="font-size:17px" fill="var(--primary)">門檻</text>
+  <text x="238" y="180" style="font-size:17px" fill="var(--secondary)">過殺</text>
+  <text x="180" y="180" style="font-size:17px" fill="var(--warm-accent)">漏檢</text>
+  <text x="60" y="222" style="font-size:17px" fill="var(--muted-text)">← 判良品</text>
+  <text x="330" y="222" style="font-size:17px" fill="var(--muted-text)">判不良 →</text>
+</svg>
+
+</div>
+<div style="font-size:17px">
+
+- 線往左：漏檢少、過殺多
+- 線往右：過殺少、漏檢多
+
+<table class="mt-2" style="font-size:16px">
+<thead><tr><th></th><th>代價</th></tr></thead>
+<tbody>
+<tr><td><strong>漏檢</strong></td><td>客訴、退貨；嚴重時召回</td></tr>
+<tr><td><strong>過殺</strong></td><td>複判人力、好板報廢</td></tr>
+</tbody>
+</table>
+
+</div>
 </div>
 
-<div class="node node--primary mt-5" style="font-size:18px"><strong>今天的規則</strong><small>在驗證集上選一條線，讓不良品最多漏掉 5%；再到測試集看過殺是多少</small></div>
+<div class="takeaway mt-2">門檻不是模型學出來的，是<strong>商業決定</strong>：今天的規則是「漏檢最多 5%」，再看過殺是多少。</div>
 
-<div class="takeaway mt-4">門檻不是模型學出來的，是<strong>商業決定</strong>：漏檢和過殺哪個比較貴？</div>
+<div class="src">分布為教學示意，不是實測；門檻要和品保主管一起定</div>
 
 <!--
 ★ 門檻（5 分）：重疊區域一定存在，所以不可能同時零過殺、零漏檢。下一頁把這兩個工廠用語對到 ML 課的混淆矩陣。
@@ -430,20 +461,20 @@ hostOnly: true
 <div>
 
 <svg viewBox="0 0 260 240" style="width:100%;max-height:285px">
-  <defs><marker id="ax6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4b5563"/></marker></defs>
-  <line x1="30" y1="210" x2="240" y2="210" stroke="#4b5563" stroke-width="1.5" marker-end="url(#ax6)"/>
-  <line x1="30" y1="210" x2="30" y2="15" stroke="#4b5563" stroke-width="1.5" marker-end="url(#ax6)"/>
-  <line x1="30" y1="210" x2="220" y2="25" stroke="#b8b8b8" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <path d="M30,210 L30,120 L60,80 L100,50 L160,35 L220,25" fill="none" stroke="#2457c5" stroke-width="3"/>
-  <text x="110" y="232" style="font-size:14px" fill="#4b5563">過殺率（FP 率）</text>
-  <text x="36" y="22" style="font-size:14px" fill="#4b5563">抓到率（1 − 漏檢率）</text>
-  <text x="130" y="150" style="font-size:14px" fill="#4b5563">亂猜＝0.5</text>
+  <defs><marker id="ax6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted-text)"/></marker></defs>
+  <line x1="30" y1="210" x2="240" y2="210" stroke="var(--muted-text)" stroke-width="1.5" marker-end="url(#ax6)"/>
+  <line x1="30" y1="210" x2="30" y2="15" stroke="var(--muted-text)" stroke-width="1.5" marker-end="url(#ax6)"/>
+  <line x1="30" y1="210" x2="220" y2="25" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <path d="M30,210 L30,120 L60,80 L100,50 L160,35 L220,25" fill="none" stroke="var(--primary)" stroke-width="3"/>
+  <text x="110" y="232" style="font-size:16px" fill="var(--muted-text)">過殺率（FP 率）</text>
+  <text x="36" y="22" style="font-size:16px" fill="var(--muted-text)">抓到率（1 − 漏檢率）</text>
+  <text x="130" y="150" style="font-size:16px" fill="var(--muted-text)">亂猜＝0.5</text>
 </svg>
 
 </div>
 <div style="font-size:18px">
 
-- 每個門檻畫一點，連成 ROC 曲線
+- 每個門檻畫一點，連成 ROC 曲線（不同門檻下「抓到率 vs 過殺率」）
 - **AUROC**＝曲線下的面積
 - 白話：「隨機抽一片不良、一片良品，不良分數比較高的機率」
 - 0.5 ＝ 亂猜；1.0 ＝ 完美排序
@@ -465,7 +496,32 @@ roc_auc_score(y, scores)   # sklearn
 
 ---
 
-<div class="eyebrow">04 · Measure · 業界基準</div>
+<div class="eyebrow">04 · Measure · 資料陷阱</div>
+
+# 稽核資料：良品和不良品，連拍攝方向都不一樣
+
+<img class="photo mt-2" src="/pcb1-orientation.jpg" alt="三片板子：倒著拍的良品、正著拍的良品、正著拍的不良品" style="width:100%">
+
+<div class="grid grid-cols-3 gap-4 mt-1" style="font-size:16px">
+<div class="shot-cap">良品，倒著拍（針腳朝上）：約 79%</div>
+<div class="shot-cap">良品，正著拍：約 21%</div>
+<div class="shot-cap">不良品：95% 正著拍</div>
+</div>
+
+<div class="node node--warm mt-3" style="font-size:18px"><strong>會發生什麼事</strong><small>模型可能學到「方向不對＝瑕疵」：AUROC 很漂亮，上線遇到正著放的好板就過殺</small></div>
+
+<div class="takeaway mt-3">高分不一定代表學對了：先看資料。Lab 的解法是訓練時加 180° 旋轉，兩種方向都算正常。</div>
+
+<div class="src">VisA PCB1 良品 0000、0620 與不良品 001；比例為講師本機以針腳位置判斷全部 1,104 張並目視抽查（2026-11-24，research/lab-runs.md）</div>
+
+<!--
+★ 資料陷阱（3 分）：這是真的發生在公開資料集裡的事，不是編的。問學員：「如果模型只看方向，AUROC 大概會是多少？」→ 很高，因為幾乎所有不良品都是正的、大部分良品是倒的。
+產線上也常見：不良品是另一個站、另一台相機、另一個時間拍的，模型就學到「哪一站拍的」而不是「有沒有瑕疵」（D3-2 的 B 線問題）。
+-->
+
+---
+
+<div class="eyebrow">04 · Measure · 業界基準 · 選修</div>
 
 # 我們的 AE 是基準線；產線用更強的方法
 
@@ -479,7 +535,7 @@ roc_auc_score(y, scores)   # sklearn
 <div class="src">Roth et al., PatchCore (CVPR 2022)；Batzner et al., EfficientAD (WACV 2024)（S4、S5，待確認）</div>
 
 <!--
-★ 基準（3 分）：只點名，不實作。重點：今天建立的「評估流程」才是可以帶走的東西。學員如果期末專題做異常偵測，可以用 anomalib（下一頁）。
+○ 基準（3 分）：只點名，不實作。重點：今天建立的「評估流程」才是可以帶走的東西。學員如果期末專題做異常偵測，可以用 anomalib（下一頁）。
 -->
 
 ---
@@ -518,7 +574,7 @@ roc_auc_score(y, scores)   # sklearn
 <div class="takeaway mt-6">瓶頸太寬會照抄、太窄會模糊；D2-2 的跳接會讓照抄更嚴重，D3-4 用擴散模型換個做法。</div>
 
 <!--
-△ 備用（2 分）：學員發現熱力圖沒亮在瑕疵上時用。可以讓學員把 encoder 少一層 down（瓶頸變 16×16）比較 AUROC。
+△ 備用（2 分）：學員發現熱力圖沒亮在瑕疵上時用。可以讓學員比較兩個方向：少一層 down（瓶頸變 16×16，反而「寬」4 倍，照抄更嚴重），或把最後一層 down 的通道 128→32（瓶頸變「窄」），比較 AUROC。
 -->
 
 ---
@@ -561,7 +617,7 @@ roc_auc_score(y, scores)   # sklearn
 
 <div class="mt-3" style="font-size:17px"><strong>訓練</strong></div>
 <div class="flex items-center gap-2 mt-1" style="font-size:17px">
-  <div class="node"><code>PCBDataset</code><small>[B, 3, 128, 128]</small></div><span class="arrow">→</span>
+  <div class="node"><code>PCBDataset</code><small class="nw">&#91;B,3,128,128&#93;</small></div><span class="arrow">→</span>
   <div class="node node--primary"><code>encoder</code><small>4 次 down</small></div><span class="arrow">→</span>
   <div class="node node--warm"><code>z</code><small>瓶頸</small></div><span class="arrow">→</span>
   <div class="node node--secondary"><code>decoder</code><small>4 次放大</small></div><span class="arrow">→</span>
@@ -570,9 +626,9 @@ roc_auc_score(y, scores)   # sklearn
 
 <div class="mt-4" style="font-size:17px"><strong>評估與上線</strong></div>
 <div class="flex items-center gap-2 mt-1" style="font-size:17px">
-  <div class="node"><code>anomaly_map</code><small>誤差圖 [B, H, W]</small></div><span class="arrow">→</span>
+  <div class="node"><code>anomaly_map</code><small>誤差圖 &#91;B, H, W&#93;</small></div><span class="arrow">→</span>
   <div class="node"><code>score</code><small>每片一個分數</small></div><span class="arrow">→</span>
-  <div class="node node--primary"><code>thr</code><small>判良／判不良</small></div>
+  <div class="node node--warm"><code>thr</code><small>判良／判不良</small></div>
 </div>
 
 
@@ -586,14 +642,14 @@ roc_auc_score(y, scores)   # sklearn
 
 <div class="eyebrow">05 · Lab L2-1 · 練習</div>
 
-# 練習：每一塊的輸入與輸出
+# Lab 3／7 · 練習：每一塊的輸入與輸出
 
 <div class="muted" style="font-size:17px">不用 AI。<code>down</code>：卷積 stride 2，高寬減半；<code>up</code>：ConvTranspose stride 2，高寬加倍。B ＝ 32</div>
 
 <table class="fill tight vlines mt-1">
 <thead><tr><th style="width:26%">塊</th><th>輸入 shape</th><th>輸出 shape</th><th>做什麼（一句話）</th></tr></thead>
 <tbody>
-<tr><td><code>encoder</code></td><td>[32, 3, 128, 128]</td><td class="blank"><FillIn id="ae.enc-out" hint="例：通道 128、高寬……" /></td><td>壓成瓶頸</td></tr>
+<tr><td><code>encoder</code>（照著做）</td><td>&#91;32, 3, 128, 128&#93;</td><td>&#91;32, 128, 8, 8&#93;：高寬 ÷2 四次</td><td>壓成瓶頸</td></tr>
 <tr><td><code>decoder</code></td><td class="blank"><FillIn id="ae.dec-in" /></td><td class="blank"><FillIn id="ae.dec-out" /></td><td class="blank"><FillIn id="ae.dec-do" /></td></tr>
 <tr><td><code>anomaly_map</code></td><td class="blank"><FillIn id="ae.map-in" /></td><td class="blank"><FillIn id="ae.map-out" hint="例：少了一維……" /></td><td class="blank"><FillIn id="ae.map-do" /></td></tr>
 <tr><td><code>score</code></td><td class="blank"><FillIn id="ae.score-in" /></td><td class="blank"><FillIn id="ae.score-out" /></td><td class="blank"><FillIn id="ae.score-do" /></td></tr>
@@ -603,7 +659,7 @@ roc_auc_score(y, scores)   # sklearn
 <FillClear group="ae" />
 
 <!--
-★ 無 AI 檢核點（8 分）：第一列的「輸入」和「做什麼」已填好當示範。不收回。下一頁是解答。
+★ 無 AI 檢核點（8 分）：第一列整列填好當示範。不收回。下一頁是解答。
 -->
 
 ---
@@ -617,14 +673,14 @@ hostOnly: true
 <table class="vlines" style="font-size:18px">
 <thead><tr><th style="width:24%">塊</th><th>輸入</th><th>輸出</th><th>做什麼</th></tr></thead>
 <tbody>
-<tr><td><code>encoder</code></td><td>[32, 3, 128, 128]</td><td>[32, 128, 8, 8]</td><td>128→64→32→16→8，壓成瓶頸</td></tr>
-<tr><td><code>decoder</code></td><td>[32, 128, 8, 8]</td><td>[32, 3, 128, 128]</td><td>還原成原大小（Sigmoid → 0–1）</td></tr>
-<tr><td><code>anomaly_map</code></td><td>[32, 3, 128, 128]</td><td>[32, 128, 128]</td><td>每像素平方誤差，通道平均</td></tr>
-<tr><td><code>score</code></td><td>[32, 3, 128, 128]</td><td>[32]</td><td>每片板子一個分數</td></tr>
+<tr><td><code>encoder</code></td><td>&#91;32, 3, 128, 128&#93;</td><td>&#91;32, 128, 8, 8&#93;</td><td>128→64→32→16→8，壓成瓶頸</td></tr>
+<tr><td><code>decoder</code></td><td>&#91;32, 128, 8, 8&#93;</td><td>&#91;32, 3, 128, 128&#93;</td><td>還原成原大小（Sigmoid → 0–1）</td></tr>
+<tr><td><code>anomaly_map</code></td><td>&#91;32, 3, 128, 128&#93;</td><td>&#91;32, 128, 128&#93;</td><td>每像素平方誤差，通道平均</td></tr>
+<tr><td><code>score</code></td><td>&#91;32, 3, 128, 128&#93;</td><td>&#91;32&#93;</td><td>每片板子一個分數</td></tr>
 </tbody>
 </table>
 
-<div class="takeaway mt-4">怎麼對答案：筆記本「模型」格印出 x、z、x̂ 的 shape（本機煙霧測試已確認 z ＝ [B, 128, 8, 8]）。</div>
+<div class="takeaway mt-4">怎麼對答案：筆記本「模型」格印出 x、z、x̂ 的 shape（本機煙霧測試已確認 z ＝ &#91;B, 128, 8, 8&#93;）。</div>
 
 <!--
 ★ 解答（2 分）：本機 CPU 煙霧測試（research/lab-runs.md）印出 z (8, 128, 8, 8)，壓縮成 1/6。
@@ -639,8 +695,9 @@ hostOnly: true
 <div style="font-size:18px" class="mt-2">
 
 <strong>【目標】</strong>只用良品訓練卷積自編碼器，輸出熱力圖、分數、AUROC 與門檻<br>
-<strong>【輸入與輸出】</strong>PCB 影像 [B, 3, 128, 128]（0–1）→ 重建 [B, 3, 128, 128]；分數 [B]<br>
+<strong>【輸入與輸出】</strong>PCB 影像 &#91;B, 3, 128, 128&#93;（0–1）→ 重建 &#91;B, 3, 128, 128&#93;；分數 &#91;B&#93;<br>
 <strong>【限制】</strong>訓練集<strong>只有良品</strong>；門檻只能用驗證集選；Colab T4；每個 epoch 存檢查點<br>
+<span class="muted" style="font-size:16px">為什麼：用測試集選門檻等於偷看答案，回報的數字會太漂亮</span><br>
 <strong>【驗收】</strong>① loss 持續下降　② 良品的重建圖看得出電路　③ 驗證集不良品平均分數高於良品　④ 測試集回報 AUROC、門檻下的過殺與漏檢
 
 </div>
@@ -659,7 +716,7 @@ hostOnly: true
 這是 PyTorch 筆記本，請只填四個 # TODO：<br>
 ① ConvAE 的 encoder（四次 down：3→32→64→128→128）與 decoder（三次 up 再接 ConvTranspose2d(32,3) 與 Sigmoid）<br>
 ② 訓練迴圈的五行（loss ＝ MSE(x_hat, xb)）<br>
-③ anomaly_map：每像素平方誤差、通道平均，回傳 [B,H,W]<br>
+③ anomaly_map：每像素平方誤差、通道平均，回傳 &#91;B,H,W&#93;<br>
 ④ 門檻：驗證集不良品分數排序，最多允許 5% 漏檢<br>
 不要用測試集選門檻。每一格說明每一行在做什麼。
 </PromptBox>
@@ -684,6 +741,7 @@ hostOnly: true
 <thead><tr><th style="width:30%">稽核問題</th><th>具體動作</th><th style="width:30%">應該是</th></tr></thead>
 <tbody>
 <tr><td>訓練集真的只有良品？</td><td>看切分格印出的張數</td><td>train 的「不良」＝ 0</td></tr>
+<tr><td>兩種拍攝方向都學了？</td><td>看「加入 180° 旋轉」那一行</td><td>訓練良品變兩倍</td></tr>
 <tr><td>輸入和輸出範圍一致？</td><td>x 是 0–1；decoder 最後是 Sigmoid</td><td>都是 0–1</td></tr>
 <tr><td>門檻用哪個資料集選？</td><td>找 <code>thr</code> 那一行</td><td>只用 <code>s_val</code></td></tr>
 <tr><td>熱力圖亮在瑕疵上？</td><td>看 4 張不良品的熱力圖</td><td>多數亮在瑕疵附近（講師實跑填入）</td></tr>
@@ -691,7 +749,7 @@ hostOnly: true
 </tbody>
 </table>
 
-<div class="takeaway mt-3">一次只改一件事：例如瓶頸窄一點（少一層 up／down），比較 AUROC。</div>
+<div class="takeaway mt-3">一次只改一件事：例如瓶頸窄一點（最後一層 down 的通道 128→32），比較 AUROC。</div>
 
 <!--
 ★ 稽核（8 分）：最常見錯誤：Agent 拿 Normalize 把輸入變成 −1～1，但 decoder 用 Sigmoid 只能輸出 0～1 → 誤差永遠很大。
@@ -711,7 +769,7 @@ def inspect(img):
     x = tf(img.convert("RGB")).unsqueeze(0)
     m = anomaly_map(x)[0]          # 熱力圖
     s = score(x).item()            # 分數
-    return heatmap(m), "疑似不良" if s > thr else "良品"
+    return heatmap(m), "疑似不良" if s > thr else "良品"  # heatmap：筆記本用 plt.cm.inferno 上色
 
 gr.Interface(fn=inspect, inputs=gr.Image(type="pil"),
              outputs=[gr.Image(), gr.Textbox()]).launch(share=True)
@@ -735,42 +793,23 @@ gr.Interface(fn=inspect, inputs=gr.Image(type="pil"),
 
 <div class="eyebrow">06 · Measure & Risk</div>
 
-# 風險：誰的成本比較高？資料能不能用？
+# 風險：這份資料能不能用？
 
-<div class="grid grid-cols-2 gap-6 mt-2">
-<div>
-
-<table style="font-size:17px">
-<thead><tr><th></th><th>代價</th></tr></thead>
+<table class="mt-3" style="font-size:19px">
+<thead><tr><th style="width:22%">資料集</th><th style="width:32%">授權</th><th>付費課程／公司產品</th></tr></thead>
 <tbody>
-<tr><td><strong>漏檢</strong></td><td>客訴、退貨、商譽；嚴重時召回</td></tr>
-<tr><td><strong>過殺</strong></td><td>複判人力、產線變慢、好板報廢</td></tr>
+<tr><td>VisA</td><td>CC BY 4.0（已確認）</td><td>可商用，需標示來源</td></tr>
+<tr><td>MVTec AD</td><td>CC BY-NC-SA 4.0（待確認）</td><td>非商用：不能用</td></tr>
+<tr><td>DeepPCB</td><td>標示不一致（待確認）</td><td>有疑義：先不用</td></tr>
 </tbody>
 </table>
-
-<div class="muted mt-2" style="font-size:16px">門檻要和品保主管一起定，不是工程師自己定</div>
-
-</div>
-<div>
-
-<table style="font-size:17px">
-<thead><tr><th>資料集</th><th>授權（待確認）</th></tr></thead>
-<tbody>
-<tr><td>VisA</td><td>CC BY 4.0：可商用，需標示</td></tr>
-<tr><td>MVTec AD</td><td>CC BY-NC-SA：非商用</td></tr>
-<tr><td>DeepPCB</td><td>標示不一致，有疑義</td></tr>
-</tbody>
-</table>
-
-</div>
-</div>
 
 <div class="takeaway mt-4">技術上能跑的資料集，不一定能用在付費課程或公司產品；先讀授權。</div>
 
-<div class="src">各資料集授權以官方頁面為準（S6–S8，待確認）</div>
+<div class="src">VisA：spot-diff README（S6，2026-11-24 確認）；MVTec AD、DeepPCB 以官方頁面為準（S7、S8，待確認）</div>
 
 <!--
-★ 風險（4 分）：這也是為什麼本課選 VisA 而不是最有名的 MVTec AD（roadmap §9.2）。
+★ 風險（3 分）：漏檢與過殺的代價已在門檻那一頁講過；這頁只談授權。這也是為什麼本課選 VisA 而不是最有名的 MVTec AD（roadmap §9.2）。
 -->
 
 ---
@@ -779,7 +818,7 @@ gr.Interface(fn=inspect, inputs=gr.Image(type="pil"),
 
 # 今天學到的概念鏈
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-4">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
   <span class="chip">只有良品</span><span class="arrow">→</span>
   <span class="chip">AE 壓扁再還原</span><span class="arrow">→</span>
   <span class="chip">誤差圖與分數</span><span class="arrow">→</span>

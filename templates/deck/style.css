@@ -274,3 +274,15 @@
 .mcq { font-size: 19px; line-height: 1.45; }
 .mcq ol { margin-top: 2px; }
 .mcq .opts { color: var(--muted-text); font-size: 17px; }
+
+/* Real photo with a caption underneath (from deck 01 slide 7) */
+.pic { display: flex; flex-direction: column; align-items: center; flex: none; }
+.pic img { width: 150px; height: 150px; object-fit: cover; border: 1px solid var(--border); border-radius: 8px; }
+.pic span { color: var(--muted-text); font-size: 15px; margin-top: 4px; white-space: nowrap; }
+.pic--z { justify-content: center; width: 112px; height: 150px; border: 1.5px dashed var(--muted-text); border-radius: 8px; background: var(--surface); }
+.pic--z code { font-size: 15px; line-height: 1.5; text-align: center; background: none; padding: 0 6px; white-space: normal; }
+.pic--z span { margin-top: 6px; }
+.photo { border: 1px solid var(--border); border-radius: 8px; object-fit: cover; display: block; }
+
+/* Tensor shape inside a node: keep on one line */
+.node small.nw { white-space: nowrap; font-size: 15px; }

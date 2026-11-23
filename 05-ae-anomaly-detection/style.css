@@ -274,3 +274,6 @@
 .mcq { font-size: 19px; line-height: 1.45; }
 .mcq ol { margin-top: 2px; }
 .mcq .opts { color: var(--muted-text); font-size: 17px; }
+
+/* Tensor shape inside a node: keep on one line */
+.node small.nw { white-space: nowrap; font-size: 15px; }

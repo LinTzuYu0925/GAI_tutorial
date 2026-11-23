@@ -16,3 +16,5 @@
 | S11 | DDPM 2020 | Ho et al., arXiv 2006.11239 | 待確認 | 2026-11-23 |
 | S12 | Stable Diffusion 2022 公開 | Rombach et al., arXiv 2112.10752；Stability AI 2022-08 發布 | 待確認 | 2026-11-23 |
 | S13 | ChatGPT 2022-11-30 發布 | OpenAI 部落格 *Introducing ChatGPT* | 待確認 | 2026-11-23 |
+| S14 | 第 7 頁左圖：藍眼虎斑貓照片，作者 AdinaVoicu，授權 CC0（Pixabay 原圖，Commons 已審核）；取 500 px 縮圖並裁成正方形 | https://commons.wikimedia.org/wiki/File:Tabby_cat_with_blue_eyes-3336579.jpg（檔案頁與授權欄位已讀） | 已讀檔案頁 | 2026-11-24 |
+| S15 | 第 7 頁右圖：GAN 生成的貓，Commons 標示 PD-algorithm（公有領域）、來源 thiscatdoesnotexist.com、作者欄為 StyleGAN2；取 500 px 縮圖 | https://commons.wikimedia.org/wiki/File:GAN_Katze_StyleGAN2.png（檔案頁已讀）。公有領域是 Commons 的標示，不是法律意見；StyleGAN2 之說採 Commons 標註，未另查網站 | 已讀檔案頁（StyleGAN 版本待確認） | 2026-11-24 |

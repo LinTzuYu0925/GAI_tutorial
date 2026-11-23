@@ -25,7 +25,7 @@ class: cover
 
 <p class="subtitle">從執行長的一張需求單，做出一頁「用例畫布」</p>
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-8">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">需求單</span><span class="arrow">→</span>
   <span class="chip">現場導覽</span><span class="arrow">→</span>
   <span class="chip">生成 vs 判別</span><span class="arrow">→</span>
@@ -50,7 +50,7 @@ class: cover
     <dt>問題</dt><dd>競爭對手都在用生成式 AI，我們該把錢花在哪裡？</dd>
     <dt>現況痛點</dt><dd>各部門各自試用免費工具，沒有人算過價值、成本與風險</dd>
     <dt>成功指標（KPI）</dt><dd>一頁「用例畫布」：每張需求單都有價值、可行性、資料、風險四項評分</dd>
-    <dt>可用資料</dt><dd>八個部門送來的需求單（也就是這門課的課程地圖）</dd>
+    <dt>可用資料</dt><dd>各部門送來的需求單（也就是這門課的課程地圖）</dd>
     <dt>限制與法規</dt><dd>預算有限、算力只有一張 T4、個資法、著作權法</dd>
     <dt>為何現有工具不夠</dt><dd>分類器只會回答「是哪一類」，不會「產生新東西」</dd>
   </dl>
@@ -78,9 +78,10 @@ class: cover
   <div><b>Ship</b>交付展示<small>Gradio 展示或一頁說明</small></div>
 </div>
 
-<table class="mt-5" style="font-size:17px">
-<thead><tr><th>Vibe Coding 學過的迴圈</th><th>Specify</th><th>Generate＋Execute</th><th>—</th><th>Iterate</th><th>Audit</th><th>—</th></tr></thead>
-</table>
+<div class="muted mt-4" style="font-size:16px">對照 Vibe Coding 學過的迴圈（每一格對上面那一步）：</div>
+<div class="loop6 mt-1" style="font-size:15px">
+  <div>Specify</div><div>Generate＋Execute</div><div>—（新）</div><div>Iterate</div><div>Audit</div><div>—（新）</div>
+</div>
 
 <div class="takeaway mt-3">你已經會 Specify → Audit；這門課多了「打開黑盒子」和「交付」。</div>
 
@@ -107,7 +108,7 @@ Open 是這門課的「原理」：每一個模型都會畫圖、類比、最多
 </tbody>
 </table>
 
-<div class="takeaway mt-3">每天回答一個部門的問題；今天先決定「哪些問題值得做」。</div>
+<div class="takeaway mt-3">每天回答一組部門的問題；今天先決定「哪些問題值得做」。</div>
 
 <!--
 ★ 課程地圖（3 分）：不用細講每一天，只讓學員知道「部門 → 需求單 → 工具」的對應。
@@ -139,68 +140,87 @@ LLM 在第五天才深入，緊接著就是 Agent 模組；今天的導覽先讓
 <div>
 
 <div class="node node--primary"><strong>文案</strong><small>小型開放 LLM</small></div>
-<div class="placeholder mt-2" style="height:170px">三版產品文案<small>講師實跑後替換</small></div>
+<div class="mt-2" style="height:200px;overflow:hidden;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:8px 12px;font-size:16px;line-height:1.45">
+  <b>【曜嶼 Breeze 藍牙耳機】</b><br>
+  專為通勤族打造，讓每一次音符都充滿安心與樂趣！<br>
+  <b>通勤降噪</b>：輕柔耳塞設計，隔絕城市噪音……<br>
+  <b>續航 30 小時</b>：高效電池技術，讓您每次使用都能享受到長達 2 小時的續航時間。
+</div>
+<div class="shot-cap">第 1 版節錄；三版都超過 80 字</div>
 
 </div>
 <div>
 
 <div class="node node--secondary"><strong>產品情境圖</strong><small>SD1.5 ＋ LCM-LoRA</small></div>
-<div class="placeholder mt-2" style="height:170px">512×512 產品圖<small>講師實跑後替換（附 seed、步數）</small></div>
+<div class="mt-2 flex justify-center" style="height:200px"><img src="/tour-product-seed42.png" alt="SD1.5 產生的白色無線耳機放在木桌上" style="height:200px;border:1px solid var(--border);border-radius:8px"></div>
+<div class="shot-cap">seed 42 · 4 步，T4 約 3 秒</div>
 
 </div>
 <div>
 
 <div class="node node--warm"><strong>10 秒片頭音樂</strong><small>MusicGen-small</small></div>
-<div class="placeholder mt-2" style="height:170px">音檔播放器<small>講師實跑後替換</small></div>
+<div class="mt-2 flex flex-col items-center justify-center gap-3" style="height:200px;border:1px solid var(--border);border-radius:8px;background:var(--surface)">
+  <span style="font-size:44px;line-height:1;color:var(--warm-accent)">♪</span>
+  <audio controls preload="metadata" src="/tour-jingle.wav" style="width:90%"></audio>
+</div>
+<div class="shot-cap">9.9 秒 · 32 kHz 單聲道</div>
 
 </div>
 </div>
 
-<div class="takeaway mt-3">一句提示詞，三種模型產生三種「新東西」：文字、影像、聲音。</div>
+<div class="takeaway mt-3">同一個產品，三種模型產生三種「新東西」：文字、影像、聲音。</div>
 
 <div class="src">示範用模型與授權見 research/sources.md S3–S6；MusicGen 權重為非商用授權，只由講師示範。</div>
 
 <!--
-★ 現場示範（8 分）：打開 materials/demo-tour（講師版即 D1-2 的 lab02 解答筆記本＋MusicGen 一格）。
-提示詞：「曜嶼電子新款藍牙耳機，主打通勤降噪，寫一段 60 字的上架文案」。圖片提示詞用英文。音樂：「upbeat electronic jingle, 10 seconds」。
-只看結果，不解釋原理；告訴學員 D1-2 自己跑文字與影像，音樂在 D6-1。
-備案：Colab 沒額度 → 播放講師事先存好的輸出（outputs/ 資料夾）。
+★ 現場示範（8 分）：打開 D1-2 的 lab02 解答筆記本，最後加一格 MusicGen。
+文案提示詞：lab02 Part A 的產品規格 SPEC ＋「請寫一段 80 字以內的上架文案。」。圖片提示詞用英文（lab02 Part B）。音樂：「upbeat electronic jingle, 10 seconds」（長度由 max_new_tokens 決定，不是提示詞裡的「10 seconds」）。
+頁面上是講師在 Colab T4 實跑的結果（research/lab-runs.md）。只看結果，不解釋原理；告訴學員 D1-2 自己跑文字與影像，音樂在 D6-1。
+可以順口點出：三版都超過 80 字，第 1 版寫「續航 30 小時」又說「長達 2 小時」，第 2、3 版混進簡體字。小模型的文案要人檢查，D1-2 會回來談。
+備案：Colab 沒額度 → 直接用這頁的圖與音檔。
 -->
 
 ---
 
 <div class="eyebrow">02 · Open（打開黑盒子）</div>
 
-# 判別 vs 生成：同一片電路板，兩種問題
+# 判別 vs 生成：認出一隻貓，和畫出一隻貓
 
-<div class="grid grid-cols-2 gap-8 mt-4">
+<div class="grid grid-cols-2 gap-8 mt-2">
 <div>
 
 <div class="node"><strong>判別模型</strong>（discriminative）<small>你在 DL 課訓練過的 CNN</small></div>
-<div class="flex items-center gap-2 mt-3" style="font-size:19px">
-  <span class="chip">電路板照片</span><span class="arrow">→</span><span class="chip">CNN</span><span class="arrow">→</span><span class="chip chip--primary">「瑕疵」或「良品」</span>
+<div class="flex items-center gap-2 mt-3">
+  <div class="pic"><img src="/contrast-real-cat.jpg" alt="一隻藍眼睛的虎斑貓的真實照片"><span>真實照片</span></div>
+  <span class="arrow">→</span><span class="chip">CNN</span><span class="arrow">→</span><span class="chip chip--primary">cat（貓）</span>
 </div>
-<p class="muted mt-3" style="font-size:18px">輸出：一個標籤（或機率）</p>
+<p class="muted mt-2" style="font-size:18px">輸出：<b>一個標籤</b>　例：電路板良品／瑕疵</p>
 
 </div>
 <div>
 
 <div class="node node--primary"><strong>生成模型</strong>（generative）<small>這門課的主角</small></div>
-<div class="flex items-center gap-2 mt-3" style="font-size:19px">
-  <span class="chip">隨機數字／提示詞</span><span class="arrow">→</span><span class="chip">生成模型</span><span class="arrow">→</span><span class="chip chip--primary">一張新的電路板</span>
+<div class="flex items-center gap-2 mt-3">
+  <div class="pic pic--z"><code>0.3<br>−1.2<br>0.7<br>…</code><span>隨機數字</span></div>
+  <span class="arrow">→</span><span class="chip">生成模型</span><span class="arrow">→</span>
+  <div class="pic"><img src="/contrast-gan-cat.jpg" alt="GAN 產生的橘色虎斑貓，這隻貓不存在"><span>這隻貓不存在</span></div>
 </div>
-<p class="muted mt-3" style="font-size:18px">輸出：一筆新的資料（影像、文字、聲音）</p>
+<p class="muted mt-2" style="font-size:18px">輸出：<b>一張新的圖</b>　例：新的產品情境圖</p>
 
 </div>
 </div>
 
-<div class="takeaway mt-6">判別模型回答「這是什麼」；生成模型畫出「一個新的」。</div>
+<div class="takeaway mt-3">判別模型回答「這是什麼」；生成模型畫出「一個新的」。</div>
 
-<div class="src">回顧：ML pp.42–43（邏輯斯迴歸＝判別模型）；DL pp.38–55（CNN 分類）</div>
+<div class="src">左：AdinaVoicu，CC0（Wikimedia Commons），裁切為正方形；「cat」標籤為示意。右：thiscatdoesnotexist.com 的 GAN 生成圖（公有領域）。<br>回顧：ML pp.42–43（邏輯斯迴歸＝判別模型）；DL pp.38–55（CNN 分類）；LabDay3-2 的 CIFAR-10 有 cat 這一類</div>
 
 <!--
-★ 判別 vs 生成（5 分）：從學員熟悉的 CNN 出發。判別模型學「給定圖片，標籤是什麼」；生成模型學「這類資料長什麼樣」，所以能畫出新的。
+★ 判別 vs 生成（5 分）：從學員熟悉的 CNN 出發。LabDay3-2 的 CIFAR-10 CNN 看到貓，輸出的就是「cat」這個標籤。
+先問：「兩隻貓，哪一隻是真的？」（左邊是 Pixabay 上的真實照片；右邊是 GAN 產生的，這隻貓不存在，網站 thiscatdoesnotexist.com 每次重新整理都會畫一隻新的。）答案揭曉後，再講差別：
+判別模型學「給定圖片，標籤是什麼」；輸入是圖，輸出是標籤。生成模型學「這類資料長什麼樣」；輸入是一串隨機數字，輸出是一整張圖，所以能畫出新的。
+右邊那隻貓用的是 GAN（第三天會自己訓練一個）；今天只要記得「模型的輸出是整筆資料」。
 常見誤解：「生成模型就是比較大的分類器」。不對：輸出的型態完全不同，一個是標籤，一個是整筆資料。
+圖片授權與來源見 research/sources.md S14–S15。「cat」標籤是示意，不是我們實際跑出來的結果。
 -->
 
 ---
@@ -266,7 +286,7 @@ p 讀作「機率分布」；θ 讀作「theta，模型的參數」。不推導�
   <ellipse cx="270" cy="125" rx="80" ry="55" fill="#e7f5f2" stroke="#16847a" stroke-width="2" stroke-dasharray="6 4"/>
   <text x="70" y="130" style="font-size:18px" fill="#2457c5">y＝藍色耳機</text>
   <text x="222" y="130" style="font-size:18px" fill="#16847a">y＝白色耳機</text>
-  <text x="70" y="225" style="font-size:16px" fill="#4b5563">同一個模型，換一個條件，抽樣的範圍就換了</text>
+  <text x="60" y="225" style="font-size:17px" fill="#4b5563">同一個模型，換條件，抽樣範圍就換了</text>
 </svg>
 
 </div>
@@ -294,25 +314,20 @@ $$p_\theta(x \mid y)$$
 
 <div class="eyebrow">03 · 2026 生成式 AI 地圖</div>
 
-# 五大家族，以及「開放權重 vs 封閉 API」
+# 五大生成模型家族
 
 <table style="font-size:17px">
 <thead><tr><th style="width:20%">家族</th><th>產生什麼</th><th style="width:24%">代表例子</th><th style="width:14%">本課</th></tr></thead>
 <tbody>
 <tr><td><strong>LLM</strong>（大型語言模型）</td><td>文字、程式碼、JSON</td><td>Qwen、Llama、Claude</td><td>D1-2、D5</td></tr>
-<tr><td><strong>擴散／Flow 模型</strong></td><td>影像、影片</td><td>Stable Diffusion</td><td>D3、D4</td></tr>
-<tr><td><strong>多模態</strong>（multimodal）</td><td>看圖說話、以文搜圖</td><td>CLIP、VLM</td><td>D4-2、D6-2</td></tr>
-<tr><td><strong>音訊</strong></td><td>音樂、語音</td><td>MusicGen、TTS</td><td>D2-4、D6-1</td></tr>
+<tr><td><strong>擴散／Flow（流模型）</strong></td><td>影像、影片</td><td>Stable Diffusion</td><td>D3、D4</td></tr>
+<tr><td><strong>多模態</strong>（multimodal）</td><td>看圖說話、以文搜圖</td><td>CLIP、VLM（視覺語言模型）</td><td>D4-2、D6-2</td></tr>
+<tr><td><strong>音訊</strong></td><td>音樂、語音</td><td>MusicGen、TTS（文字轉語音）</td><td>D2-4、D6-1</td></tr>
 <tr><td><strong>Agent</strong></td><td>多步驟自動完成任務</td><td>Claude Code</td><td>下一個模組</td></tr>
 </tbody>
 </table>
 
-<div class="grid grid-cols-2 gap-4 mt-3" style="font-size:18px">
-<div class="node"><strong>開放權重</strong>（open weights）<small>下載模型檔，自己的 GPU 跑；資料不出門</small></div>
-<div class="node node--warm"><strong>封閉 API</strong><small>呼叫廠商的服務；不用 GPU，但資料要送出去</small></div>
-</div>
-
-<div class="takeaway mt-3">選家族看「要產生什麼」；選開放或封閉看「資料能不能出門、預算多少」。</div>
+<div class="takeaway mt-3">選家族看「要產生什麼」；開放權重還是封閉 API，第 13 頁再決定。</div>
 
 <!--
 ★ 地圖（6 分）：每一列指出本課在哪一天處理。Agent 只點名：工具呼叫、MCP、RAG 都在下一個 Agent 模組，這門課不教。
@@ -366,7 +381,7 @@ $$p_\theta(x \mid y)$$
 
 <div class="takeaway mt-3">先做「四項都高」的需求單；價值高但資料或風險分數低的，先補資料或流程。</div>
 
-<div class="src">McKinsey Global Institute, The economic potential of generative AI (2023)，research/sources.md S1</div>
+<div class="src">McKinsey Global Institute, The economic potential of generative AI (2023)，research/sources.md S1（頁碼待確認）</div>
 
 <!--
 ★ 四面向評估（6 分）：分數越高越好（風險 5 分代表風險很低，避免學員搞混方向）。
@@ -428,7 +443,7 @@ $$p_\theta(x \mid y)$$
   <div class="node"><strong>③ 資料</strong><small>有什麼、多少、授權</small></div>
   <div class="node"><strong>④ 模型家族</strong><small>LLM／擴散／音訊……</small></div>
   <div class="node"><strong>⑤ API 或開放權重</strong><small>理由一句</small></div>
-  <div class="node node--warm"><strong>⑥ 最大風險</strong><small>個資、著作權、幻覺</small></div>
+  <div class="node node--warm"><strong>⑥ 最大風險</strong><small>個資、著作權、幻覺（說得流暢但內容錯誤，第 19 頁）</small></div>
   <div class="node node--primary"><strong>⑦ 四項分數</strong><small>價值／可行／資料／風險</small></div>
   <div class="node node--primary"><strong>⑧ 決定</strong><small>先做／補資料／不做</small></div>
 </div>
@@ -450,7 +465,7 @@ $$p_\theta(x \mid y)$$
 <tbody>
 <tr><td>① 問題</td><td>客服人員每天花 3 小時打回覆，語氣不一致</td></tr>
 <tr><td>② KPI</td><td>草稿採用率 ≥ 70%；平均回覆時間減半</td></tr>
-<tr><td>③ 資料</td><td>過去的客服單與回覆（含客戶個資，需去識別化）</td></tr>
+<tr><td>③ 資料</td><td>過去的客服單與回覆（含客戶個資，需去識別化：把姓名、電話等個資遮掉）</td></tr>
 <tr><td>④ 模型家族</td><td>LLM</td></tr>
 <tr><td>⑤ API 或開放權重</td><td>開放權重：客服單有個資，不想送出公司</td></tr>
 <tr><td>⑥ 最大風險</td><td>幻覺（答應不存在的保固）→ 人工送出前審核</td></tr>
@@ -473,7 +488,7 @@ $$p_\theta(x \mid y)$$
 <div class="muted" style="font-size:17px">1. 讀兩張需求單的一句話　2. 每格寫短答案　3. 四項分數各 1–5 分，加總</div>
 
 <table class="fill tight vlines mt-1">
-<thead><tr><th style="width:18%">欄位</th><th>行銷部：「每週要 50 張新品情境圖」</th><th>品保部：「AOI 新瑕疵常漏檢」</th></tr></thead>
+<thead><tr><th style="width:18%">欄位</th><th>行銷部：「每週要 50 張新品情境圖」</th><th>品保部：「AOI（自動光學檢測）新瑕疵常漏檢（瑕疵沒被抓到）」</th></tr></thead>
 <tbody>
 <tr><td>② KPI</td><td class="blank"><FillIn id="canvas.mkt-kpi" hint="例：每張成本……" /></td><td class="blank"><FillIn id="canvas.qa-kpi" /></td></tr>
 <tr><td>③ 資料</td><td class="blank"><FillIn id="canvas.mkt-data" /></td><td class="blank"><FillIn id="canvas.qa-data" hint="例：良品多、瑕疵……" /></td></tr>
@@ -528,7 +543,7 @@ hostOnly: true
 
 <div class="node node--warm"><strong>幻覺</strong>（hallucination）<small>模型說得很流暢，但內容是錯的或編的</small></div>
 
-<p style="font-size:18px" class="mt-3">例：請 LLM 寫耳機文案，它自己加上「續航 60 小時」，但規格書寫 30 小時。</p>
+<p style="font-size:18px" class="mt-3">真實例子（第 6 頁講師在 Colab T4 跑的小模型）：文案寫「<b>續航 30 小時</b>」，下一句卻說「享受到長達 <b>2 小時</b>的續航時間」；另外兩版混進了簡體字。</p>
 
 </div>
 <div>
@@ -571,7 +586,7 @@ hostOnly: true
 
 # 今天學到的概念鏈
 
-<div class="chain flex flex-nowrap items-center gap-2 mt-4">
+<div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
   <span class="chip">需求單</span><span class="arrow">→</span>
   <span class="chip">判別 vs 生成</span><span class="arrow">→</span>
   <span class="chip">p_data 與 p_θ</span><span class="arrow">→</span>

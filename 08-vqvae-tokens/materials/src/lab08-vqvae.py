@@ -189,12 +189,24 @@ ax[1].bar(range(512), counts.numpy(), width=1.0); ax[1].set_xlabel("code (sorted
 ax[1].set_title(f"K=512 code usage: {(counts > 0).sum().item()} used, {(counts == 0).sum().item()} dead")
 plt.tight_layout(); plt.savefig("vq_bits_usage.png", dpi=120); plt.show()
 
+# %% [markdown]
+# ## C. 編碼簿用了多少？看編號本身
+# 上一張圖右邊是使用次數直方圖（死碼數寫在標題）。下面把每張圖的 7 × 7 編號畫出來：顏色固定對應 0～511，
+# 但相近的顏色可能是不同編號，**要比的是印出來的數字**。
+
+# %%
+
 with torch.no_grad():
     x_hat = m512(X_test[:8].to(device))[0].cpu()
 fig, ax = plt.subplots(3, 8, figsize=(12, 4.6))
 for i in range(8):
-    ax[0, i].imshow(X_test[i, 0], cmap="gray"); ax[1, i].imshow(idx512[i], cmap="tab20"); ax[2, i].imshow(x_hat[i, 0], cmap="gray")
+    ax[0, i].imshow(X_test[i, 0], cmap="gray"); ax[1, i].imshow(idx512[i], cmap="viridis", vmin=0, vmax=511); ax[2, i].imshow(x_hat[i, 0], cmap="gray")
     for r in range(3): ax[r, i].axis("off")
 for r, t in enumerate(["input", "7x7 code ids", "reconstruction"]): ax[r, 0].set_title(t, loc="left")
 plt.tight_layout(); plt.savefig("vq_tokens.png", dpi=120); plt.show()
-print("第 0 張圖的 49 個編號：\n", idx512[0].numpy())
+labels = [test_ds.targets[i].item() for i in range(len(idx512))]
+shoe, pants = labels.index(9), labels.index(1)          # 9 ＝ 短靴、1 ＝ 褲子（Fashion-MNIST 類別編號）
+print(f"第 {shoe} 張（短靴）的 49 個編號：\n", idx512[shoe].numpy())
+print(f"第 {pants} 張（褲子）的 49 個編號：\n", idx512[pants].numpy())
+common = set(idx512[shoe].flatten().tolist()) & set(idx512[pants].flatten().tolist())
+print("兩張都用到的編號：", sorted(common))

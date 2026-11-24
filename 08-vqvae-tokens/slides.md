@@ -49,7 +49,7 @@ class: cover
   <dl>
     <dt>問題</dt><dd>通話錄音與產線影像佔滿儲存空間，要用低位元率儲存與串流</dd>
     <dt>現況痛點</dt><dd>每月儲存費持續上升；串流到分廠很慢</dd>
-    <dt>成功指標（KPI）</dt><dd>位元率與品質對照表（kbps：每秒幾千個位元）；編碼簿使用率</dd>
+    <dt>成功指標（KPI）</dt><dd>位元率與品質對照表（kbps：每秒幾千個位元）；每種設定實際用到幾個編號</dd>
     <dt>可用資料</dt><dd>公開的國語朗讀錄音（代替通話）；Fashion-MNIST（代替產線縮圖）</dd>
     <dt>限制與法規</dt><dd>不能用真實客戶錄音（個資法）</dd>
     <dt>為何現有工具不夠</dt><dd>VAE 的潛在表示是連續的小數，沒辦法變成固定位元數的編號</dd>
@@ -89,9 +89,9 @@ class: cover
 
 | 格式 | 位元率 | 10 分鐘 |
 |---|---|---|
-| 未壓縮（24 kHz、16 位元） | 384 kbps | 約 28.8 MB |
-| EnCodec 6 kbps | 6 kbps | 約 0.45 MB |
-| EnCodec 1.5 kbps | 1.5 kbps | 約 0.11 MB |
+| 未壓縮（24 kHz、16 位元） | <span class="nw">384 kbps</span> | <span class="nw">約 28.8 MB</span> |
+| EnCodec 6 kbps | <span class="nw">6 kbps</span> | <span class="nw">約 0.45 MB</span> |
+| EnCodec 1.5 kbps | <span class="nw">1.5 kbps</span> | <span class="nw">約 0.11 MB</span> |
 
 </div>
 <div>
@@ -114,12 +114,12 @@ class: cover
 
 <div class="eyebrow">01 · Try（先用現成的）</div>
 
-# EnCodec：同一段錄音，五種位元率
+# EnCodec：同一段錄音，不同位元率
 
 <div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:220px;min-height:0">輸入：10 秒國語朗讀的頻譜圖（橫軸秒、縱軸頻率）<small>講師下載錄音後替換（2026-11-24 下載時 Wikimedia 回傳 429 限流）</small></div>
+<div class="placeholder" style="height:220px;min-height:0;padding:16px 24px">輸入：10 秒國語朗讀的頻譜圖（橫軸秒、縱軸頻率）<small>講師下載錄音後替換</small></div>
 
 </div>
 <div>
@@ -130,27 +130,29 @@ class: cover
 </div>
 </div>
 
-<div class="takeaway mt-3">先聽再猜：1.5 kbps 還聽得懂嗎？哪些聲音最先壞掉？</div>
+<div class="takeaway mt-3">先聽再猜：1.5 kbps 還聽得懂嗎？哪些聲音最先壞掉？（筆記本會跑 1.5、3、6、12、24 五種）</div>
 
 <div class="src">錄音：維基百科「畢業（演藝界）」朗讀，Wikimedia Commons，CC BY-SA 4.0（S1）；模型 facebook/encodec_24khz（S2）</div>
 
 <!--
 ★ 示範（5 分）：用 lab08 解答筆記本 Part A 的三個播放器（原始、1.5、24 kbps）。頻譜圖（spectrogram）：把聲音拆成「每個時間點、每個頻率有多少能量」，越亮越大聲。
-不能用真實客服錄音（個資），所以用公開授權的朗讀。
+不能用真實客服錄音（個資），所以用公開授權的朗讀。2026-11-24 下載錄音時 Wikimedia 回傳 429 限流，課前要先下載好。
 -->
 
 ---
 
 <div class="eyebrow">02 · Open（打開黑盒子）· 今天的主角圖</div>
 
-# 瓶頸對到一本編碼簿
+# 瓶頸對到一本編碼簿（向量量化，VQ）
 
-<div class="flex items-center justify-center gap-2 mt-3" style="font-size:17px">
-  <div class="node" style="width:14%">輸入 x<small class="nw">&#91;B,1,28,28&#93;</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:14%"><strong>Encoder</strong></div><span class="arrow">→</span>
-  <div class="node" style="width:14%">z<small class="nw">&#91;B,16,7,7&#93;</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:18%"><strong>查編碼簿</strong><small>每個位置 → 最近一格</small></div><span class="arrow">→</span>
-  <div class="node node--secondary" style="width:14%"><strong>Decoder</strong></div>
+<div class="flex items-center justify-center gap-1 mt-3" style="font-size:16px">
+  <div class="node" style="width:11%">輸入 x<small class="nw">&#91;B,1,28,28&#93;</small></div><span class="arrow">→</span>
+  <div class="node node--primary" style="width:11%"><strong>Encoder</strong></div><span class="arrow">→</span>
+  <div class="node" style="width:11%">z<small class="nw">&#91;B,16,7,7&#93;</small></div><span class="arrow">→</span>
+  <div class="node node--warm" style="width:17%"><strong>查編碼簿</strong><small class="nw">每格 → 最近一格</small></div><span class="arrow">→</span>
+  <div class="node" style="width:11%">z_q<small class="nw">&#91;B,16,7,7&#93;</small></div><span class="arrow">→</span>
+  <div class="node node--secondary" style="width:11%"><strong>Decoder</strong></div><span class="arrow">→</span>
+  <div class="node" style="width:11%">x̂<small class="nw">&#91;B,1,28,28&#93;</small></div>
 </div>
 
 <div class="grid grid-cols-[1fr_1.2fr] gap-6 mt-4 items-center">
@@ -217,7 +219,8 @@ idx = d.argmin(dim=1)                   # 最近的那一格的編號
 z_q = codebook(idx)                     # 查回那一格的向量
 ```
 
-<div class="muted mt-2" style="font-size:17px">讀作：算距離 → 挑最小的 → 換成那一格。圖上的 z 最近的是第 4 格，所以這個位置記成「4」。</div>
+<div class="muted mt-2" style="font-size:16px"><code>flat</code>：把 z 攤平成「一列一個 16 維向量」<span class="nw">&#91;B·49, 16&#93;</span> → <code>d</code> <span class="nw">&#91;B·49, K&#93;</span> → <code>idx</code> <span class="nw">&#91;B·49&#93;</span></div>
+<div class="muted mt-1" style="font-size:17px">讀作：算距離 → 挑最小的 → 換成那一格。圖上的 z 最近的是第 4 格，所以這個位置記成「4」。</div>
 
 </div>
 </div>
@@ -245,12 +248,13 @@ z_st = z + (z_q - z).detach()   # 數值上 ＝ z_q；梯度上 ＝ z
 
 <div class="muted mt-2" style="font-size:17px">讀作：<code>.detach()</code> 讓括號裡那段「不算梯度」。所以往前算時 z ＋ (z_q − z) ＝ z_q；往回傳時括號消失，只剩 z。</div>
 
-<div class="takeaway mt-3">一行程式騙過反向傳播：和 D2-3 的重參數化一樣，都是在「不能微分的地方」開一條路。</div>
+<div class="takeaway mt-3">一行程式騙過反向傳播，在「不能微分的地方」開一條路。常見誤解：「detach 放哪裡都一樣」——放錯位置，梯度方向就錯了。</div>
 
-<div class="src">直通估計器（straight-through estimator）：Bengio et al. 2013；VQ-VAE 論文 §3.2（S3）</div>
+<div class="src">直通估計器（straight-through estimator）：Bengio et al. 2013（S9）；VQ-VAE 論文（S3）</div>
 
 <!--
 ★ 直通估計器（6 分）：straight-through estimator（直通估計器）。對照 D2-3 第 8 頁：重參數化把「抽樣」變成可微分；直通估計器把「查表」變成可微分。兩種都是工程技巧，不是數學推導。
+常見誤解：detach 放哪裡都一樣。Lab 6／7 會看到放錯的後果。
 -->
 
 ---
@@ -267,7 +271,7 @@ loss = mse(x_hat, x) + codebook_loss + 0.25 * commit_loss
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
 <div class="node"><strong>codebook loss</strong><small>只更新編碼簿：讓被選到的格子靠近它代表的那些 z</small></div>
-<div class="node"><strong>commitment loss（承諾損失）</strong><small>只更新編碼器：讓 z 乖乖待在某一格附近，不要到處跑；0.25 是論文常用的權重</small></div>
+<div class="node"><strong>commitment loss（承諾損失）</strong><small>只更新編碼器：讓 z 乖乖待在某一格附近，不要到處跑；0.25 是論文用的權重（β）</small></div>
 </div>
 
 <div class="takeaway mt-3">重建損失管「還原得像」，另外兩項管「格子和 z 互相靠近」。</div>
@@ -367,7 +371,7 @@ hostOnly: true
 <div class="grid grid-cols-[1.15fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:240px">K ＝ 512 的編碼簿使用次數直方圖（由多到少排序）<small>講師實跑後替換（lab Part B）</small></div>
+<div class="placeholder" style="height:240px;padding:16px 24px">K ＝ 512 每一格被選幾次<small>直方圖，由多到少排序；講師實跑後替換（lab Part C）</small></div>
 
 </div>
 <div style="font-size:18px">
@@ -391,13 +395,15 @@ hostOnly: true
 
 # 殘差向量量化：一本不夠，就疊好幾本
 
-<div class="flex items-center justify-center gap-2 mt-4" style="font-size:17px">
-  <div class="node" style="width:14%">z</div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:17%"><strong>第 1 本</strong><small>粗略的近似</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:17%"><strong>第 2 本</strong><small>編「剩下的誤差」</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:17%"><strong>第 3 本…</strong><small>再編剩下的</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:17%"><strong>加起來</strong><small>越多本越準</small></div>
-</div>
+<table class="vlines mt-3" style="font-size:17px">
+<thead><tr><th style="width:18%">第幾本</th><th>收到什麼</th><th>查到的近似</th><th style="width:30%">交給下一本（剩下的）</th></tr></thead>
+<tbody>
+<tr><td>第 1 本</td><td>z</td><td>q₁（粗略）</td><td>r₁ ＝ z − q₁</td></tr>
+<tr><td>第 2 本</td><td>r₁</td><td>q₂</td><td>r₂ ＝ r₁ − q₂</td></tr>
+<tr><td>第 3 本…</td><td>r₂</td><td>q₃</td><td>…</td></tr>
+<tr><td colspan="4"><strong>還原：</strong>z ≈ q₁ ＋ q₂ ＋ q₃ ＋ …（每一本都加進來，越多本越準）</td></tr>
+</tbody>
+</table>
 
 <div class="grid grid-cols-2 gap-6 mt-5" style="font-size:18px">
 <div class="node"><strong>位元率怎麼調</strong><small>用幾本編碼簿：1.5 kbps ＝ 2 本、24 kbps ＝ 32 本（每秒 75 步、每本 10 bits）</small></div>
@@ -419,7 +425,7 @@ hostOnly: true
 # 編號就是 token：語言模型也能「寫」圖和聲音
 
 <div class="flex items-center justify-center gap-3 mt-5" style="font-size:18px">
-  <div class="node" style="width:22%">一張圖 → 49 個編號<small>&#91;12, 407, 3, …&#93;</small></div><span class="arrow">→</span>
+  <div class="node" style="width:22%"><span class="nw">一張圖 →</span> <span class="nw">49 個編號</span><small>&#91;12, 407, 3, …&#93;</small></div><span class="arrow">→</span>
   <div class="node node--primary" style="width:22%"><strong>排成一列</strong><small>像一句話裡的字</small></div><span class="arrow">→</span>
   <div class="node node--secondary" style="width:26%"><strong>語言模型</strong><small>預測「下一個編號」</small></div>
 </div>
@@ -429,7 +435,7 @@ hostOnly: true
 <div class="node"><strong>D6-1 MusicGen</strong><small>預測下一個 EnCodec 編號 → 解碼成音樂</small></div>
 </div>
 
-<div class="takeaway mt-4">把資料變成編號之後，「生成圖片／音樂」就變成「寫一串編號」：這是 VQ 最大的用處。</div>
+<div class="takeaway mt-4">把資料變成編號之後，「生成圖片／音樂」就變成「寫一串編號」：這是向量量化（VQ）最大的用處。</div>
 
 <!--
 ★ token（3 分）：token 這個字第一天已經出現過（文字的 token）。今天把它推廣到影像和聲音。
@@ -445,6 +451,10 @@ hostOnly: true
 <div class="node"><strong>VQ-VAE 的問題</strong><small>只用 MSE 重建，細節偏糊（和 D2-3 的 VAE 一樣）</small></div>
 <div class="node node--primary"><strong>VQGAN 的做法</strong><small>解碼器多一個「鑑定師」（D3-1 的 GAN）和感知損失，讓還原的圖更銳利；許多影像 token 化工具都從這裡出發</small></div>
 </div>
+
+<div class="muted mt-3" style="font-size:16px">感知損失（perceptual loss）：不比逐像素的差，改比「預訓練影像模型看到的特徵」差多少，比較接近人眼的感覺。</div>
+
+<div class="takeaway mt-3">想讓 VQ 的還原更清楚：加上鑑定師（對抗損失）和感知損失；鑑定師 D3-1 會學。</div>
 
 <div class="src">Esser et al., Taming Transformers (VQGAN), 2021（S6）</div>
 
@@ -465,6 +475,8 @@ hostOnly: true
 - 搭配「死碼重新放到資料附近」，使用率會好很多
 
 </div>
+
+<div class="takeaway mt-4">死碼太多時：換成 EMA 更新，再把沒用到的格子重新放到資料附近。</div>
 
 <!--
 △ 備用（2 分）：學員發現死碼很多時再講。EMA（exponential moving average，指數移動平均）。
@@ -489,7 +501,7 @@ hostOnly: true
 </div>
 <div>
 
-<div class="placeholder" style="height:250px">目標：位元率表、三個播放器、bits vs 誤差圖、使用率直方圖<small>講師實跑後換成真實輸出</small></div>
+<div class="placeholder" style="height:250px;padding:16px 24px">目標：位元率表、三個播放器、bits vs 誤差圖、使用率直方圖<small>講師 T4 實跑後換成真實輸出（含 VRAM 峰值與總時間）</small></div>
 
 </div>
 </div>
@@ -497,7 +509,7 @@ hostOnly: true
 <div class="takeaway mt-3">交付給資訊部的是一張「位元率 vs 品質」對照表，不是一句「壓得很小」。</div>
 
 <!--
-★ Lab 開始（3 分）：錄音檔約 54 MB、EnCodec 模型約數十 MB，下載時間待實測。備案：沒有 GPU → EPOCHS＝1（Part A 在 CPU 也跑得動）。
+★ Lab 開始（3 分）：錄音檔約 54 MB、EnCodec 模型約數十 MB；下載時間、VRAM 峰值與總時間待 T4 實測（teaching-plan 課前清單）。錄音備案：講師課前把錄音放在共用雲端硬碟，學員改 LOCAL 路徑；拿不到錄音也可以先做 Part B、C。沒有 GPU → EPOCHS＝1（Part A 在 CPU 也跑得動）。
 -->
 
 ---
@@ -514,7 +526,7 @@ hostOnly: true
   <div class="node node--secondary"><code>codec.decode</code><small>還原音訊</small></div>
 </div>
 
-<div class="mt-4" style="font-size:17px"><strong>Part B、C：自己的 VQ-VAE</strong></div>
+<div class="mt-4" style="font-size:17px"><strong>Part B：自己的 VQ-VAE；Part C：編碼簿用了幾格</strong></div>
 <div class="flex items-center gap-2 mt-1" style="font-size:17px">
   <div class="node"><code>enc</code><small class="nw">&#91;B,16,7,7&#93;</small></div><span class="arrow">→</span>
   <div class="node node--warm"><code>quantize</code><small>編號 idx</small></div><span class="arrow">→</span>
@@ -569,7 +581,7 @@ hostOnly: true
 </div>
 
 <!--
-★ 執行（約 20 分）：③ 最容易錯在 permute：z 是 [B, D, H, W]，要先把 D 移到最後再攤平成 [B·H·W, D]。
+★ 執行（約 14 分，訓練時聽 Part A 的播放器）：③ 最容易錯在 permute：z 是 [B, D, H, W]，要先把 D 移到最後再攤平成 [B·H·W, D]。
 -->
 
 ---
@@ -590,7 +602,7 @@ hostOnly: true
 </div>
 <div>
 
-<div class="node node--primary"><strong>看 7 × 7 編號圖</strong><small>筆記本最後一張圖的中間那排：同一種顏色＝同一個編號。鞋子和褲子用到的編號一樣嗎？</small></div>
+<div class="node node--primary"><strong>看 7 × 7 編號圖</strong><small>筆記本印出鞋子和褲子的 7 × 7 編號陣列：哪些編號兩張都有？圖的顏色只是輔助，要比的是印出來的數字。</small></div>
 
 </div>
 </div>
@@ -598,7 +610,7 @@ hostOnly: true
 <div class="takeaway mt-4">位元數是算出來的，品質是量出來的：兩個都要報。</div>
 
 <!--
-★ 對照（5 分）：第 3 題：用到 N 格，就只需要 log2(N) 無條件進位的 bits。
+★ 對照（4 分）：第 3 題：用到 N 格，就只需要 log2(N) 無條件進位的 bits。
 -->
 
 ---
@@ -621,7 +633,7 @@ hostOnly: true
 <div class="takeaway mt-3">一次只改一件事：例如把 K ＝ 512 的 epochs 加倍，看死碼會不會變少。</div>
 
 <!--
-★ 稽核（8 分）：最常見錯誤：detach 放錯位置（例如寫成 z.detach() + (z_q − z)），編碼器就收不到梯度，loss 不降。
+★ 稽核（6 分）：最常見錯誤：detach 放錯位置。例如寫成 z.detach() ＋ (z_q − z)：數值一樣是 z_q，但傳回 z 的梯度變成上游梯度的相反數，編碼器被往錯的方向推，loss 不降甚至發散；編碼簿還會直接收到重建梯度。完全不寫直通估計器（直接用 z_q）才是「編碼器收不到重建梯度」。
 -->
 
 ---
@@ -640,10 +652,10 @@ hostOnly: true
 </tbody>
 </table>
 
-<div class="takeaway mt-3">建議要附理由：「客服抽查用 6 kbps：大小只有未壓縮的約 1/64，聽得清楚」——數字以實跑為準。</div>
+<div class="takeaway mt-3">建議要附理由：「客服抽查用 ＿＿ kbps：大小約未壓縮的 1/＿＿，聽起來 ＿＿」——空格等實跑後再填。</div>
 
 <!--
-★ Ship（4 分）：大小與本數是算術（本機試跑已印出 2／8／32 本、每秒 75 步）；頻譜誤差與「聽起來」一定要等 T4 實跑。
+★ Ship（3 分）：大小與本數是算術（本機試跑已印出 2／8／32 本、每秒 75 步）；頻譜誤差與「聽起來」一定要等 T4 實跑。
 -->
 
 ---
@@ -653,7 +665,7 @@ hostOnly: true
 # 風險：通話錄音是個資
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
-<div class="node node--warm"><strong>不能拿來練習的</strong><small>真實客服錄音：有姓名、電話、聲音本身也能認出人；沒有當事人同意不能拿來訓練或展示</small></div>
+<div class="node node--warm"><strong>不能拿來練習的</strong><small>真實客服錄音：有姓名、電話、聲音本身也能認出人；原則上要先告知並取得同意，才能拿來訓練或展示（法條依據待確認）</small></div>
 <div class="node"><strong>今天的做法</strong><small>公開授權的朗讀錄音（標示作者與授權）；真的要用公司資料時，先去識別化、取得同意、限制存取</small></div>
 </div>
 
@@ -697,12 +709,12 @@ hostOnly: true
 
 <div class="mcq" style="font-size:17px">
 
-1. 用 AE 做異常偵測，訓練資料應該是？（　）<span class="opts">A. 只有不良品　B. 良品與不良品各半　C. 只有良品　D. 不需要資料</span>
-2. U-Net 的跳接主要讓模型？（　）<span class="opts">A. 參數變少　B. 保留細節、畫準邊界　C. 不需要訓練　D. 輸出類別標籤</span>
-3. 預測 6 像素、真實 6 像素、重疊 4，IoU ＝？（　）<span class="opts">A. 0.67　B. 0.33　C. 0.25　D. 0.5</span>
-4. VAE 損失中的 KL 項作用是？（　）<span class="opts">A. 把每團雲拉向標準常態分布　B. 讓重建更清楚　C. 減少參數　D. 加快推論</span>
-5. 7 × 7 個編號、編碼簿 256 格，一張圖幾 bits？（　）<span class="opts">A. 49　B. 256　C. 392　D. 12,544</span>
-6. VQ-VAE 的直通估計器解決什麼問題？（　）<span class="opts">A. 過擬合　B. 查表（argmin）不能微分　C. 資料太少　D. 學習率太大</span>
+1. 用 AE 做異常偵測，訓練資料應該是？（　）<span class="opts"><span class="nw">A. 只有不良品</span>　<span class="nw">B. 良品與不良品各半</span>　<span class="nw">C. 只有良品</span>　<span class="nw">D. 不需要資料</span></span>
+2. U-Net 的跳接主要讓模型？（　）<span class="opts"><span class="nw">A. 參數變少</span>　<span class="nw">B. 保留細節、畫準邊界</span>　<span class="nw">C. 不需要訓練</span>　<span class="nw">D. 輸出類別標籤</span></span>
+3. 預測 6 像素、真實 6 像素、重疊 4，IoU ＝？（　）<span class="opts"><span class="nw">A. 0.67</span>　<span class="nw">B. 0.33</span>　<span class="nw">C. 0.25</span>　<span class="nw">D. 0.5</span></span>
+4. VAE 損失中的 KL 項作用是？（　）<span class="opts"><span class="nw">A. 把每團雲拉向標準常態分布</span>　<span class="nw">B. 讓重建更清楚</span>　<span class="nw">C. 減少參數</span>　<span class="nw">D. 加快推論</span></span>
+5. 7 × 7 個編號、編碼簿 256 格，一張圖幾 bits？（　）<span class="opts"><span class="nw">A. 49</span>　<span class="nw">B. 256</span>　<span class="nw">C. 392</span>　<span class="nw">D. 12,544</span></span>
+6. VQ-VAE 的直通估計器解決什麼問題？（　）<span class="opts"><span class="nw">A. 過擬合</span>　<span class="nw">B. 查表（argmin）不能微分</span>　<span class="nw">C. 資料太少</span>　<span class="nw">D. 學習率太大</span></span>
 
 </div>
 
@@ -725,7 +737,7 @@ hostOnly: true
 </div>
 <div style="font-size:18px">
 
-1. 用 lab05，把 <code>PCB1_DIR</code> 換成 VisA 的另一個類別
+1. 用 lab05，把載入資料那一格的 <code>CATEGORY</code> 換成 VisA 的另一個類別（例如 <code>"pcb2"</code>）
 2. 記錄 AUROC、漏檢 ≤ 5% 時的過殺率
 3. 先檢查資料：良品和不良品的拍攝條件一樣嗎？
 4. 寫半頁給品保主管：建議門檻、理由、代價、還不確定的地方

@@ -4,7 +4,7 @@ With `mdc: true`, a bare `[text]` in slide markdown is parsed as an MDC span and
 brackets vanish in the render ("B, C, H, W"). This rewrites such brackets to the HTML
 entities &#91; &#93;, which render as [ ] both in markdown and inside raw HTML.
 
-Skipped: frontmatter, fenced code, inline `code`, HTML comments (speaker notes),
+Skipped: frontmatter, fenced code, inline `code`, KaTeX math ($...$, $$...$$), HTML comments (speaker notes),
 lines with Vue components (attribute values), and markdown links `[x](url)`.
 
 Usage: python -X utf8 scripts/fix-brackets.py <deck> [<deck> ...]
@@ -21,8 +21,8 @@ def fix_text(seg):
 
 
 def fix_line(line):
-    parts = re.split(r"(`[^`]*`|<[^>]*>)", line)   # keep inline code and HTML tags (class="grid-cols-[...]") untouched
-    return "".join(p if p.startswith(("`", "<")) else fix_text(p) for p in parts)
+    parts = re.split(r"(`[^`]*`|<[^>]*>|\$\$.*?\$\$|\$[^$\n]+\$)", line)   # keep inline code, HTML tags (class="grid-cols-[...]") and KaTeX math untouched
+    return "".join(p if p.startswith(("`", "<", "$")) else fix_text(p) for p in parts)
 
 
 def run(deck):

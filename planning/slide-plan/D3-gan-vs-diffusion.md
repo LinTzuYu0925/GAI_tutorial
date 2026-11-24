@@ -94,6 +94,8 @@ Lab L3-2 (`lab10-cyclegan.ipynb`, ~55 min): reference CycleGAN at 64–128px for
 
 ## D3-3 · Marketing: 「我們的 GAN 一直生出同樣的圖；要不要改用擴散模型？」 (#7, #2) → `11-ddpm-from-scratch`
 
+> **Status:** auto-approved by the instructor's /goal instruction (2026-11-25, build-d3).
+
 ```
 【需求單 #D3-3】部門：行銷部（虛構公司：曜嶼電子）
 問題：           GAN 生成器一直產生差不多的圖（模式崩塌），要不要改用擴散模型？
@@ -135,6 +137,8 @@ Lab L3-3 (`lab11-ddpm.ipynb`, ~60 min): forward strip, schedule plot, training a
 ---
 
 ## D3-4 · QA (return): 「AE 熱圖太模糊，細紋路一直過殺」 (#8) → `12-diffusion-anomaly`
+
+> **Status:** auto-approved by the instructor's /goal instruction (2026-11-25, build-d3).
 
 ```
 【需求單 #D3-4】部門：製造品保部（A 線）（虛構公司：曜嶼電子）

@@ -17,12 +17,12 @@
 | D1 | D1-2 | `02-genai-tour` | Marketing: copy + product image tonight | #1, #2 | L1-2 | **Built** (26; notebook not yet run) |
 | D1 | D1-3 | `03-keras-to-pytorch` | Factory IT: Keras → PyTorch | bridge | L1-3 | **Built** (25; CPU smoke test passed) |
 | D1 | D1-4 | `04-colab-hub-gradio` | IT: disconnects + clickable demo | K10, #2 | L1-4 | **Built** (30; CPU smoke test passed) |
-| D2 | D2-1 | `05-ae-anomaly-detection` | QA Line A: unseen defects | #3, #8, #2 | L2-1 | **Built** (31; CPU smoke test on synthetic data) |
-| D2 | D2-2 | `06-unet-defect-mask` | QA: where and how big | #4 | L2-2 | Plan draft |
-| D2 | D2-3 | `07-vae-latent-space` | Marketing-tech: 512px on one T4 | #5, #2 | L2-3 | Plan draft |
-| D2 | D2-4 | `08-vqvae-tokens` | IT/Support: low-bitrate storage | #6 | L2-4 | Plan draft |
-| D3 | D3-1 | `09-gan-upscaling` | E-commerce: low-res catalog | #10 | L3-1 | Plan draft |
-| D3 | D3-2 | `10-cyclegan-line-b` | QA Line B: domain shift, no pairs | #11 | L3-2 | Plan draft |
+| D2 | D2-1 | `05-ae-anomaly-detection` | QA Line A: unseen defects | #3, #8, #2 | L2-1 | **Built + reviewed** (32; real VisA PCB1 CPU smoke test; T4 run pending) |
+| D2 | D2-2 | `06-unet-defect-mask` | QA: where and how big | #4 | L2-2 | **Built + reviewed** (30; CPU smoke test on VisA; T4 run pending) |
+| D2 | D2-3 | `07-vae-latent-space` | Marketing-tech: 512px on one T4 | #5, #2 | L2-3 | **Built + reviewed** (27; CPU smoke test; T4 run pending) |
+| D2 | D2-4 | `08-vqvae-tokens` | IT/Support: low-bitrate storage | #6 | L2-4 | **Built + reviewed** (29, incl. Day 2 summary/quiz/homework; CPU smoke test; T4 run pending) |
+| D3 | D3-1 | `09-gan-upscaling` | E-commerce: low-res catalog | #10 | L3-1 | **Built + reviewed** (32; T4 run recorded on an older build) |
+| D3 | D3-2 | `10-cyclegan-line-b` | QA Line B: domain shift, no pairs | #11 | L3-2 | **Built + reviewed** (26; CPU smoke test; T4 run pending) |
 | D3 | D3-3 | `11-ddpm-from-scratch` | Marketing: GAN mode collapse | #7, #2 | L3-3 | Plan draft |
 | D3 | D3-4 | `12-diffusion-anomaly` | QA return: blurry AE heatmaps | #8 | L3-4 | Plan draft |
 | D4 | D4-1 | `13-conditional-diffusion-cfg` | Data team: generate class k | #9, 學習評量 | L4-1 | Plan draft |

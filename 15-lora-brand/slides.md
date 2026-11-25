@@ -82,21 +82,17 @@ class: cover
 
 # 盡力描述，畫出來的還是「別人的背包」
 
-<div class="grid grid-cols-[1.4fr_1fr] gap-6 mt-2">
-<div>
-
-<div class="placeholder" style="height:118px;padding:10px 20px">6 張訓練照（我們的背包）<small>講師 T4 實跑後替換（lab15 <code>train_photos.png</code>）</small></div>
-<div class="placeholder mt-2" style="height:118px;padding:10px 20px">只用提示詞生成的 4 張（seed 0–3）<small>講師 T4 實跑後替換（lab15 <code>prompt_only.png</code>）</small></div>
-
+<div class="grid grid-cols-2 gap-4 mt-1">
+<div class="placeholder" style="height:150px;min-height:0;padding:10px 16px">6 張訓練照（我們的背包）<small>講師 T4 實跑後替換（lab15 <code>train_photos.png</code>）</small></div>
+<div class="placeholder" style="height:150px;min-height:0;padding:10px 16px">只用提示詞生成的 4 張（seed 0–3）<small>講師 T4 實跑後替換（lab15 <code>prompt_only.png</code>）</small></div>
 </div>
-<div style="font-size:17px">
 
-提示詞：<code style="font-size:15px">a photo of a pinkish-red backpack with small round patches on the front pocket, on a wooden bench in a park</code>
+<div style="font-size:17px" class="mt-2">
 
-- 對照看：顏色、前口袋、小徽章、背帶一樣嗎？
-- 換一個 seed，還是同一個背包嗎？
+提示詞：<code style="font-size:16px">a photo of a pinkish-red backpack with small round patches on the front pocket, on a wooden bench in a park</code>
 
-</div>
+- 對照看：顏色、前口袋、小徽章、背帶一樣嗎？換一個 seed，還是同一個背包嗎？
+
 </div>
 
 <div class="takeaway mt-3">提示詞描述的是一個類別；品牌要的是一個特定的東西。</div>
@@ -118,7 +114,7 @@ class: cover
 <div class="node node--warm"><strong>scale 的取捨</strong><small>小：場景聽文字、產品不太像；大：產品像了，但姿勢、背景也被照抄</small></div>
 </div>
 
-<div class="takeaway mt-2">不訓練的基準：幾秒鐘就有大概的樣子；細節穩不穩，要和 LoRA 比。</div>
+<div class="takeaway mt-2">不訓練的基準：不用等訓練就有大概的樣子（生成時間見 lab 輸出）；細節穩不穩，要和 LoRA 比。</div>
 
 <div class="src">Ye et al., IP-Adapter, 2023（S4，待確認）；權重 <code>h94/IP-Adapter</code> 的 <code>ip-adapter_sd15.bin</code></div>
 
@@ -133,11 +129,11 @@ class: cover
 # 全部微調 vs LoRA
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
-<div class="node"><strong>全部微調（DL 課學過）</strong><small>U-Net 約 860M 個參數全部更新：<br>· 每個參數都要存梯度和 Adam 的兩個狀態 → T4 放不下<br>· 6 張照片，860M 個參數 → 很容易背下來<br>· 存一份新模型 ≈ 幾 GB</small></div>
-<div class="node node--primary"><strong>LoRA（低秩適應）</strong><small>原本的權重 W 凍結，每個注意力層旁邊加一小塊 B·A：<br>· 只訓練不到 1% 的參數<br>· T4 跑得動<br>· 存下來只有幾 MB，可以隨時開關</small></div>
+<div class="node"><strong>全部微調（DL 課學過）</strong><small>U-Net 約 860M 個參數全部更新（以 lab15 印出為準）：<br>· 每個參數都要存梯度和 Adam 的兩個狀態 → 預期 T4 很吃緊<br>· 6 張照片，860M 個參數 → 很容易背下來<br>· 存一份新模型 ≈ 幾 GB</small></div>
+<div class="node node--primary"><strong>LoRA（低秩適應）</strong><small>原本的權重 W 凍結，每個注意力層旁邊加一小塊 B·A：<br>· 只訓練不到 1% 的參數<br>· T4 跑得動（VRAM 以 lab15 實測為準）<br>· 存下來只有幾 MB，可以隨時開關</small></div>
 </div>
 
-<div class="takeaway mt-4">和 DL 課的遷移學習同一個想法：大部分凍結，只調一小部分；LoRA 連「調哪一層」都只加一小塊。</div>
+<div class="takeaway mt-4">和 DL 課的遷移學習同一個想法：大部分凍結；LoRA 不解凍任何一層，只在旁邊加一小塊。</div>
 
 <div class="src">DL 課 pp.56–66（遷移學習、凍結）；Hu et al., LoRA, 2022（S2，待確認）；參數量與檔案大小以 lab15 輸出為準</div>
 
@@ -154,17 +150,26 @@ class: cover
 <div class="grid grid-cols-[1.1fr_1fr] gap-6 mt-2 items-center">
 <div>
 
-<svg viewBox="0 0 330 200" style="width:100%" aria-label="左邊一個大方塊 W 標示凍結；右邊一個細長的 B 乘上一個扁平的 A；兩者的輸出相加">
-  <rect x="10" y="30" width="120" height="120" fill="#eee" stroke="#888" stroke-width="2"/>
-  <text x="48" y="95" style="font-size:22px" fill="#555">W</text>
-  <text x="14" y="172" style="font-size:15px" fill="#666">d × d，凍結</text>
-  <text x="145" y="98" style="font-size:24px" fill="#444">＋</text>
-  <rect x="180" y="30" width="20" height="120" fill="var(--warm-accent)" fill-opacity="0.3" stroke="var(--warm-accent)" stroke-width="2"/>
-  <text x="184" y="95" style="font-size:18px" fill="var(--warm-accent)">B</text>
-  <text x="208" y="98" style="font-size:20px" fill="#444">·</text>
-  <rect x="220" y="80" width="105" height="20" fill="var(--warm-accent)" fill-opacity="0.3" stroke="var(--warm-accent)" stroke-width="2"/>
-  <text x="264" y="96" style="font-size:16px" fill="var(--warm-accent)">A</text>
-  <text x="172" y="172" style="font-size:15px" fill="var(--warm-accent)">d × r 和 r × d，要訓練</text>
+<svg viewBox="0 0 340 240" style="width:100%;max-height:250px" aria-label="輸入 x 分成兩條路：上面經過大方塊 W（凍結），下面先經過扁平的 A 再經過細長的 B（要訓練）；兩條路在加號相加成為輸出">
+  <defs><marker id="lora-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted-text)"/></marker></defs>
+  <text x="4" y="118" style="font-size:18px" fill="var(--text)">x</text>
+  <path d="M20,112 L40,112 L40,55 L70,55" stroke="var(--muted-text)" stroke-width="1.5" fill="none" marker-end="url(#lora-a)"/>
+  <path d="M40,112 L40,170 L70,170" stroke="var(--muted-text)" stroke-width="1.5" fill="none" marker-end="url(#lora-a)"/>
+  <rect x="72" y="15" width="90" height="80" fill="var(--surface)" stroke="#b8b8b8" stroke-width="2"/>
+  <text x="105" y="62" style="font-size:22px" fill="var(--muted-text)">W</text>
+  <text x="74" y="110" style="font-size:14px" fill="var(--muted-text)">d × d，凍結</text>
+  <rect x="72" y="160" width="70" height="20" fill="var(--warm-accent)" fill-opacity="0.25" stroke="var(--warm-accent)" stroke-width="2"/>
+  <text x="100" y="175" style="font-size:15px" fill="var(--warm-accent)">A</text>
+  <path d="M142,170 L160,170" stroke="var(--muted-text)" stroke-width="1.5" fill="none" marker-end="url(#lora-a)"/>
+  <rect x="162" y="135" width="18" height="70" fill="var(--warm-accent)" fill-opacity="0.25" stroke="var(--warm-accent)" stroke-width="2"/>
+  <text x="166" y="175" style="font-size:15px" fill="var(--warm-accent)">B</text>
+  <text x="40" y="232" style="font-size:14px" fill="var(--warm-accent)">A：r × d、B：d × r，要訓練</text>
+  <path d="M162,55 L240,55 L240,98" stroke="var(--muted-text)" stroke-width="1.5" fill="none" marker-end="url(#lora-a)"/>
+  <path d="M180,170 L240,170 L240,126" stroke="var(--muted-text)" stroke-width="1.5" fill="none" marker-end="url(#lora-a)"/>
+  <circle cx="240" cy="112" r="13" fill="#fff" stroke="var(--primary)" stroke-width="2"/>
+  <text x="232" y="119" style="font-size:20px" fill="var(--primary)">+</text>
+  <path d="M253,112 L285,112" stroke="var(--muted-text)" stroke-width="1.5" fill="none" marker-end="url(#lora-a)"/>
+  <text x="288" y="118" style="font-size:16px" fill="var(--text)">輸出</text>
 </svg>
 
 </div>
@@ -206,7 +211,7 @@ class: cover
 
 <FillClear group="lora" />
 
-<div class="muted mt-2" style="font-size:16px">做完後執行 lab 第 3 部分的第一格對答案。再想：r 加倍，LoRA 檔案大約變幾倍？</div>
+<div class="muted mt-2" style="font-size:16px">做完後執行 lab 第 3 部分的第一格（只有公式，不用 GPU）對答案。再想：r 加倍，LoRA 檔案大約變幾倍？</div>
 
 <!--
 ★ 無 AI 檢核點（7 分）：個人作業、不收回。768 是 SD1.5 文字編碼器的寬度，也是 U-Net 部分注意力層的寬度。
@@ -246,7 +251,7 @@ hostOnly: true
 
 <div class="node node--primary" style="font-size:22px;text-align:center;padding:14px">a photo of <span style="color:var(--warm-accent)"><b>sks</b></span> <b>backpack</b></div>
 
-- **sks**：識別字，一個模型幾乎沒看過的字 → 學成「這一個背包」
+- **sks**：識別字，一個很少見、意思很少的字 → 學成「這一個背包」
 - **backpack**：類別詞，讓模型從「已經會畫的背包」出發，不用從零學
 
 </div>
@@ -264,7 +269,7 @@ hostOnly: true
 <div class="src">Ruiz et al., DreamBooth, 2023（S3，待確認）</div>
 
 <!--
-★ DreamBooth（7 分）：為什麼不用「our backpack」？因為「our」是常見字，已經有意思了；sks 幾乎沒有意思，比較不會干擾。常見誤解：要很多照片。論文用 3～5 張；重點是角度、背景要不同。
+★ DreamBooth（7 分）：為什麼不用「our backpack」？因為「our」是常見字，已經有意思了；sks 比較少見、意思比較少，比較不會干擾（社群常提到 sks 在 SD 裡可能和步槍有關，待確認；LoRA 關的那一排會畫出它原本的意思）。常見誤解：要很多照片。論文用 3～5 張；重點是角度、背景要不同。
 -->
 
 ---
@@ -308,7 +313,7 @@ hostOnly: true
 - **好**：產品認得出來，場景照提示詞換掉
 - **背下來**：每張都是訓練照的姿勢和背景，「雪山」也變成訓練照的地點
 - 量法：生成圖和 6 張訓練照比 CLIP 影像相似度，取最大值；接近 1 ＝ 幾乎是某一張訓練照
-- **prior preservation**：同時用「一般背包」的圖訓練，讓模型不要忘記背包本來的樣子（今天只講概念）
+- **prior preservation（先驗保留）**：同時用「一般背包」的圖訓練，讓模型不要忘記背包本來的樣子（今天只講概念）
 
 </div>
 </div>
@@ -327,8 +332,8 @@ hostOnly: true
 
 <div style="font-size:19px" class="mt-4">
 
-- 模型完全不動，只學「sks」這個字的嵌入向量（D4-1 的嵌入）
-- 檔案只有幾 KB；但能學到的細節比 LoRA 少
+- 模型完全不動，只學一個新字（例如 <code>&lt;our-bag&gt;</code>）的嵌入向量（D4-1 的嵌入）
+- 檔案很小（只有一個向量）；但能學到的細節比 LoRA 少
 
 </div>
 
@@ -423,7 +428,14 @@ hostOnly: true
 <strong>【輸入與輸出】</strong>照片 &#91;6, 3, 512, 512&#93; → 潛在（含翻轉）&#91;12, 4, 64, 64&#93;；文字向量 &#91;1, 77, 768&#93;；U-Net 預測雜訊 &#91;1, 4, 64, 64&#93;<br>
 <strong>【限制】</strong>只訓練 LoRA（r＝4，注意力的 to_q、to_k、to_v、to_out.0）；400 步；Colab T4<br>
 <span class="muted" style="font-size:16px">為什麼：步數太多會背下 6 張照片；r 太大檔案變大、也更容易背</span><br>
-<strong>【驗收】</strong>① LoRA 參數 &lt; U-Net 的 1%　② LoRA 開的三張，產品比關的時候更像訓練照　③ 三個場景的背景都不同　④ 和最像的訓練照的相似度，低於訓練照彼此之間的平均
+<strong>【驗收】</strong>
+
+<div class="steps" style="font-size:16px">
+  <div><span class="num">1</span>LoRA 參數 &lt; U-Net 的 1%；訓練後 lora_B 範數 &gt; 0</div>
+  <div><span class="num">2</span>LoRA 開的三張，肉眼看產品比關的時候更像訓練照（前口袋、小徽章）</div>
+  <div><span class="num">3</span>三個場景的背景都不同；LoRA 關掉後和加 LoRA 前的原圖一樣</div>
+  <div><span class="num">4</span>和最像訓練照的相似度，不高於參考線（每張訓練照和其他張裡最像的那張）</div>
+</div>
 
 </div>
 
@@ -452,7 +464,7 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 <div class="node node--warm mt-2" style="font-size:16px"><strong>常見錯誤</strong><small>target_modules 寫錯名字（例如 <code>q_proj</code>，那是 LLM 的名字）：會出錯或一個參數都沒加上。先看「要訓練幾個參數」再訓練</small></div>
 
 <!--
-★ 執行（約 24 分，含訓練）：訓練時先看第 5 部分要對照的問題。斷線：重新執行第 1 部分，再用 pipe.load_lora_weights("lora_sks_backpack") 跳到第 5 部分（檔案若已存到雲端硬碟）。
+★ 執行（約 24 分，含訓練）：訓練時先看第 5 部分要對照的問題。斷線：重新執行第 0、1 部分，再用 pipe.load_lora_weights(…) 載入講師放在共用雲端硬碟的 lora_sks_backpack（或自己先複製到雲端硬碟的那份），跳到第 5 部分。
 -->
 
 ---
@@ -465,21 +477,21 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 <div>
 
 1. IP-Adapter 0.9 和 LoRA：哪一個產品細節（前口袋、小徽章）比較穩？
-2. LoRA 關的那一排：「sks backpack」畫出什麼？為什麼？
+2. LoRA 關的那一排：「sks backpack」畫出什麼？為什麼？（答案寫在筆記本，講者會收尾）
 3. 雪山、辦公室：背景真的換了嗎？還是變成訓練照的地點？
 
 </div>
 <div>
 
-<div class="node node--primary"><strong>和隔壁同學比</strong><small>同樣 400 步，不同的 seed：如果你的雪山也變成了訓練照的背景，就是過度擬合的徵兆</small></div>
+<div class="node node--primary"><strong>和隔壁同學比</strong><small>把 SEED 改成你的座號再生成：如果你的雪山也變成訓練照的背景，就是過度擬合的徵兆</small></div>
 
 </div>
 </div>
 
-<div class="takeaway mt-4">LoRA 關的時候，sks 只是一個沒意義的字：模型只畫得出「一個背包」。</div>
+<div class="takeaway mt-4">同一個 seed、只差 LoRA 開關：差別就是 LoRA 學到的東西。</div>
 
 <!--
-★ 對照（7 分）：第 2 題的答案在這頁的 takeaway：LoRA 關 → 回到原本的 SD1.5，sks 沒有意義。
+★ 對照（7 分）：第 2 題的預期答案：LoRA 關 → 回到原本的 SD1.5，sks 對它沒有「我們的背包」的意思，畫出一般的背包（或 sks 原本的聯想）；以 T4 輸出為準。
 -->
 
 ---
@@ -492,9 +504,9 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 <thead><tr><th style="width:30%">稽核問題</th><th>具體動作</th><th style="width:34%">應該是</th></tr></thead>
 <tbody>
 <tr><td>Agent 的 LoRA 真的加上了嗎？</td><td>看「要訓練幾個參數」</td><td>大於 0，且 &lt; U-Net 的 1%</td></tr>
-<tr><td>原本的 U-Net 有沒有被改？</td><td><code>disable_adapters()</code> 後生成</td><td>和原本的 SD1.5 一樣</td></tr>
+<tr><td>原本的 U-Net 有沒有被改？</td><td>看「LoRA 關掉後 vs 加 LoRA 前」的最大像素差</td><td>0 或很小</td></tr>
 <tr><td>訓練的是預測雜訊嗎？</td><td>看 <code>mse_loss(pred, noise)</code></td><td>和 D3-3 一樣，比的是雜訊</td></tr>
-<tr><td>有沒有背下來？</td><td>看相似度表</td><td>LoRA 開的相似度，低於訓練照彼此的平均</td></tr>
+<tr><td>有沒有背下來？</td><td>看相似度表</td><td>LoRA 開的相似度不高於參考線</td></tr>
 <tr><td>照片能用嗎？</td><td>看授權檔</td><td>每張有出處，或是自己拍的</td></tr>
 </tbody>
 </table>
@@ -516,11 +528,13 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 <tbody>
 <tr><td>只用提示詞</td><td>否</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
 <tr><td>IP-Adapter 0.6</td><td>否</td><td>實跑後填入</td><td>實跑後填入</td><td>—</td></tr>
-<tr><td>LoRA r＝4、400 步</td><td>約 ＿ 分鐘</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
+<tr><td>LoRA r＝4、400 步</td><td class="blank"><FillIn id="ship.min" hint="分鐘" /></td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
 </tbody>
 </table>
 
-<div class="takeaway mt-3">建議句型：「品牌部的主力產品用 LoRA（＿ MB、訓練 ＿ 分鐘）；臨時的活動用 IP-Adapter」。</div>
+<FillClear group="ship" />
+
+<div class="takeaway mt-2">建議句型：「品牌部用 ＿＿（理由：＿＿）；＿＿ 的情況改用 ＿＿」。用你表格裡的數字填。</div>
 
 <!--
 ★ Ship（4 分）：表格由講師 T4 實跑後填入；學員填自己的數字。

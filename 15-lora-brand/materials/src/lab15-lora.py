@@ -40,7 +40,7 @@ dtype = torch.float16 if device == "cuda" else torch.float32
 if device == "cuda":
     free, total = torch.cuda.mem_get_info()
     print("GPU:", torch.cuda.get_device_name(0), f"| 可用 VRAM {free/1e9:.1f} / {total/1e9:.1f} GB")
-SEED = 0
+SEED = 0            # 生成用的 seed：想和隔壁同學比較時，改成你的座號
 random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 STEPS = 400      # LoRA 訓練步數（沒有 GPU：不要訓練，直接看講師的輸出）
 RANK = 4         # LoRA 的秩 r
@@ -120,6 +120,13 @@ d = 768
 for r in [4, 8, 16]:
     print(f"r＝{r:2d}：LoRA {2*d*r:>7,} 個參數，是全部的 {2*d*r/(d*d):.2%}")
 
+# %% [markdown]
+# 加 LoRA 之前，先用原本的 SD1.5 畫一張「對照組」：之後關掉 LoRA 時，應該和這張一模一樣（稽核用）。
+
+# %%
+ORIG_PROMPT = "a photo of sks backpack on a wooden bench in a park"
+orig = pipe(ORIG_PROMPT, num_inference_steps=25, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(SEED)).images[0]
+
 from peft import LoraConfig
 unet = pipe.unet
 unet.requires_grad_(False); pipe.vae.requires_grad_(False); pipe.text_encoder.requires_grad_(False)
@@ -162,6 +169,7 @@ cast_training_params(unet, dtype=torch.float32)        # 只有 LoRA 參數用 f
 unet.enable_gradient_checkpointing()
 unet.train()
 opt = torch.optim.AdamW([p for p in unet.parameters() if p.requires_grad], lr=1e-4)
+scaler = torch.amp.GradScaler("cuda", enabled=device == "cuda")   # fp16 的小梯度可能變成 0：先放大再縮回（D4-1 也用過）
 if device == "cuda":
     torch.cuda.reset_peak_memory_stats()
 losses, t0 = [], time.time()
@@ -173,12 +181,14 @@ for step in range(STEPS):
     with torch.autocast(device_type=device, dtype=torch.float16, enabled=device == "cuda"):
         pred = unet(xt, t, encoder_hidden_states=text_emb).sample
     loss = torch.nn.functional.mse_loss(pred.float(), noise.float())   # 預測雜訊（D3-3）
-    opt.zero_grad(); loss.backward(); opt.step()
+    opt.zero_grad(); scaler.scale(loss).backward(); scaler.step(opt); scaler.update()
     losses.append(loss.item())
     if (step + 1) % 100 == 0:
         print(f"step {step+1}/{STEPS} | 最近 100 步平均 loss {np.mean(losses[-100:]):.4f} | {time.time()-t0:.0f}s")
 print(f"訓練 {time.time()-t0:.0f}s | VRAM 峰值 {vram()}")
 unet.eval(); unet.disable_gradient_checkpointing()
+b_norm = sum(p.norm().item() for n, p in unet.named_parameters() if "lora_B" in n)
+print(f"所有 lora_B 的範數加總 {b_norm:.3f}（訓練前是 0；還是 0 代表沒學到東西）")
 
 from peft.utils import get_peft_model_state_dict
 from diffusers.utils import convert_state_dict_to_diffusers
@@ -198,6 +208,11 @@ for p in PROMPTS:
     unet.disable_adapters(); before = pipe(p, num_inference_steps=25, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(SEED)).images[0]
     unet.enable_adapters();  after = pipe(p, num_inference_steps=25, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(SEED)).images[0]
     rows.append((before, after))
+unet.disable_adapters()
+same = pipe(ORIG_PROMPT, num_inference_steps=25, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(SEED)).images[0]
+unet.enable_adapters()
+diff = np.abs(np.asarray(same).astype(int) - np.asarray(orig).astype(int)).max()
+print(f"稽核：LoRA 關掉後 vs 加 LoRA 前，最大像素差 {diff}（0 或很小＝原本的 U-Net 沒被改）")
 fig, axes = plt.subplots(2, len(PROMPTS), figsize=(3.4 * len(PROMPTS), 7))
 for j, (b, a) in enumerate(rows):
     axes[0, j].imshow(b); axes[0, j].axis("off"); axes[0, j].set_title("LoRA 關：" + PROMPTS[j][19:], fontsize=8)
@@ -208,6 +223,7 @@ plt.tight_layout(); plt.savefig("lora_before_after.png", dpi=100); plt.show()
 # ### 5b. 過度擬合：是不是「背下」了訓練照？
 # 每張生成圖和 6 張訓練照比 CLIP **影像**相似度，取最大值。
 # 接近 1 → 幾乎是某一張訓練照（姿勢、背景都一樣）＝背下來了；產品像、但場景不同，才是我們要的。
+# 參考線：訓練照彼此之間（每張和「其他張裡最像的」比）。生成圖比這條線還高，就要懷疑背下來了。
 
 # %%
 from transformers import CLIPModel, CLIPProcessor
@@ -224,9 +240,11 @@ E_train = img_emb(photos)
 for name, ims in [("只用提示詞", base), ("LoRA 開", [a for _, a in rows]), ("LoRA 關", [b for b, _ in rows])]:
     sims = (img_emb(ims) @ E_train.T).max(dim=1).values
     print(f"{name:6s}：和最像的訓練照相似度 {sims.mean():.3f}（每張：{', '.join(f'{v:.2f}' for v in sims.tolist())}）")
-# 參考：訓練照彼此之間
+# 參考線：每張訓練照和「其他 5 張裡最像的那張」比，再平均（同樣取最大值，才公平）
 tt = E_train @ E_train.T
-print(f"訓練照彼此（不含自己）的平均相似度 {(tt.sum() - tt.trace()) / (len(photos) * (len(photos) - 1)):.3f}")
+tt.fill_diagonal_(-1)
+loo = tt.max(dim=1).values.mean().item()
+print(f"參考線：訓練照和其他訓練照中最像的那張，平均相似度 {loo:.3f}")
 
 # %% [markdown]
 # ## 6. 延伸（選做）

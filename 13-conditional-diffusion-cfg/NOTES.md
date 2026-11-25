@@ -16,8 +16,8 @@
 
 - [x] 大綱、投影片、筆記本
 - [x] 本機 CPU 煙霧測試（見 lab-runs）
-- [ ] Colab T4 實跑；第 5、12、14、16、22 頁
-- [ ] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
+- [x] Colab T4 實跑（2026-11-25）；第 5、12、14、16、22 頁已換成實跑輸出
+- [x] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
 - [ ] slide-reviewer 審查（結果記在 `planning/reviews-d4.md`）
 
 ## 3. 決定
@@ -44,5 +44,4 @@
 
 ## 5. 待講師注意
 
-- 第 5、12、16、22 頁佔位圖與第 14 頁表格要等 T4 實跑。
 - 學習評量（b）繳交方式。

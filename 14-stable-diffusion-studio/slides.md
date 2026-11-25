@@ -29,7 +29,7 @@ class: cover
   <span class="chip">文字當條件</span><span class="arrow">→</span>
   <span class="chip">CLIP</span><span class="arrow">→</span>
   <span class="chip">SD 四個零件</span><span class="arrow">→</span>
-  <span class="chip">參數與負面提示</span><span class="arrow">→</span>
+  <span class="chip">參數與負面提示詞</span><span class="arrow">→</span>
   <span class="chip">img2img、inpainting</span><span class="arrow">→</span>
   <span class="chip">CLIP 分數、偏差稽核</span>
 </div>
@@ -68,7 +68,7 @@ class: cover
 
 1. **說明** CLIP 把文字和圖放進同一個空間，並用程式算餘弦相似度
 2. **畫出** Stable Diffusion 的四個零件和每一段的 shape
-3. **控制**步數、指導強度、seed、負面提示，並說出負面提示為什麼要 w ＞ 1
+3. **控制**步數、指導強度、seed、負面提示詞，並說出負面提示詞為什麼要 w ＞ 1
 4. **使用** img2img 與 inpainting 換風格、換背景
 5. **量測** CLIP 分數隨 w 的變化，並對有人物的提示詞做偏差稽核
 
@@ -83,9 +83,9 @@ class: cover
 # 512px 在 T4 上跑得動，是因為不在像素上去噪
 
 <div class="grid grid-cols-3 gap-4 mt-4" style="font-size:18px">
-<div class="node"><strong>像素</strong><small>512 × 512 × 3 ＝ 786,432 個數字</small></div>
-<div class="node node--primary"><strong>SD 的潛在空間</strong><small>4 × 64 × 64 ＝ 16,384 個數字：小 48 倍（D2-3 量過）</small></div>
-<div class="node node--warm"><strong>D4-1 的條件</strong><small>一個類別編號 → 今天換成一段文字</small></div>
+<div class="node"><strong>像素</strong><small>512×512×3 ＝ 786,432</small></div>
+<div class="node node--primary"><strong>SD 的潛在空間</strong><small>4×64×64 ＝ 16,384（小 48 倍，D2-3）</small></div>
+<div class="node node--warm"><strong>條件</strong><small>D4-1 類別編號 → 今天一段文字</small></div>
 </div>
 
 <div style="font-size:19px" class="mt-4">
@@ -118,7 +118,7 @@ class: cover
 
 **企劃文字**：夏季新品：白色無線耳機，放在木頭書桌上，旁邊有咖啡和筆電，早晨窗光，溫暖、乾淨
 
-**提示詞（英文）**：<code style="font-size:15px">product photo of white wireless earbuds with charging case on a wooden desk, coffee cup and laptop in background, soft morning window light, warm, clean, high detail</code>
+**提示詞（英文）**：<code style="font-size:16px">product photo of white wireless earbuds with charging case on a wooden desk, coffee cup and laptop in background, soft morning window light, warm, clean, high detail</code>
 
 </div>
 </div>
@@ -162,7 +162,7 @@ class: cover
 <div class="src">Radford et al., CLIP, 2021（S2，待確認）；SD1.5 用的是 CLIP 的文字編碼器</div>
 
 <!--
-★ CLIP 1（5 分）：contrastive（對比式）。CLIP 不會生成圖，它只會「比對」。SD 借用它的文字編碼器，把提示詞變成向量。CLIP 用英文網路資料訓練：中文提示詞的向量不可靠（第 8 頁會量）。
+★ CLIP 1（5 分）：contrastive（對比式）。CLIP 不會生成圖，它只會「比對」。SD 借用它的文字編碼器，把提示詞變成向量。CLIP 用英文網路資料訓練：中文提示詞的向量不可靠（「練習：同一張耳機圖，哪一句最配？」會量）。
 -->
 
 ---
@@ -171,8 +171,8 @@ class: cover
 
 # 餘弦相似度（cosine similarity）：先變單位向量，再內積
 
-<div class="grid grid-cols-[1fr_1.5fr] gap-6 mt-2 items-center">
-<div class="node" style="font-size:17px"><strong>照著算（2 維）</strong><small>圖 ＝ (3, 4)，長度 5 → (0.6, 0.8)<br>文字 ＝ (4, 3)，長度 5 → (0.8, 0.6)<br>內積 ＝ 0.6×0.8 ＋ 0.8×0.6 ＝ <b>0.96</b>：方向很接近<br>方向一樣 → 1；垂直 → 0</small></div>
+<div class="node mt-2" style="font-size:17px"><strong>照著算（2 維）</strong><small>圖 (3, 4) → 除以長度 5 → (0.6, 0.8)；文字 (4, 3) → (0.8, 0.6)；內積 0.6×0.8 ＋ 0.8×0.6 ＝ <b>0.96</b>，方向很接近（方向一樣 → 1，垂直 → 0）</small></div>
+<div class="mt-2">
 <div>
 
 ```python
@@ -191,7 +191,7 @@ S = im @ tx.T          # [圖數, 文字數]
 <div class="src">S3：<code>clip-vit-base-patch32</code> 的向量是 512 維（以筆記本輸出為準）</div>
 
 <!--
-★ CLIP 2（5 分）：在白板上畫兩個箭頭。實際的 CLIP 分數通常只有 0.2～0.35 之間（不是 0～1 都會用到），所以要比相對大小，不看絕對值。這句話的數字範圍以第 2 部分的輸出為準。
+★ CLIP 2（5 分）：在白板上畫兩個箭頭。實際的分數範圍看第 2 部分的輸出；比相對大小，不看絕對值。
 -->
 
 ---
@@ -200,12 +200,12 @@ S = im @ tx.T          # [圖數, 文字數]
 
 # 練習：同一張耳機圖，哪一句最配？
 
-<div class="muted" style="font-size:17px">先寫預測（1＝最高），再執行 lab 第 2 部分的「tricky」那一格，填實際分數。第一列已填好。</div>
+<div class="muted" style="font-size:16px"><b>照著做</b>：在第 2 部分印出的 3 × 3 表找「圖2」那一列，最大的那一格就是它最配的句子。<br>現在換成同一張耳機圖配四句：先寫預測排名（1＝最高），再執行「tricky」那一格填實際分數。</div>
 
 <table class="fill tight vlines mt-1">
 <thead><tr><th style="width:46%">文字</th><th style="width:16%">預測排名</th><th>實際分數</th></tr></thead>
 <tbody>
-<tr><td><code>white wireless earbuds on a desk</code></td><td>1</td><td class="blank"><FillIn id="clip.s1" hint="例：0.2……" /></td></tr>
+<tr><td><code>white wireless earbuds on a desk</code></td><td class="blank"><FillIn id="clip.r1" /></td><td class="blank"><FillIn id="clip.s1" hint="例：0.＿＿＿……" /></td></tr>
 <tr><td><code>black wireless earbuds on a desk</code></td><td class="blank"><FillIn id="clip.r2" /></td><td class="blank"><FillIn id="clip.s2" /></td></tr>
 <tr><td><code>white wired headphones on a desk</code></td><td class="blank"><FillIn id="clip.r3" /></td><td class="blank"><FillIn id="clip.s3" /></td></tr>
 <tr><td>白色無線耳機放在書桌上</td><td class="blank"><FillIn id="clip.r4" /></td><td class="blank"><FillIn id="clip.s4" /></td></tr>
@@ -217,7 +217,7 @@ S = im @ tx.T          # [圖數, 文字數]
 <div class="muted mt-1" style="font-size:16px">想一想：差一個字（white／black）分數差多少？中文那一句排第幾？</div>
 
 <!--
-★ 練習（6 分）：個人作業、不收回。重點是發現：只差一個顏色詞，分數差很小；中文句子的分數明顯偏低（CLIP 的英文訓練資料）。這解釋了為什麼提示詞要寫英文。
+★ 練習（6 分）：個人作業、不收回。重點是發現：只差一個顏色詞，分數差多少；中文句子排第幾（預期偏低，因為 CLIP 用英文資料訓練；以實跑為準）。
 -->
 
 ---
@@ -238,7 +238,7 @@ hostOnly: true
 </tbody>
 </table>
 
-<div class="takeaway mt-4">怎麼判斷：看排名，不看絕對值；中文句子排最後，就是提示詞要寫英文的證據。</div>
+<div class="takeaway mt-4">怎麼判斷：看排名，不看絕對值；如果中文句子排最後（以實跑為準），就是提示詞要寫英文的證據。</div>
 
 <!--
 ★ 解答（2 分）：數字來自講師 T4 實跑（lab-runs.md）。學員的 seed 不同，分數會略有差異，排名應該相近。
@@ -250,17 +250,20 @@ hostOnly: true
 
 # Stable Diffusion 的四個零件
 
-<div class="grid items-center mt-3" style="font-size:16px;grid-template-columns:19% 4% 23% 4% 23% 4% 19%;row-gap:8px">
+<div class="grid items-center mt-3" style="font-size:16px;grid-template-columns:19% 4% 23% 4% 23% 4% 19%;row-gap:6px">
   <div class="node">提示詞<small>一段英文</small></div><span class="arrow text-center">→</span>
-  <div class="node node--warm"><strong>文字編碼器</strong><small>CLIP 的文字部分 → &#91;1, 77, 768&#93;</small></div><span class="arrow text-center">↓</span>
-  <div></div><div></div><div></div>
+  <div class="node node--warm"><strong>文字編碼器</strong><small>CLIP 的文字部分 → &#91;1, 77, 768&#93;</small></div>
+  <div></div><div></div><div></div><div></div>
+  <div></div><div></div>
+  <div class="arrow text-center" style="font-size:15px">↓ 交叉注意力</div>
+  <div></div><div></div><div></div><div></div>
   <div class="node">純雜訊<small>&#91;1, 4, 64, 64&#93;</small></div><span class="arrow text-center">→</span>
   <div class="node node--primary"><strong>U-Net × N 步</strong><small>D3-3 的去噪 ＋ D4-1 的 CFG</small></div><span class="arrow text-center">⇄</span>
   <div class="node node--secondary"><strong>排程器</strong><small>決定每步減多少雜訊、走幾步</small></div><span class="arrow text-center">→</span>
   <div class="node"><strong>VAE 解碼器</strong><small>D2-3 → &#91;1, 3, 512, 512&#93;</small></div>
 </div>
 
-<div class="muted mt-3" style="font-size:16px">77＝提示詞最多 77 個 token（太長會被截斷）；U-Net 參數量與 in_channels 在 lab14 第 1 部分印出。</div>
+<div class="muted mt-2" style="font-size:15px">77＝提示詞最多 77 個 token（太長會截斷）。SD 用每個 token 的向量（77 × 768）；第 2 部分量分數用的是小一號 CLIP 的整句向量（512）。shape 在 lab14 第 1 部分印出。</div>
 
 <div class="takeaway mt-3">每一塊都學過：VAE（D2-3）、U-Net（D2-2、D3-3）、CFG（D4-1）；只有文字編碼器是新的。</div>
 
@@ -286,14 +289,14 @@ hostOnly: true
     <rect x="10" y="65" width="35" height="35"/><rect x="45" y="65" width="35" height="35" fill="var(--warm-accent)"/><rect x="80" y="65" width="35" height="35"/><rect x="115" y="65" width="35" height="35"/>
     <rect x="10" y="100" width="35" height="35"/><rect x="45" y="100" width="35" height="35"/><rect x="80" y="100" width="35" height="35"/><rect x="115" y="100" width="35" height="35"/>
   </g>
-  <text x="10" y="160" style="font-size:15px" fill="var(--muted-text)">潛在圖的一小塊</text>
+  <text x="10" y="160" style="font-size:15px" fill="var(--muted-text)">潛在圖的一小塊（示意圖）</text>
   <g style="font-size:16px">
-    <text x="230" y="40" fill="#444">white</text><text x="230" y="80" fill="#444">wireless</text><text x="230" y="120" fill="var(--warm-accent)" font-weight="bold">earbuds</text><text x="230" y="160" fill="#444">desk</text>
+    <text x="230" y="40" fill="var(--muted-text)">white</text><text x="230" y="80" fill="var(--muted-text)">wireless</text><text x="230" y="120" fill="var(--warm-accent)" font-weight="bold">earbuds</text><text x="230" y="160" fill="var(--muted-text)">desk</text>
   </g>
-  <line x1="80" y1="82" x2="225" y2="36" stroke="#999" stroke-width="1"/>
-  <line x1="80" y1="82" x2="225" y2="76" stroke="#999" stroke-width="2"/>
+  <line x1="80" y1="82" x2="225" y2="36" stroke="#b8b8b8" stroke-width="1"/>
+  <line x1="80" y1="82" x2="225" y2="76" stroke="#b8b8b8" stroke-width="2"/>
   <line x1="80" y1="82" x2="225" y2="116" stroke="var(--warm-accent)" stroke-width="5"/>
-  <line x1="80" y1="82" x2="225" y2="156" stroke="#999" stroke-width="1"/>
+  <line x1="80" y1="82" x2="225" y2="156" stroke="#b8b8b8" stroke-width="1"/>
 </svg>
 
 </div>
@@ -318,7 +321,7 @@ hostOnly: true
 
 <div class="eyebrow">03 · Adapt（調整）· 參數</div>
 
-# 參數：步數、指導強度 w、seed、負面提示
+# 參數：步數、指導強度 w、seed、負面提示詞
 
 <div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-2">
 <div>
@@ -328,27 +331,54 @@ hostOnly: true
 </div>
 <div style="font-size:17px">
 
-- **步數**：太少會糊，25 步之後差異變小，時間大約跟步數成正比
+- **步數**：預期太少會糊、時間大約跟步數成正比（看網格驗證）
 - **w**（<code>guidance_scale</code>）：D4-1 的那一行；預設 7.5
 - **seed**：同 seed ＋ 同設定 → 同一張圖（D1-2）
-- **負面提示**：拿來**取代 ε_uncond**：「離開負面、走向正面」。所以 w＝1 時沒有作用（D1-2 的觀察）
+- **負面提示詞**：下一頁
 
 </div>
 </div>
 
 <div class="takeaway mt-3">一次只改一個參數，才知道是哪個參數造成的改變。</div>
 
-<div class="src">S6：diffusers 在 w ≤ 1 時不做 CFG（待確認）；負面提示對照圖見 lab14 第 3 部分（<code>negative_prompt.png</code>）</div>
+<div class="src">lab14 第 3 部分</div>
 
 <!--
-★ 參數（5 分）：D1-2 留下的問題在這裡解答：負面提示是 CFG 那一行裡的 ε_uncond 換成「負面提示的預測」。w＝1 時 ε＝ε_cond，ε_uncond 完全不參與，所以負面提示沒有作用。
+★ 參數（3 分）：一次只改一個參數。網格以 T4 輸出為準。
+-->
+
+---
+
+<div class="eyebrow">03 · Adapt · 負面提示詞</div>
+
+# 負面提示詞：換掉 CFG 那一行的 ε_uncond
+
+<div class="node node--primary" style="font-size:21px;padding:10px;text-align:center">ε ＝ <s style="color:var(--muted-text)">ε_uncond</s> <b style="color:var(--warm-accent)">ε_neg</b> ＋ w ·（ε_cond − <b style="color:var(--warm-accent)">ε_neg</b>）</div>
+
+<div class="grid grid-cols-[1fr_1.1fr] gap-6 mt-3">
+<div class="placeholder" style="height:190px;padding:12px 18px">沒有／有負面提示詞（people, hands, text, watermark, blurry），seed 1、w＝7.5<small>講師 T4 實跑後替換（lab14 <code>negative_prompt.png</code>）</small></div>
+<div style="font-size:18px">
+
+- ε_neg：給「負面提示詞」時模型預測的雜訊
+- 讀作：「從負面提示詞出發，朝正面提示走 w 倍」＝ 離開不要的東西
+- w＝1：ε＝ε_cond，ε_neg 完全不參與 → 沒有作用（D1-2 的觀察）
+
+</div>
+</div>
+
+<div class="takeaway mt-3">負面提示詞不是「禁止清單」，而是 CFG 的起點；所以只有 w ＞ 1 才有用。</div>
+
+<div class="src">S6：diffusers 在 w ≤ 1 時不做 CFG（待確認）</div>
+
+<!--
+★ 負面提示詞（3 分）：D1-2 留下的問題在這裡解答。把 D4-1 的 CFG 那一行寫在白板上，劃掉 ε_uncond、換成 ε_neg。
 -->
 
 ---
 
 <div class="eyebrow">03 · Adapt · img2img</div>
 
-# img2img：strength＝要加多少雜訊
+# img2img（以圖生圖）：strength＝要加多少雜訊
 
 <div class="placeholder" style="height:200px;padding:16px 24px">原圖 → strength 0.3、0.5、0.7、0.9（提示詞改成冬天）<small>講師 T4 實跑後替換（lab14 <code>img2img_strength.png</code>）</small></div>
 
@@ -431,7 +461,7 @@ hostOnly: true
 
 # 偏差稽核：提示詞沒說的，模型會自己補
 
-<div style="font-size:17px">提示詞：<code>photo of a customer service representative at an electronics store, smiling</code>（沒有指定性別、年齡）。看 lab 第 6b 部分的 12 張，自己數。</div>
+<div style="font-size:17px">提示詞：<code>photo of a customer service representative at an electronics store, smiling, store background</code>（沒有指定性別、年齡）。看 lab 第 6b 部分的 12 張，自己數。</div>
 
 <table class="fill tight vlines mt-2">
 <thead><tr><th style="width:34%">看起來像（粗略判斷）</th><th>張數（共 12）</th><th style="width:40%">你覺得行銷部該怎麼改提示詞？</th></tr></thead>
@@ -485,9 +515,9 @@ hostOnly: true
 
 <div style="font-size:19px" class="mt-4">
 
-- DL 課的 YOLOv8 瑕疵偵測，最缺的是「不良品照片」
+- 用 DL 課的 YOLOv8（物件偵測）做瑕疵偵測時，最缺的是「不良品照片」
 - 在良品照上畫一個遮罩、提示詞寫「scratch」→ 合成一張帶刮痕的板子
-- 遮罩本身就是標註框：不用再人工標
+- 遮罩是標註框的上限：仍要人工確認瑕疵真的畫出來、畫在哪裡
 
 </div>
 
@@ -529,7 +559,7 @@ hostOnly: true
 <div>
 
 **打開筆記本**：<code>lab14-sd-studio.ipynb</code>（在 <code>materials/</code>）→ Open in Colab<br>
-執行階段：**T4 GPU**（模型約 4 GB，第一次下載要幾分鐘）
+執行階段：**T4 GPU**（SD1.5 與 inpainting 兩個模型，下載量與時間待 T4 實測）
 
 1. 企劃文字能變成可用的情境照嗎？
 2. 產品照能只換背景、不改產品嗎？
@@ -558,10 +588,11 @@ hostOnly: true
 <div class="steps mt-2" style="font-size:17px">
   <div><span class="num">1</span><strong>文字生成</strong>：<code>StableDiffusionPipeline</code>，排程器換成 DPM-Solver；印出四個零件</div>
   <div><span class="num">2</span><strong>CLIP</strong>：<code>clip_sim(images, texts)</code> → &#91;圖數, 文字數&#93;</div>
-  <div><span class="num">3</span><strong>參數</strong>：步數 × w 網格；負面提示對照</div>
+  <div><span class="num">3</span><strong>參數</strong>：步數 × w 網格；負面提示詞對照</div>
   <div><span class="num">4</span><strong>img2img</strong>：<code>StableDiffusionImg2ImgPipeline(**pipe.components)</code>，共用權重</div>
   <div><span class="num">5</span><strong>inpainting</strong>：做背景遮罩（TODO）→ inpainting 模型換背景 → 量產品區改變多少</div>
-  <div><span class="num">6–7</span><strong>量測與 Ship</strong>：CLIP 分數 vs w、偏差稽核 12 張、Gradio 兩個分頁</div>
+  <div><span class="num">6</span><strong>量測</strong>：CLIP 分數 vs w、偏差稽核 12 張</div>
+  <div><span class="num">7</span><strong>Ship</strong>：Gradio 兩個分頁</div>
 </div>
 
 <div class="takeaway mt-3">一個 TODO：背景遮罩（第 5 部分）。其他格是「改參數、看結果」。</div>
@@ -581,7 +612,7 @@ hostOnly: true
 <strong>【目標】</strong>依企劃文字生成情境照；替白底產品照換背景且產品不變；找出貼題的 w<br>
 <strong>【輸入與輸出】</strong>提示詞（英文）→ 圖 512 × 512；產品照 ＋ 遮罩（白＝背景）→ 換背景的圖；CLIP：&#91;圖數, 文字數&#93; 的相似度<br>
 <strong>【限制】</strong>SD1.5 fp16、512px、25 步；一次只載一個 pipeline；Colab T4<br>
-<span class="muted" style="font-size:16px">為什麼：兩個 SD 模型同時在 GPU 上，VRAM 會吃緊；fp16 讓一張圖幾秒內完成</span><br>
+<span class="muted" style="font-size:16px">為什麼：兩個 SD 模型同時在 GPU 上，VRAM 會吃緊；fp16 省一半 VRAM（速度待 T4 實測）</span><br>
 <strong>【驗收】</strong>① 背景遮罩佔 40%～90% 的像素　② 產品區（遮罩外）平均改變 &lt; 背景區的 1／3　③ w＝7.5 的 CLIP 分數高於 w＝1　④ 偏差表 12 張都填了
 
 </div>
@@ -612,7 +643,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 <div class="node node--warm mt-2" style="font-size:16px"><strong>常見錯誤</strong><small>遮罩黑白顛倒：白色是產品 → inpainting 會把產品重畫掉、背景留著。先看遮罩圖再跑</small></div>
 
 <!--
-★ 執行（約 18 分）：常見錯誤是遮罩顛倒；另一個是門檻太低，產品的白色外殼也被當成背景（白色耳機！）——這時要看「背景佔幾 %」並調門檻或手動補遮罩。
+★ 執行（約 17 分）：常見錯誤是遮罩顛倒；另一個是門檻太低，產品的白色外殼也被當成背景（白色耳機！）——這時要看「背景佔幾 %」並調門檻或手動補遮罩。
 -->
 
 ---
@@ -625,7 +656,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 <div>
 
 1. 參數網格：從幾步開始，圖就「夠用」了？
-2. 負面提示：寫了 <code>people, hands, text</code> 之後，圖裡還有嗎？
+2. 負面提示詞：寫了 <code>people, hands, text</code> 之後，圖裡還有嗎？
 3. img2img：哪一個 strength 最像「同一張照片的冬天版」？
 4. 換背景：放大看耳機的形狀、白色外殼的邊緣
 
@@ -649,18 +680,17 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 
 # Lab 6／7：Audit → Iterate
 
-<table style="font-size:15px">
+<table style="font-size:17px">
 <thead><tr><th style="width:30%">稽核問題</th><th>具體動作</th><th style="width:34%">應該是</th></tr></thead>
 <tbody>
 <tr><td>Agent 做的遮罩方向對嗎？</td><td>看遮罩圖</td><td>背景白、產品黑</td></tr>
 <tr><td>產品有沒有被改？</td><td>看「產品區平均改變」</td><td>遠小於背景區（驗收 ②）</td></tr>
 <tr><td>U-Net 真的是 9 通道？</td><td>看印出的 <code>in_channels</code></td><td>inpainting 9、一般 SD 4</td></tr>
-<tr><td>CLIP 分數比的是同一句提示詞嗎？</td><td>看 <code>clip_sim(ims, &#91;PROMPT&#93;)</code></td><td>每個 w 都和同一句比</td></tr>
-<tr><td>偏差表的判斷可靠嗎？</td><td>「看不出來」的有幾張</td><td>不確定就填看不出來，不硬猜</td></tr>
+<tr><td>偏差表的判斷可靠嗎？</td><td>「看不出來」有幾張</td><td>不確定就填看不出來</td></tr>
 </tbody>
 </table>
 
-<div class="takeaway mt-3">一次只改一件事：例如遮罩門檻從 235 改成 245，看背景比例和產品區改變怎麼變。</div>
+<div class="takeaway mt-3">一次只改一件事：遮罩那一格可以單獨重跑，例如門檻 235 → 245，看背景比例怎麼變。</div>
 
 <!--
 ★ 稽核（5 分）：數字以 T4 輸出為準（lab-runs.md）。
@@ -679,7 +709,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 <div class="takeaway mt-2">遮罩決定「改哪裡」，提示詞決定「改成什麼」。</div>
 
 <!--
-★ 結果（3 分）：延伸題的答案：形狀大致保留（旁邊的背景會「框住」它），但細節（Logo、按鍵）通常會變，所以不能拿來做真的商品圖。
+★ 結果（3 分）：延伸題的預期（未實跑）：形狀大致保留（背景會「框住」它），細節可能會變；所以不能拿來做真的商品圖。講師可在課前實跑確認。
 -->
 
 ---
@@ -697,9 +727,9 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 <div style="font-size:17px">
 
 - <code>gr.Blocks</code> ＋ <code>gr.Tab</code>：一個網頁、兩個工具（D1-4 是單一的 <code>Interface</code>）
-- 兩個分頁共用同一組權重：<code>Img2Img(**pipe.components)</code>
+- 兩個分頁共用同一組權重：<code>StableDiffusionImg2ImgPipeline(**pipe.components)</code>
 - 標題寫明「AI 生成，使用前請人工審核」
-- <code>share=True</code>：72 小時有效的公開網址（D1-4）
+- <code>share=True</code>：暫時的公開網址（期限看執行時的輸出，D1-4）
 
 </div>
 </div>
@@ -744,7 +774,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
   <span class="chip">CLIP：文字和圖同一空間</span><span class="arrow">→</span>
   <span class="chip">文字編碼器 → 交叉注意力</span><span class="arrow">→</span>
   <span class="chip">潛在空間 4 × 64 × 64</span><span class="arrow">→</span>
-  <span class="chip">CFG w、負面提示</span><span class="arrow">→</span>
+  <span class="chip">CFG w、負面提示詞</span><span class="arrow">→</span>
   <span class="chip">img2img、inpainting</span><span class="arrow">→</span>
   <span class="chip">CLIP 分數、偏差稽核</span>
 </div>
@@ -752,7 +782,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 <div class="takeaway mt-6">SD 的每一塊都學過；今天學會的是「控制」：參數、起點（img2img）、範圍（遮罩），以及量測。</div>
 
 <!--
-★ 總整理（2 分）：請學員說出三種把條件交給 U-Net 的方式：嵌入相加（D4-1）、交叉注意力（文字）、接成輸入通道（inpainting）。
+★ 總整理（2 分）：請學員說出三種把條件交給 U-Net 的方式：嵌入相加（D4-1）、交叉注意力（文字）、接成輸入通道（inpainting）。和學習評量的關係：文字、遮罩都是「條件」；D4-4 的備忘錄會用到今天的 CLIP 分數。
 -->
 
 ---
@@ -764,7 +794,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 <div class="mcq" style="font-size:17px">
 
 1. Stable Diffusion 1.5 的 U-Net 在什麼大小上去噪？（　）<br><span class="opts"><span class="nw">A. 3 × 512 × 512 的像素</span>　<span class="nw">B. 4 × 64 × 64 的潛在</span>　<span class="nw">C. 77 × 768 的文字向量</span>　<span class="nw">D. 1 × 28 × 28</span></span>
-2. 為什麼 guidance_scale＝1 時負面提示沒有作用？（　）<br><span class="opts"><span class="nw">A. 負面提示只支援英文</span>　<span class="nw">B. 步數太少</span>　<span class="nw">C. 負面提示取代 ε_uncond，而 w＝1 時 ε＝ε_cond</span>　<span class="nw">D. seed 固定了</span></span>
+2. 為什麼 guidance_scale＝1 時負面提示詞沒有作用？（　）<br><span class="opts"><span class="nw">A. 負面提示詞只支援英文</span>　<span class="nw">B. 步數太少</span>　<span class="nw">C. 負面提示詞取代 ε_uncond，而 w＝1 時 ε＝ε_cond</span>　<span class="nw">D. seed 固定了</span></span>
 3. img2img 的 strength 從 0.3 調到 0.9，最可能？（　）<br><span class="opts"><span class="nw">A. 圖更像原圖</span>　<span class="nw">B. 加更多雜訊，和原圖差更多</span>　<span class="nw">C. 生成更快</span>　<span class="nw">D. 解析度變高</span></span>
 4. CLIP 分數高代表？（　）<br><span class="opts"><span class="nw">A. 圖和提示詞的方向接近</span>　<span class="nw">B. 圖很好看</span>　<span class="nw">C. 圖沒有偏差</span>　<span class="nw">D. 圖沒有侵權</span></span>
 

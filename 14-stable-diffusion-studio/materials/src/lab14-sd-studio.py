@@ -69,6 +69,9 @@ pipe.set_progress_bar_config(disable=True)
 print(f"載入 {time.time()-t0:.0f}s")
 print("四個零件：", type(pipe.vae).__name__, "|", type(pipe.unet).__name__, "|", type(pipe.text_encoder).__name__, "|", type(pipe.scheduler).__name__)
 print(f"U-Net 參數 {sum(p.numel() for p in pipe.unet.parameters())/1e6:.0f}M | 輸入通道 {pipe.unet.config.in_channels} | 潛在大小 {pipe.unet.config.sample_size} × {pipe.unet.config.sample_size}")
+ids = pipe.tokenizer("a photo", padding="max_length", max_length=pipe.tokenizer.model_max_length, return_tensors="pt").input_ids
+with torch.no_grad():
+    print("提示詞 → 文字編碼器 →", tuple(pipe.text_encoder(ids.to(device))[0].shape), "（每個 token 一個向量）")
 
 BRIEF = "夏季新品：白色無線耳機，放在木頭書桌上，旁邊有咖啡和筆電，早晨窗光，溫暖、乾淨"
 PROMPT = "product photo of white wireless earbuds with charging case on a wooden desk, coffee cup and laptop in background, soft morning window light, warm, clean, high detail"
@@ -174,6 +177,12 @@ show_row([img] + outs, ["原圖"] + [f"strength {s}" for s in strengths], size=2
 # 一張白底產品照（我們自己生成，當作「現有產品照」）
 product = pipe("studio product photo of white wireless earbuds with open charging case, centered, plain pure white background, soft shadow",
                num_inference_steps=25, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(SEED)).images[0]
+product.save("product.png")
+
+# %% [markdown]
+# 這一格可以重複執行：改門檻（235）再跑，看背景比例怎麼變。
+
+# %%
 arr = np.asarray(product).astype(np.float32)
 # >>> TODO: 做背景遮罩——接近白色（三個通道都 > 235）的像素是背景＝255，其餘（產品）＝0
 bg = (arr > 235).all(axis=-1)
@@ -182,8 +191,16 @@ mask = Image.fromarray((bg * 255).astype(np.uint8))
 from PIL import ImageFilter
 mask = mask.filter(ImageFilter.MinFilter(9))    # 背景區往內縮一點：產品邊緣多保留幾個像素
 print(f"背景佔 {np.asarray(mask).mean()/255:.0%} 的像素（太低或太高都代表門檻要調）")
+plt.figure(figsize=(3, 3)); plt.imshow(mask, cmap="gray"); plt.axis("off"); plt.title("遮罩（白＝重畫）"); plt.show()
 
-del i2i, pipe; gc.collect(); torch.cuda.empty_cache() if device == "cuda" else None
+# %% [markdown]
+# 遮罩滿意了，再換模型：先刪掉第一個 pipeline 釋放 VRAM，再載入 inpainting 模型。
+
+# %%
+
+if "pipe" in globals():
+    del i2i, pipe
+gc.collect(); torch.cuda.empty_cache() if device == "cuda" else None
 from diffusers import StableDiffusionInpaintPipeline
 inpaint = StableDiffusionInpaintPipeline.from_pretrained("stable-diffusion-v1-5/stable-diffusion-inpainting", torch_dtype=dtype, safety_checker=None).to(device)
 inpaint.set_progress_bar_config(disable=True)
@@ -234,8 +251,10 @@ plt.tight_layout(); plt.savefig("clip_vs_cfg.png", dpi=120); plt.show()
 
 # %%
 PEOPLE = "photo of a customer service representative at an electronics store, smiling, store background"
-people = pipe([PEOPLE] * 12, num_inference_steps=25, guidance_scale=7.5,
-              generator=[torch.Generator(device).manual_seed(100 + s) for s in range(12)]).images
+people = []
+for b in range(3):   # 一次 4 張，避免 12 張同時解碼佔太多 VRAM
+    people += pipe([PEOPLE] * 4, num_inference_steps=25, guidance_scale=7.5,
+                   generator=[torch.Generator(device).manual_seed(100 + 4 * b + s) for s in range(4)]).images
 fig, axes = plt.subplots(2, 6, figsize=(15, 5.6))
 for k, (ax, im) in enumerate(zip(axes.flat, people)):
     ax.imshow(im); ax.set_title(f"#{k+1}（seed {100+k}）", fontsize=9); ax.axis("off")
@@ -243,7 +262,7 @@ plt.tight_layout(); plt.savefig("bias_audit.png", dpi=90); plt.show()
 
 # %% [markdown]
 # ## 7. Ship：行銷部可以自己點的工作室
-# 兩個分頁：「文字生成」、「同一張圖換風格（img2img）」。`share=True` 會給一個 72 小時有效的公開網址（D1-4 學過）。
+# 兩個分頁：「文字生成」、「同一張圖換風格（img2img）」。`share=True` 會給一個暫時的公開網址（有效期限看執行時印出的訊息；D1-4 學過）。
 
 # %%
 import gradio as gr

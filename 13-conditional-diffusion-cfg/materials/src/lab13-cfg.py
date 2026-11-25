@@ -261,7 +261,7 @@ clf.eval()
 test_loader = DataLoader(test_ds, batch_size=500)
 with torch.no_grad():
     acc = np.mean([(clf(xb.to(device)).argmax(1).cpu() == yb).float().mean().item() for xb, yb in test_loader])
-print(f"分類器在真實測試圖的準確率 {acc:.1%}（這是忠實度的天花板參考）")
+print(f"分類器在真實測試圖的準確率 {acc:.1%}（參考：生成圖如果比真實圖更「典型」，忠實度可能比這還高）")
 
 # %%
 def mean_pairwise(x):

@@ -17,7 +17,7 @@
 - [x] 大綱、投影片、筆記本
 - [x] 本機：筆記本建置＋語法檢查（SD／LoRA 不在 CPU 實跑，依 /goal 指示）
 - [ ] Colab T4 實跑；佔位圖與 Lab 7／7 表格
-- [ ] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
+- [x] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
 - [ ] slide-reviewer 審查（`planning/reviews-d4.md`）
 
 ## 3. 決定
@@ -29,12 +29,12 @@
 | 2026-11-25 | 不用 8-bit Adam：只訓練 LoRA 時優化器狀態很小，少一個相依套件（bitsandbytes）；投影片說明它是另一個常用選項 |
 | 2026-11-25 | 過度擬合用「和最像訓練照的 CLIP 影像相似度」量化，並和訓練照彼此的平均比較 |
 | 2026-11-25 | prior preservation 只講概念，不實作（時間） |
+| 2026-11-25 | 審查後：加 GradScaler 與 lora_B 範數檢查；加 LoRA 前先生成對照圖（稽核「原 U-Net 沒被改」）；過度擬合參考線改成「每張訓練照和其他張裡最像的」平均 |
 
 ## 4. 本單元詞彙（中文統一）
 
 | 英文 | 中文 | 首次出現頁 |
 |---|---|---|
-| IP-Adapter | IP-Adapter（參考圖轉接器） | 5 |
 | LoRA (Low-Rank Adaptation) | 低秩適應 | 6 |
 | rank (r) | 秩 | 7 |
 | DreamBooth | DreamBooth | 10 |

@@ -118,7 +118,8 @@ class: cover
 
 # 講師的模型：指定「運動鞋」，就出現運動鞋
 
-<div class="placeholder" style="height:300px;padding:16px 24px">指定第 7 類（運動鞋）的 8 張樣本，w ＝ 3，seed 0；下方：10 個類別各 8 張<small>講師 T4 實跑後替換（lab13 第 3 部分的輸出，附取樣時間）</small></div>
+<img class="photo" src="/lab13-run-sneakers.png" alt="指定第 7 類運動鞋，模型畫出的 8 張運動鞋，每張角度和花紋略有不同" style="width:100%">
+<div class="shot-cap">lab13 解答筆記本，Colab T4 實跑：8 張「運動鞋」、1000 步、7.0 秒（w＝3、seed 0；模型訓練 10 個 epoch、369 秒）</div>
 
 <div class="takeaway mt-3">先猜：同一個模型、同樣的起始雜訊，只換類別編號，畫出來的會差多少？</div>
 
@@ -334,7 +335,8 @@ hostOnly: true
 
 # w 越大：越像指定類別，但同一類越單調
 
-<div class="placeholder" style="height:290px;padding:16px 24px">w ＝ 0、1、3、7 四個網格（每列一類 × 8 張，同樣的起始雜訊）<small>講師 T4 實跑後替換（lab13 <code>cfg_scale_grid.png</code>，seed 0、T＝1000 步）</small></div>
+<img class="photo" src="/lab13-run-cfg-grid.png" alt="四個網格，w 等於 0、1、3、7；每一列是一個類別的 8 張圖。w 等於 0 時每列類別混雜，w 越大每列越整齊、8 張越像" style="width:100%">
+<div class="shot-cap">Colab T4 實跑（lab13 第 3 部分，seed 0、T＝1000 步；四格共 139 秒）。由上到下：T恤、褲子、套頭衫、洋裝、外套、涼鞋、襯衫、運動鞋、包包、短靴</div>
 
 <div class="takeaway mt-3">同樣的起始雜訊、只差 w：看每一列的 8 張越來越像。w 是「忠實」和「多樣」的旋鈕。</div>
 
@@ -400,20 +402,20 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <table class="mt-2" style="font-size:18px">
 <thead><tr><th style="width:12%">w</th><th>忠實度（認對比例）</th><th>同類兩兩距離（多樣性）</th><th>FID（特徵）</th><th>KID（特徵）</th></tr></thead>
 <tbody>
-<tr><td>0</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
-<tr><td>1</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
-<tr><td>3</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
-<tr><td>7</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td><td>實跑後填入</td></tr>
-<tr><td>真實圖</td><td>實跑後填入（分類器準確率）</td><td>實跑後填入</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>10.6%</td><td>19.59</td><td>20.18</td><td>0.405</td></tr>
+<tr><td>1</td><td>80.8%</td><td>15.94</td><td>4.54</td><td>0.070</td></tr>
+<tr><td>3</td><td><b>97.0%</b></td><td>14.19</td><td><b>4.51</b></td><td><b>0.030</b></td></tr>
+<tr><td>7</td><td>99.0%</td><td>14.10</td><td>11.96</td><td>0.202</td></tr>
+<tr><td>真實圖</td><td>88.2%（分類器準確率）</td><td>17.30</td><td>0</td><td>0</td></tr>
 </tbody>
 </table>
 
-<div class="muted mt-2" style="font-size:16px">每個 w 生成 10 類 × 50 張；分類器是 lab 裡在真實圖上訓練 2 個 epoch 的小 CNN（D1-3 的寫法）；多樣性用 D3-1 量 mode collapse 的同一把尺。</div>
+<div class="muted mt-2" style="font-size:16px">Colab T4 實跑（seed 0）：每個 w 生成 10 類 × 50 張；分類器是 lab 裡訓練 2 個 epoch 的小 CNN（D1-3 的寫法）；多樣性用 D3-1 量 mode collapse 的同一把尺；FID／KID 用分類器的 77 維特徵。</div>
 
 <div class="takeaway mt-2">忠實度只量「有沒有聽話」：認對 100% 但每張一樣，對補資料沒有用。要和多樣性一起看。</div>
 
 <!--
-★ 忠實度（4 分）：講師 T4 實跑後填表。讀表順序：忠實度隨 w 上升；同類距離隨 w 下降；FID 先降後升（太單調反而離真實分布遠）。數字以實跑為準。
+★ 忠實度（4 分）：讀表順序：忠實度隨 w 上升；同類距離隨 w 下降（w＝0 的 19.59 比真實圖還大，因為圖很亂）；FID／KID 在 w＝3 最好、w＝7 又變差（太單調，離真實分布遠）。生成圖忠實度 97% 高於分類器自己的 88.2%：生成圖比真實圖「典型」。
 -->
 
 ---
@@ -458,7 +460,8 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </div>
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">目標：10 類 × 8 張的網格、四個 w 的對照表、取捨曲線<small>講師 T4 實跑後換成真實輸出（含 VRAM 峰值與總時間）</small></div>
+<img class="photo" src="/lab13-run-tradeoff.png" alt="取捨曲線：w 從 0 到 7，忠實度從約 10% 升到約 99%，同類兩兩距離從約 19.6 降到約 14.1" style="width:100%">
+<div class="shot-cap">目標之一：取捨曲線（講師 Colab T4 實跑；全程約 25 分鐘，VRAM 峰值 0.95 GB）</div>
 
 </div>
 </div>
@@ -466,7 +469,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="takeaway mt-3">交付給數據組：一張「w 對忠實度、多樣性、FID／KID」的表，加上你建議的 w。</div>
 
 <!--
-★ Lab 開始（3 分）：Fashion-MNIST 由 torchvision 下載（約 30 MB）。訓練時間、VRAM 待 T4 實測（teaching-plan 課前清單）。沒有 GPU：EPOCHS＝1、SUBSET＝3000、N_PER_CLASS＝10，圖會很糊，但流程一樣。
+★ Lab 開始（3 分）：Fashion-MNIST 由 torchvision 下載（約 30 MB）。講師 T4 實跑：訓練 10 epochs 369 秒、VRAM 峰值 0.95 GB、四個 w 的量測 891 秒（每個 w 約 3.7 分鐘印一行）。沒有 GPU：EPOCHS＝1、SUBSET＝3000、N_PER_CLASS＝10，圖會很糊，但流程一樣。
 -->
 
 ---
@@ -522,7 +525,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </PromptBox>
 
 <div class="steps mt-2" style="font-size:17px">
-  <div><span class="num">1</span>訓練時間待 T4 實測；等待時看每個 epoch 的 loss（應該從約 0.1 往下）</div>
+  <div><span class="num">1</span>T4 上訓練約 6 分鐘（每個 epoch 約 37 秒）；loss 從 0.092 降到約 0.032</div>
   <div><span class="num">2</span>沒有 Agent 額度：照「label dropout」和「CFG 那一行」兩頁的程式填；卡住開 <code>-solution.ipynb</code></div>
   <div><span class="num">3</span>預期輸出：<code>輸入 (4, 1, 32, 32) → 輸出 (4, 1, 32, 32)</code>，之後每個 epoch 一行 loss</div>
 </div>
@@ -575,7 +578,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <tr><td>Agent 寫的 label dropout 對嗎？</td><td>印出 <code>(y_in == NULL).float().mean()</code></td><td>約 0.1</td></tr>
 <tr><td>Agent 寫的 CFG 起點對嗎？</td><td>w＝0 取樣一次</td><td>每一列類別混雜（＝ε_uncond）</td></tr>
 <tr><td>兩種 y 的順序有沒有對上？</td><td>看 <code>out&#91;:n&#93;</code>、<code>out&#91;n:&#93;</code></td><td>前半是 <code>y_c</code>、後半是 <code>y_u</code></td></tr>
-<tr><td>分類器本身可靠嗎？</td><td>看真實測試圖的準確率</td><td>是忠實度的天花板：分類器自己都會認錯</td></tr>
+<tr><td>分類器本身可靠嗎？</td><td>看真實測試圖的準確率</td><td>和忠實度比：忠實度更高＝生成圖比真實圖還「典型」</td></tr>
 <tr><td>FID／KID 是同樣的參考嗎？</td><td>看 <code>real</code> 的張數</td><td>每個 w 都和同一組 500 張真實圖比</td></tr>
 </tbody>
 </table>
@@ -583,7 +586,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="takeaway mt-3">一次只改一件事：例如把 P_UNCOND 改成 0 重新訓練，看 w＝3 會怎樣（延伸題 1）。</div>
 
 <!--
-★ 稽核（6 分）：分類器在真實圖上的準確率以 lab 輸出為準；忠實度接近這個數字時，剩下的錯誤可能是分類器的錯，不是生成器的錯。
+★ 稽核（6 分）：T4 實跑：分類器在真實圖上 88.2%，但 w＝3 的生成圖忠實度 97.0%。生成圖比真實圖更「典型」（每類都畫最標準的樣子），分類器反而更好認——這正是多樣性下降的另一個訊號。
 -->
 
 ---
@@ -595,12 +598,13 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2" style="font-size:18px">
 <div>
 
-<div class="placeholder" style="height:240px;padding:16px 24px">取捨曲線：橫軸 w，左軸忠實度、右軸同類兩兩距離（虛線＝真實圖）<small>講師 T4 實跑後替換（lab13 <code>cfg_tradeoff.png</code>）</small></div>
+<img class="photo" src="/lab13-run-tradeoff.png" alt="取捨曲線：藍線忠實度隨 w 上升，橘色虛線同類兩兩距離隨 w 下降，橘色點線是真實圖的距離 17.30" style="width:100%">
+<div class="shot-cap">Colab T4 實跑（lab13 <code>cfg_tradeoff.png</code>，seed 0）；點線＝真實圖的同類距離 17.30</div>
 
 </div>
 <div>
 
-<div class="node node--primary"><strong>建議句型</strong><small>「補第 k 類資料時用 w＝＿＿：忠實度 ＿＿%、同類距離 ＿＿（真實圖 ＿＿）、KID ＿＿。上線前要用真實測試圖驗收分類器有沒有變好。」</small></div>
+<div class="node node--primary"><strong>建議句型</strong><small>「補第 k 類資料時用 w＝＿＿：忠實度 ＿＿%、同類距離 ＿＿（真實圖 ＿＿）、KID ＿＿。上線前要用真實測試圖驗收分類器有沒有變好。」<br>講師的例子：w＝3，忠實度 97.0%、同類距離 14.19（真實 17.30）、KID 0.030（四個裡最好）</small></div>
 
 </div>
 </div>

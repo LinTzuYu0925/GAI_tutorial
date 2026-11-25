@@ -201,7 +201,7 @@ if TRAIN_DDPM:
             print(f"step {step:5d}  loss {np.mean(hist[-200:]):.4f}  ({time.time()-t0:.0f}s)")
     RESULTS["ddpm_train_seconds"] = round(time.time() - t0)
     if device == "cuda": RESULTS["ddpm_train_vram_gb"] = round(torch.cuda.max_memory_allocated() / 1e9, 2)
-    torch.save({k: v.half() for k, v in net.state_dict().items()}, CKPT)
+    torch.save({k: v.half().cpu() for k, v in net.state_dict().items()}, CKPT)
 net.load_state_dict({k: v.float() for k, v in torch.load(CKPT, map_location=device).items()})
 net.eval()
 RESULTS["ddpm_source"] = "trained here" if TRAIN_DDPM else "instructor checkpoint"
@@ -227,7 +227,7 @@ def diffusion_repair(x, t_start, steps=20, seed=SEED, batch=64):
         # <<< TODO
         for t, t_prev in zip(ts[:-1], ts[1:]):
             eps_hat = net(x_t, torch.full((len(x_t),), t, device=device, dtype=torch.long))
-            x0_hat = ((x_t - s1mab[t] * eps_hat) / sab[t]).clamp(-1, 1)    # 目前估計的「乾淨版」
+            x0_hat = (x_t - s1mab[t] * eps_hat) / sab[t]                   # 目前估計的「乾淨版」（不要裁切：D3-3 的教訓）
             x_t = x0_hat if t_prev == 0 else sab[t_prev] * x0_hat + s1mab[t_prev] * eps_hat   # DDIM：放回 t_prev
         out.append(((x_t + 1) / 2).clamp(0, 1).cpu())
     return torch.cat(out)

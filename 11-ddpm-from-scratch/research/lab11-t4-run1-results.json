@@ -1,0 +1,62 @@
+{
+ "try_seconds": 62.0,
+ "try_steps": 1000,
+ "strip": {
+  "0": [
+   1.0,
+   0.01
+  ],
+  "50": [
+   0.985,
+   0.173
+  ],
+  "100": [
+   0.946,
+   0.324
+  ],
+  "250": [
+   0.722,
+   0.692
+  ],
+  "500": [
+   0.279,
+   0.96
+  ],
+  "750": [
+   0.057,
+   0.998
+  ],
+  "999": [
+   0.006,
+   1.0
+  ]
+ },
+ "noise_wins_at": 259,
+ "params": 1981921,
+ "train_seconds": 477,
+ "epochs": 20,
+ "final_loss": 0.0334,
+ "train_vram_gb": 1.07,
+ "ddpm_1000_seconds_64": 6.8,
+ "sample_vram_gb": 0.36,
+ "pairwise_real": 22.9,
+ "pairwise_ddpm": 16.41,
+ "ddim_250_seconds_64": 1.76,
+ "pairwise_ddim_250": 35.39,
+ "ddim_100_seconds_64": 0.67,
+ "pairwise_ddim_100": 22.58,
+ "ddim_50_seconds_64": 0.34,
+ "pairwise_ddim_50": 20.62,
+ "ddim_20_seconds_64": 0.13,
+ "pairwise_ddim_20": 20.73,
+ "ddim_10_seconds_64": 0.07,
+ "pairwise_ddim_10": 17.52,
+ "nn_gen_median": 6.2,
+ "nn_test_median": 5.89,
+ "nn_gen_min": 4.11,
+ "gpu": "Tesla T4",
+ "torch": "2.14.1+cu130",
+ "diffusers": "0.42.1",
+ "python": "3.13.16",
+ "seed": 0
+}

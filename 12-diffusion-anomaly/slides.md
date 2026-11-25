@@ -619,21 +619,79 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：150 → 143 → … → 0
 
 <div class="eyebrow">第三天 · iPAS 小考</div>
 
-# 選擇題（6 題）
+# 第三天小考 1／3（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['互相合作', '一個偽造、一個鑑定，互相對抗', '共用參數', '輪流當分類器']"
+  :why="['兩者目標相反：G 想騙過 D，D 想抓出 G。', '', 'G 和 D 是兩個獨立的網路，各有各的參數。', 'G 一直是生成器，D 一直是鑑別器，不會輪流。']"
+  explain="G 偽造、D 鑑定，兩邊輪流訓練、互相對抗，G 就越畫越像。">
+GAN 的生成器和鑑別器的關係？
+</Mcq>
 
-1. GAN 的生成器和鑑別器的關係？（　）<span class="opts"><span class="nw">A. 互相合作</span>　<span class="nw">B. 一個偽造、一個鑑定，互相對抗</span>　<span class="nw">C. 共用參數</span>　<span class="nw">D. 輪流當分類器</span></span>
-2. 「生成的圖很清楚，但幾乎都長一樣」稱為？（　）<span class="opts"><span class="nw">A. 過擬合</span>　<span class="nw">B. 梯度消失</span>　<span class="nw">C. mode collapse</span>　<span class="nw">D. 分布偏移</span></span>
-3. CycleGAN 的循環一致損失要求？（　）<span class="opts"><span class="nw">A. F(G(b)) 和 b 一樣</span>　<span class="nw">B. G(b) 和 b 一樣</span>　<span class="nw">C. D 判成真</span>　<span class="nw">D. 兩個 G 參數相同</span></span>
-4. DDPM 訓練時，網路要預測？（　）<span class="opts"><span class="nw">A. 乾淨的原圖</span>　<span class="nw">B. 類別</span>　<span class="nw">C. 加進去的雜訊</span>　<span class="nw">D. 鑑別器分數</span></span>
-5. 用擴散做異常偵測時，加噪步數 t 太大會？（　）<span class="opts"><span class="nw">A. 瑕疵留下來，漏檢</span>　<span class="nw">B. 正常的結構也被重畫，過殺</span>　<span class="nw">C. 速度變快</span>　<span class="nw">D. 沒有影響</span></span>
-6. DDIM 的主要好處？（　）<span class="opts"><span class="nw">A. 不用訓練網路</span>　<span class="nw">B. 多樣性變高</span>　<span class="nw">C. 用同一個網路、少走很多步</span>　<span class="nw">D. 不需要 GPU</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['過擬合', '梯度消失', 'mode collapse', '分布偏移']"
+  :why="['過擬合是把訓練集背起來；這裡是 G 只會畫少數幾種。', '梯度消失是訓練學不動，圖通常也不會清楚。', '', '分布偏移是資料換了來源（例如換相機），不是生成器的問題。']"
+  explain="G 找到一種能騙過 D 的圖就一直畫它，多樣性崩掉，叫 mode collapse（模式崩潰）。">
+「生成的圖很清楚，但幾乎都長一樣」稱為？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 小考（5 分）。答案：1 B、2 C、3 A（B 是常見錯誤）、4 C（A 是 D3-3 的常見誤解）、5 B（A 是 t 太小）、6 C（A 錯：網路還是要訓練，只是不用「重新」訓練）。
+★ 檢核 1／3（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 B、2 C。
+-->
+
+---
+
+<div class="eyebrow">第三天 · iPAS 小考</div>
+
+# 第三天小考 2／3（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="0"
+  :options="['F(G(b)) 和 b 一樣', 'G(b) 和 b 一樣', 'D 判成真', '兩個 G 參數相同']"
+  :why="['', 'G(b) 要像 A 線，不該和 b 一樣；這是最常見的錯誤。', '這是對抗損失，不是循環一致。', '兩個生成器方向相反，參數各自學。']"
+  explain="b 轉到 A 線再轉回來，F(G(b)) 要和原本的 b 一樣，板子的內容才不會在轉換中被換掉。">
+CycleGAN 的循環一致損失要求？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="2"
+  :options="['乾淨的原圖', '類別', '加進去的雜訊', '鑑別器分數']"
+  :why="['有些模型改成預測 x₀，但標準 DDPM（也是本課 lab 的做法）預測的是 ε。這是常見誤解。', '類別標籤是條件，不是要預測的目標。', '', 'DDPM 沒有鑑別器，那是 GAN。']"
+  explain="加進去的雜訊是自己抽的，答案已知：網路看 x_t 和 t 猜出 ε，和真的 ε 比 MSE。">
+DDPM 訓練時，網路要預測？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／3（2 分）。答案：3 A、4 C。
+-->
+
+---
+
+<div class="eyebrow">第三天 · iPAS 小考</div>
+
+# 第三天小考 3／3（iPAS 題型）：點選答案
+
+<Mcq id="quiz3.q5" :n="5" :answer="1"
+  :options="['瑕疵留下來，漏檢', '正常的結構也被重畫，過殺', '速度變快', '沒有影響']"
+  :why="['瑕疵留下來是 t 太小：雜訊不夠蓋掉瑕疵。', '', '加噪越多，去噪要走的步數越多，不會變快。', 't 是這個方法最重要的旋鈕：AUROC 隨 t 有高有低。']"
+  explain="t 太大，連正常的細紋路都被雜訊蓋掉、重畫成別的樣子，正常板也和原圖差很多，就過殺。">
+用擴散做異常偵測時，加噪步數 t 太大會？
+</Mcq>
+
+<Mcq id="quiz3.q6" :n="6" :answer="2"
+  :options="['不用訓練網路', '多樣性變高', '用同一個網路、少走很多步', '不需要 GPU']"
+  :why="['網路還是要訓練，只是不用「重新」訓練：DDPM 訓練好的網路直接拿來用。', 'DDIM 常用決定性取樣，多樣性不會因此變高。', '', 'DDIM 照樣要跑網路，只是次數少很多。']"
+  explain="DDIM 換了取樣公式，同一個 DDPM 網路跳著走、少走很多步，速度快很多。">
+DDIM 的主要好處？
+</Mcq>
+
+<FillClear group="quiz3" corner />
+
+<!--
+★ 檢核 3／3（1 分）。答案：5 B、6 C。
+全部答案與理由：1 B、2 C、3 A（B 是常見錯誤）、4 C（A 是 D3-3 的常見誤解）、5 B（A 是 t 太小）、6 C（A 錯：網路還是要訓練，只是不用「重新」訓練）。
 -->
 
 ---

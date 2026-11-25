@@ -1,0 +1,72 @@
+{
+ "ae_train_seconds": 11,
+ "ae_val_auroc": 0.912,
+ "ddpm_train_seconds": 439,
+ "ddpm_train_vram_gb": 0.59,
+ "ddpm_source": "trained here",
+ "t_sweep": {
+  "25": 0.845,
+  "50": 0.888,
+  "100": 0.913,
+  "150": 0.909,
+  "250": 0.858,
+  "400": 0.703
+ },
+ "best_t": 100,
+ "step_sweep": {
+  "100": [
+   0.908,
+   42.53
+  ],
+  "20": [
+   0.913,
+   8.54
+  ],
+  "10": [
+   0.917,
+   4.28
+  ],
+  "5": [
+   0.926,
+   2.14
+  ]
+ },
+ "best_steps": 5,
+ "test_table": [
+  {
+   "name": "AE（D2-1）",
+   "auroc": 0.944,
+   "over": 0.166,
+   "miss": 0.06,
+   "ms": 0.16,
+   "per_s": 6072.4,
+   "takt_ok": true
+  },
+  {
+   "name": "擴散 t=100，每步都走",
+   "auroc": 0.922,
+   "over": 0.43,
+   "miss": 0.06,
+   "ms": 42.86,
+   "per_s": 23.3,
+   "takt_ok": true
+  },
+  {
+   "name": "擴散 t=100，DDIM 5 步",
+   "auroc": 0.93,
+   "over": 0.364,
+   "miss": 0.06,
+   "ms": 2.14,
+   "per_s": 467.8,
+   "takt_ok": true
+  }
+ ],
+ "eval_vram_gb": 0.4,
+ "gpu": "Tesla T4",
+ "torch": "2.14.1+cu130",
+ "python": "3.13.16",
+ "seed": 0,
+ "size": 64,
+ "takt_s": 1.0,
+ "eval_n": null
+}

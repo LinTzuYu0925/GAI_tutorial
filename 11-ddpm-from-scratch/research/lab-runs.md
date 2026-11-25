@@ -51,3 +51,61 @@
 - **DDIM 步數越多越糟**：自己寫的 DDIM 和 `DDIMScheduler` 結果相同（標準差 0.885 vs 0.886），不是呼叫錯誤。原因是 `DDIMScheduler` 預設 `clip_sample=True`：每一步把估出的 x̂₀ 裁到 −1～1；小模型在雜訊很多的前幾步（√ᾱ 很小，x̂₀ 被放大上百倍）估得很不準，裁掉後誤差一路累積，步數越多累積越多。改 `clip_sample=False` 後，250／100／50／20 步畫出**同一件衣服**（同一個起點雜訊），10 步略差。→ lab11 改成 `clip_sample=False`；lab12 自己寫的 DDIM 也拿掉 x̂₀ 的 clamp。第一次的 DDIM 圖留作稽核頁證據：`public/lab11-run1-ddim-clip.png`。
 - **兩兩距離偏低**：用檢查點在 CPU 生成 64 張、訓練 1 epoch 的小分類器（測試準確率 85.6%）分類：64 張出現 8 類（缺 Pullover、Ankle boot；Sandal 16、Dress 15、Trouser 11、Shirt 11）。衣物佔畫面比例 22.2%（真圖 40.7%），平均像素 −0.711（真圖 −0.424）：樣本比較細、比較暗。用「和樣本同樣類別比例」的真圖算兩兩距離仍是 22.04 → 距離偏低主要來自「細、暗」，不是類別少。→ lab11 加上分類器數類別與衣物佔畫面比例。
 - 第一次的 notebook 與數字改名保存：`research/lab11-t4-run1.ipynb`、`research/lab11-t4-run1-results.json`；投影片改用第二次實跑。
+
+### 2026-11-25 第二次 T4 實跑（clip_sample=False、加分類器）
+
+（`lab11-ddpm-solution.ipynb`，branch build-d3，EPOCHS＝20、全部 60,000 張、SEED＝0）
+
+- 環境：Colab，GPU：Tesla T4，可用 VRAM 15.5 / 15.6 GB；torch 2.14.1+cu130、diffusers 0.42.1、Python 3.13.16。
+- 一次「全部執行」跑完，沒有重試；整本約 11 分鐘（16:58 開始連線，17:09 前全部格子完成）。
+- 警告：只有 HF Hub 的「unauthenticated requests，請設 HF_TOKEN」提示（A 部分下載模型時），沒有錯誤。
+- 下載：Colab 檔案瀏覽器下載的 zip 和「檔案 > 下載 > 下載 .ipynb」在 Edge 仍存成沒有名字的 .tmp；檢查內容（zip 可解開、12 個檔案；ipynb 是 JSON、26 格）後改名使用。
+- A（google/ddpm-cifar10-32）：16 張 × 1000 步 57.2 秒。
+- B：√ᾱ_t 與 √(1−ᾱ_t) 和第一次相同；從 t＝259 起雜訊比例大於原圖。
+- C：形狀和第一次相同；參數 1,981,921。
+- D 訓練（每個 epoch 約 23～24 秒），總共 470 秒：
+
+  | epoch | 累計秒數 | loss |
+  |---|---|---|
+  | 1 | 23 | 0.1196 |
+  | 2 | 46 | 0.0549 |
+  | 3 | 70 | 0.0482 |
+  | 4 | 93 | 0.0452 |
+  | 5 | 117 | 0.0432 |
+  | 6 | 140 | 0.0417 |
+  | 7 | 164 | 0.0401 |
+  | 8 | 188 | 0.0396 |
+  | 9 | 211 | 0.0384 |
+  | 10 | 235 | 0.0372 |
+  | 11 | 258 | 0.0367 |
+  | 12 | 282 | 0.0362 |
+  | 13 | 306 | 0.0355 |
+  | 14 | 329 | 0.0351 |
+  | 15 | 353 | 0.0341 |
+  | 16 | 376 | 0.0342 |
+  | 17 | 400 | 0.0344 |
+  | 18 | 423 | 0.0340 |
+  | 19 | 447 | 0.0334 |
+  | 20 | 470 | 0.0334 |
+
+  - 最後 loss 0.0334；訓練 VRAM 峰值 1.07 GB。
+- E 取樣：64 張 × 1000 步 6.7 秒，VRAM 峰值 0.36 GB。
+  - 兩兩距離：真實 32 張 22.90；我們的 DDPM 17.42（D3-1 DCGAN T4 實跑 22.08）。
+  - 衣物佔畫面比例（像素 > −0.5）：真實 42.7%；DDPM 22.5%。
+  - 分類器測試準確率 87.5%。64 張 DDPM 樣本出現 10 類；64 張真圖也是 10 類。
+  - 各類張數（T-shirt/top、Trouser、Pullover、Dress、Coat、Sandal、Shirt、Sneaker、Bag、Ankle boot）：DDPM 7／10／1／10／2／10／6／11／6／1；真圖 4／7／8／5／8／6／5／9／8／4。DDPM 的 Pullover、Ankle boot 各只有 1 張、Coat 2 張，Sneaker、Trouser、Dress、Sandal 偏多。
+- F DDIM（同一個網路，64 張，`clip_sample=False`）：
+
+  | 步數 | 64 張秒數 | 兩兩距離 |
+  |---|---|---|
+  | DDPM 1000 | 6.70 | 17.42 |
+  | DDIM 250 | 1.66 | 19.14 |
+  | DDIM 100 | 0.67 | 19.01 |
+  | DDIM 50 | 0.33 | 18.68 |
+  | DDIM 20 | 0.13 | 17.59 |
+  | DDIM 10 | 0.07 | 16.27 |
+
+  - `ddim_steps.png`：修好了。250／100／50／20／10 步每一欄都是**同一件**（包包、褲子、高跟涼鞋、外套、球鞋、上衣……），只有細節不同；10 步略模糊、較淡。第一次那種雜訊和白方塊不見了。
+- G 最近鄰（16 張生成圖 → 60,000 張訓練圖）：中位數 6.55、最小 4.39；測試圖參考值中位數 5.89。
+- 存檔：`research/lab11-t4-run2.ipynb`（含輸出的 notebook）、`research/lab11-t4-run2-results.json`、`materials/ddpm_fmnist.pt`（覆蓋第一次，4.0 MB）。
+- 圖片（`public/`，覆蓋第一次）：`lab11-run-try_pretrained.png`、`lab11-run-forward_strip.png`、`lab11-run-schedule.png`、`lab11-run-time_embedding.png`、`lab11-run-loss.png`、`lab11-run-samples.png`、`lab11-run-class_counts.png`（新）、`lab11-run-reverse_strip.png`、`lab11-run-ddim_steps.png`、`lab11-run-nearest.png`。

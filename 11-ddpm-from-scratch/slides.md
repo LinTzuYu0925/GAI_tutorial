@@ -490,7 +490,8 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
 
 ```python
 from diffusers import DDIMScheduler
-sched = DDIMScheduler(num_train_timesteps=1000, beta_start=1e-4, beta_end=0.02, beta_schedule="linear")
+sched = DDIMScheduler(num_train_timesteps=1000, beta_start=1e-4, beta_end=0.02,
+                      beta_schedule="linear", clip_sample=False)   # 關掉裁切（Lab 6／7）
 sched.set_timesteps(50)                       # 只走 50 步
 for t in sched.timesteps:                     # 980, 960, …, 0
     x = sched.step(model(x, t), t, x).prev_sample
@@ -501,12 +502,12 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div class="node node--primary"><strong>DDIMScheduler</strong><small>不加回雜訊，可以一次跳好幾步；<strong>網路不用重新訓練</strong></small></div>
 </div>
 
-<div class="takeaway mt-3">排程器（scheduler）只管「怎麼走回來」；學到的網路不變，所以可以直接換。</div>
+<div class="takeaway mt-3">排程器（scheduler）只管「怎麼走回來」；學到的網路不變，所以可以直接換。但預設值要檢查。</div>
 
 <div class="src">Song et al., DDIM, ICLR 2021 §4.1、§5（S2）；diffusers <code>DDIMScheduler</code>（S6）</div>
 
 <!--
-○ 選修（3 分）：scheduler（排程器）。DDIM 論文寫：同一個訓練好的模型，不需要重新訓練（S2 §4.1）。實際快幾倍、圖差多少：Lab 的 F 部分自己量。D3-4 會用 DDIM 縮短檢測時間。
+○ 選修（3 分）：scheduler（排程器）。DDIM 論文寫：同一個訓練好的模型，不需要重新訓練（S2 §4.1）。實際快幾倍、圖差多少：Lab 的 F 部分自己量。D3-4 會用 DDIM 縮短檢測時間。clip_sample＝False 的原因在 Lab 6／7（講師第一次實跑踩到的坑）。
 -->
 
 ---
@@ -571,7 +572,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
   <div><span class="num">1</span><strong>A、B</strong>：現成 DDPM；<code>q_sample</code> 一行加噪、<code>betas</code>／<code>alpha_bar</code> 排程</div>
   <div><span class="num">2</span><strong>C</strong>：<code>time_embedding</code>、<code>Block</code>（D2-2 的 block ＋ 時間）、<code>TinyUNet</code></div>
   <div><span class="num">3</span><strong>D</strong>：訓練迴圈（TODO ①：出題、猜雜訊、MSE）</div>
-  <div><span class="num">4</span><strong>E</strong>：<code>sample</code>（TODO ②：扣掉雜訊）；<code>mean_pairwise</code> 和 DCGAN 比</div>
+  <div><span class="num">4</span><strong>E</strong>：<code>sample</code>（TODO ②：扣掉雜訊）；<code>mean_pairwise</code> 和 DCGAN 比；小分類器數「出現幾類」</div>
   <div><span class="num">5</span><strong>F、G</strong>：<code>sample_ddim</code> 步數 vs 秒數；<code>nearest</code> 找最像的訓練圖</div>
 </div>
 
@@ -593,12 +594,12 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <strong>【輸入與輸出】</strong>x_t <code>&#91;B,1,32,32&#93;</code>（−1～1）＋ t <code>&#91;B&#93;</code> → TinyUNet → ε̂ <code>&#91;B,1,32,32&#93;</code><br>
 <strong>【限制】</strong>Colab T4；32 × 32；不改模型大小、排程和 epochs；預測的是雜訊<br>
 <span class="muted" style="font-size:16px">為什麼：大家設定一樣，才能和隔壁、和 DCGAN 比</span><br>
-<strong>【驗收】</strong>① <code>out</code> 的 shape 和 x_t 一樣　② loss 一路往下，沒有 GAN 那種劇烈震盪　③ 64 張樣本看得出衣物，而且種類很多　④ 兩兩距離 ≥ DCGAN 的 22.08　⑤ 記下 1000 步和 50 步的秒數
+<strong>【驗收】</strong>① <code>out</code> 的 shape 和 x_t 一樣　② loss 一路往下，沒有 GAN 那種劇烈震盪　③ 64 張樣本看得出衣物　④ 多樣性用三個證據一起判斷：網格、兩兩距離（DCGAN 22.08）、分類器數出的類別數　⑤ 記下 1000 步和 50 步的秒數
 
 </div>
 
 <!--
-★ Specify（3 分）：驗收第 ④ 點用的是 D3-1 講師實跑的數字。驗收是課前寫好的門檻，不是預測結果；T4 實跑後以實際數字為準。
+★ Specify（3 分）：驗收第 ④ 點的 22.08 是 D3-1 講師實跑的數字。第 ④ 點故意要三個證據：講師第一次實跑發現，只看兩兩距離會誤判（圖比較細、比較暗，距離也會變小）。
 -->
 
 ---
@@ -642,7 +643,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 1. 64 張裡，數得出幾種衣物？有沒有兩張幾乎一樣？
 2. 和 D3-1 的 DCGAN 網格比：哪一個比較清楚？
-3. 兩兩距離是多少？比 22.08 大還是小？
+3. 兩兩距離是多少？比 22.08 大還是小？分類器說出現幾類？兩個證據說的一樣嗎？
 
 </div>
 </div>
@@ -659,22 +660,33 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 # Lab 6／7：Audit → Iterate
 
+<div class="grid grid-cols-[1.2fr_1fr] gap-5 mt-1">
+<div>
+
 <table style="font-size:15px">
-<thead><tr><th style="width:28%">稽核問題</th><th>具體動作</th><th style="width:32%">應該是</th></tr></thead>
+<thead><tr><th style="width:36%">稽核問題</th><th>應該是</th></tr></thead>
 <tbody>
-<tr><td>網路猜的是雜訊嗎？</td><td>看 loss 那一行</td><td><code>mse_loss(model(x_t, t), eps)</code></td></tr>
-<tr><td>丟進網路的是髒圖嗎？</td><td>看 <code>model(...)</code> 的第一個參數</td><td><code>x_t</code>，不是 <code>x0</code></td></tr>
-<tr><td>t 是每張圖各自隨機嗎？</td><td>看 <code>randint</code> 的 shape</td><td><code>(len(x0),)</code>，不是一個數</td></tr>
-<tr><td>取樣最後一步有沒有加雜訊？</td><td>看 <code>if t &gt; 0</code></td><td>t＝0 時不加</td></tr>
-<tr><td>樣本範圍對嗎？</td><td>畫圖的 <code>vmin</code>、<code>vmax</code></td><td>−1～1（和訓練資料一樣）</td></tr>
-<tr><td>DDIM 少走幾步，代價是什麼？</td><td>F 部分的表和圖</td><td>講師實跑後填入</td></tr>
+<tr><td>網路猜的是雜訊嗎？</td><td><code>mse_loss(model(x_t, t), eps)</code></td></tr>
+<tr><td>丟進網路的是髒圖嗎？</td><td><code>model(x_t, t)</code>，不是 <code>x0</code></td></tr>
+<tr><td>t 是每張圖各自隨機嗎？</td><td><code>randint(0, T, (len(x0),))</code></td></tr>
+<tr><td>取樣最後一步加雜訊了嗎？</td><td><code>if t &gt; 0</code>：t＝0 時不加</td></tr>
+<tr><td>DDIM 步數越多，圖越好嗎？</td><td>應該差不多；如果越多越糟 → 看排程器的預設值</td></tr>
 </tbody>
 </table>
 
-<div class="takeaway mt-3">一次只改一件事：例如把 EPOCHS 從 20 改成 5，看樣本和兩兩距離怎麼變。</div>
+</div>
+<div>
+
+<img class="photo" src="/lab11-run1-ddim-clip.png" alt="講師第一次實跑的 DDIM 圖：250 步全是雜訊，100 步、50 步是白色方塊，20 步、10 步才是衣服" style="width:100%;max-height:250px;object-fit:contain">
+<div class="shot-cap">講師第一次 T4 實跑：250 步全是雜訊、20 步反而清楚 → 預設 <code>clip_sample=True</code> 惹的禍</div>
+
+</div>
+</div>
+
+<div class="takeaway mt-2">稽核一定要看圖：程式沒有報錯，是網格「越多步越糟」露出了設定錯誤。</div>
 
 <!--
-★ 稽核（6 分）：前三列對應三個最常見的錯誤。第 5 列：如果把 −1～1 的圖當 0～1 畫，整張會變得很亮或很暗。
+★ 稽核（6 分）：前四列對應最常見的錯誤。第五列是講師自己踩到的坑（research/lab-runs.md）：DDIMScheduler 預設會把每一步估出的乾淨圖 x̂₀ 裁到 −1～1；在雜訊很多的前幾步，x̂₀ 是用「髒圖 ÷ 很小的數」算出來的，小模型猜錯一點就被放大很多，裁掉之後誤差一路累積，步數越多累積越多。改成 clip_sample＝False 後，同一個起點雜訊在 250、100、50、20 步都畫出同一件衣服。一次只改一件事：例如把 EPOCHS 從 20 改成 5，看樣本和兩兩距離怎麼變。
 -->
 
 ---
@@ -800,19 +812,53 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['原圖 x₀', '加進去的雜訊 ε', '鑑別器的分數', '類別標籤']"
+  :why="['有些模型改成預測 x₀，但標準 DDPM（也是本課 lab 的做法）預測的是 ε。這是常見誤解。', '', 'DDPM 沒有鑑別器，那是 GAN。', '類別標籤是條件，不是要預測的目標。']"
+  explain="加進去的雜訊是自己抽的，答案已知：網路看 x_t 和 t 猜出 ε，和真的 ε 比 MSE。">
+DDPM 訓練時，網路的輸出要和什麼比 MSE？
+</Mcq>
 
-1. DDPM 訓練時，網路的輸出要和什麼比 MSE？（　）<br><span class="opts"><span class="nw">A. 原圖 x₀</span>　<span class="nw">B. 加進去的雜訊 ε</span>　<span class="nw">C. 鑑別器的分數</span>　<span class="nw">D. 類別標籤</span></span>
-2. x_t ＝ √ᾱ_t·x₀ ＋ √(1−ᾱ_t)·ε 中，t 越大？（　）<br><span class="opts"><span class="nw">A. 原圖的比例越大</span>　<span class="nw">B. 兩者不變</span>　<span class="nw">C. 雜訊的比例越大</span>　<span class="nw">D. 圖越來越清楚</span></span>
-3. 去噪網路為什麼需要時間嵌入？（　）<br><span class="opts"><span class="nw">A. 讓網路知道現在的圖有多髒</span>　<span class="nw">B. 讓訓練更快</span>　<span class="nw">C. 讓輸出變成彩色</span>　<span class="nw">D. 取代跳接</span></span>
-4. 和 GAN 比，擴散模型取樣最主要的缺點？（　）<br><span class="opts"><span class="nw">A. 多樣性差</span>　<span class="nw">B. 要重複執行網路很多次，比較慢</span>　<span class="nw">C. 一定要成對資料</span>　<span class="nw">D. 損失震盪</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['原圖的比例越大', '兩者不變', '雜訊的比例越大', '圖越來越清楚']"
+  :why="['相反：ᾱ_t 隨 t 變小，原圖的比例越來越小。', 'ᾱ_t 隨 t 改變，兩個比例都會跟著變。', '', '前向過程是加噪，t 越大圖越髒。']"
+  explain="ᾱ_t 從接近 1 降到接近 0：t 越大，√(1−ᾱ_t) 越大，到最後幾乎全是雜訊。">
+x<sub>t</sub> ＝ √ᾱ<sub>t</sub>·x₀ ＋ √(1−ᾱ<sub>t</sub>)·ε 中，t 越大？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 B（A 是第 10 頁的常見誤解）、2 C、3 A、4 B（A、D 是 GAN 的問題）。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 B、2 C。
+-->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="0"
+  :options="['讓網路知道現在的圖有多髒', '讓訓練更快', '讓輸出變成彩色', '取代跳接']"
+  :why="['', '時間嵌入是為了猜得準，不是為了速度。', '顏色由輸出通道數決定。', '時間嵌入和跳接各管各的，U-Net 兩個都要。']"
+  explain="同一個網路要處理 t＝1 到 t＝T 的圖；告訴它 t，它才知道該去掉多少雜訊。">
+去噪網路為什麼需要時間嵌入？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="1"
+  :options="['多樣性差', '要重複執行網路很多次，比較慢', '一定要成對資料', '損失震盪']"
+  :why="['多樣性差是 GAN 的 mode collapse；擴散的多樣性反而好。', '', '成對資料是 pix2pix 的要求，擴散不需要。', '損失震盪是 GAN 對抗訓練的問題；擴散的 MSE 損失很穩。']"
+  explain="GAN 一次前向就出圖；擴散要從雜訊一步步去噪，網路要跑幾十到上千次。">
+和 GAN 比，擴散模型取樣最主要的缺點？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（1 分）。答案：3 A、4 B。
+全部答案與理由：1 B（A 是第 10 頁的常見誤解）、2 C、3 A、4 B（A、D 是 GAN 的問題）。
 -->
 
 ---

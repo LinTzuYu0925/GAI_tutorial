@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（講師以 /goal 指示自動核准） |
-| `slides.md` | 投影片（30 頁，其中 2 頁 hostOnly） |
+| `slides.md` | 投影片（31 頁，其中 2 頁 hostOnly） |
 | `teaching-plan.md` | 時間表 |
 | `materials/src/lab11-ddpm.py` | 筆記本原始檔 |
 | `materials/lab11-ddpm.ipynb`、`-solution.ipynb` | Lab L3-3 |
@@ -29,6 +29,8 @@
 | 2026-11-25 | 第 4 頁照實說：D3-1 的 DCGAN 實跑沒有崩塌；今天比的是「多樣性有沒有保證」 |
 | 2026-11-25 | 去噪網路沿用 D2-2 的 U-Net 結構（BatchNorm、MaxPool、`torch.cat` 跳接），只加時間嵌入；不換成論文的 GroupNorm，少一個新名詞 |
 | 2026-11-25 | 資料整包放進 GPU，不用 DataLoader（Windows 本機測試時 worker 會出錯；T4 上也比較快） |
+| 2026-11-25 | 第一次 T4 實跑發現 DDIM 步數越多越糟：`DDIMScheduler` 預設 `clip_sample=True` → 改 False；第一次的圖留在 Lab 6／7 當稽核證據 |
+| 2026-11-25 | 第一次 T4 實跑的兩兩距離 16.41 低於 DCGAN：本機診斷是樣本較細、較暗，不是類別少 → 筆記本加小分類器數類別，投影片用「網格＋距離＋類別數」三個證據 |
 | 2026-11-25 | 檢查點用 fp16 存（約 4 MB），T4 實跑後放進 `materials/`，筆記本 `USE_CKPT＝True` 時從 raw.githubusercontent.com 下載 |
 
 ## 4. 本單元詞彙（中文統一）

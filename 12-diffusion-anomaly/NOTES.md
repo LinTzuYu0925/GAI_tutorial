@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（講師以 /goal 指示自動核准） |
-| `slides.md` | 投影片（28 頁，其中 2 頁 hostOnly） |
+| `slides.md` | 投影片（30 頁，其中 2 頁 hostOnly） |
 | `teaching-plan.md` | 時間表 |
 | `materials/src/lab12-diffusion-ad.py` | 筆記本原始檔 |
 | `materials/lab12-diffusion-ad.ipynb`、`-solution.ipynb` | Lab L3-4 |

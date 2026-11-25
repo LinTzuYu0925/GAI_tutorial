@@ -22,6 +22,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
+import glob, subprocess
+from matplotlib import font_manager
+# Colab 預設沒有中文字型：安裝 Noto CJK，否則圖上的中文會變成方框（D1-2 同樣做法）
+NOTO = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+if not glob.glob(NOTO) and platform.system() == "Linux":
+    subprocess.run("apt-get -qq install -y fonts-noto-cjk > /dev/null", shell=True)
+for f in glob.glob(NOTO):
+    font_manager.fontManager.addfont(f)
+    plt.rcParams["font.family"] = font_manager.FontProperties(fname=f).get_name()
 print("torch", torch.__version__, "| python", platform.python_version())
 device = "cuda" if torch.cuda.is_available() else "cpu"
 if device == "cuda":
@@ -32,7 +41,7 @@ random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 EPOCHS = 10         # 沒有 GPU：改成 1（並把下面的 SUBSET 設成 3000）
 SUBSET = None       # None＝用全部 60000 張訓練圖
 P_UNCOND = 0.1      # label dropout：每張圖有 10% 的機率被藏起標籤
-N_PER_CLASS = 100   # 量測時每一類生成幾張（沒有 GPU：改成 10）
+N_PER_CLASS = 50    # 量測時每一類生成幾張（T4 上每個 w 約 3 分鐘；沒有 GPU：改成 10）
 W_LIST = [0, 1, 3, 7]
 
 # %% [markdown]
@@ -267,15 +276,19 @@ def raw_feats(x):
     return torch.cat([clf.f(x[i:i+500].to(device)).cpu() for i in range(0, len(x), 500)]).double().numpy()
 
 def feats(x):
-    """128 維特徵，用真實圖的平均與標準差標準化（每一維都變成「幾個標準差」）"""
-    return (raw_feats(x) - F_MU) / F_SD
+    """128 維特徵：丟掉真實圖上幾乎不動的維度，再用真實圖的平均與標準差標準化（每一維都變成「幾個標準差」）"""
+    return ((raw_feats(x) - F_MU) / F_SD)[:, KEEP]
 
 def fid(a, b):
     """兩團點雲的 Fréchet 距離：平均值差多少 ＋ 散佈形狀差多少"""
     from scipy import linalg
     mu1, mu2 = a.mean(0), b.mean(0)
     s1, s2 = np.cov(a, rowvar=False), np.cov(b, rowvar=False)
-    covmean = linalg.sqrtm(s1 @ s2).real
+    covmean = linalg.sqrtm(s1 @ s2)
+    if not np.isfinite(covmean).all():          # 樣本少時矩陣可能接近奇異：和 pytorch-fid 一樣加一點點對角線
+        off = np.eye(len(s1)) * 1e-6
+        covmean = linalg.sqrtm((s1 + off) @ (s2 + off))
+    covmean = covmean.real
     return float(((mu1 - mu2) ** 2).sum() + np.trace(s1 + s2 - 2 * covmean))
 
 def kid(a, b, n_sub=10, size=100, seed=0):
@@ -295,9 +308,10 @@ real = torch.stack([test_ds[i][0] for k in range(10) for i in (ty == k).nonzero(
 real_y = torch.arange(10).repeat_interleave(N_PER_CLASS)
 f_raw = raw_feats(real)
 F_MU, F_SD = f_raw.mean(0), f_raw.std(0) + 1e-6
+KEEP = f_raw.std(0) > 1e-3          # ReLU 後有些維度在真實圖上永遠是 0，不能拿來比
 f_real = feats(real)
 div_real = np.mean([mean_pairwise(real[real_y == k]) for k in range(10)])
-print(f"真實圖：每類 {N_PER_CLASS} 張 | 同類兩兩距離 {div_real:.2f}")
+print(f"真實圖：每類 {N_PER_CLASS} 張 | 特徵保留 {KEEP.sum()} / 128 維 | 同類兩兩距離 {div_real:.2f}")
 
 # %%
 rows, t0 = [], time.time()

@@ -375,7 +375,7 @@ hostOnly: true
 4. 生成圖「全擠在一起」（多樣性差）時，即使每張都像，FID 也會變大
 
 ```python
-f_real, f_gen = feats(real), feats(gen)   # 各 [1000, 128]
+f_real, f_gen = feats(real), feats(gen)   # 各 [500, 特徵維度]
 fid(f_real, f_gen); kid(f_real, f_gen)
 ```
 
@@ -388,7 +388,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 <!--
 ★ FID／KID（6 分）：ML 課學過「兩點之間的距離」；這裡是「兩團點之間的距離」。平均差＝整體偏到哪裡；散佈形狀差＝一團散開、一團擠在一起。不推公式（附錄的 sources 有）。
-常見誤解：FID 數字可以跨論文比較。只有「同樣的特徵網路、同樣的樣本數、同樣的真實參考」才能比；樣本只有 1000 張時 FID 偏高，這是用 KID 的原因。
+常見誤解：FID 數字可以跨論文比較。只有「同樣的特徵網路、同樣的樣本數、同樣的真實參考」才能比；樣本只有幾百張時 FID 偏高，這是用 KID 的原因。
 -->
 
 ---
@@ -408,7 +408,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </tbody>
 </table>
 
-<div class="muted mt-2" style="font-size:16px">每個 w 生成 10 類 × 100 張；分類器是 lab 裡在真實圖上訓練 2 個 epoch 的小 CNN（D1-3 的寫法）；多樣性用 D3-1 量 mode collapse 的同一把尺。</div>
+<div class="muted mt-2" style="font-size:16px">每個 w 生成 10 類 × 50 張；分類器是 lab 裡在真實圖上訓練 2 個 epoch 的小 CNN（D1-3 的寫法）；多樣性用 D3-1 量 mode collapse 的同一把尺。</div>
 
 <div class="takeaway mt-2">忠實度只量「有沒有聽話」：認對 100% 但每張一樣，對補資料沒有用。要和多樣性一起看。</div>
 
@@ -576,7 +576,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <tr><td>Agent 寫的 CFG 起點對嗎？</td><td>w＝0 取樣一次</td><td>每一列類別混雜（＝ε_uncond）</td></tr>
 <tr><td>兩種 y 的順序有沒有對上？</td><td>看 <code>out&#91;:n&#93;</code>、<code>out&#91;n:&#93;</code></td><td>前半是 <code>y_c</code>、後半是 <code>y_u</code></td></tr>
 <tr><td>分類器本身可靠嗎？</td><td>看真實測試圖的準確率</td><td>是忠實度的天花板：分類器自己都會認錯</td></tr>
-<tr><td>FID／KID 是同樣的參考嗎？</td><td>看 <code>real</code> 的張數</td><td>每個 w 都和同一組 1000 張真實圖比</td></tr>
+<tr><td>FID／KID 是同樣的參考嗎？</td><td>看 <code>real</code> 的張數</td><td>每個 w 都和同一組 500 張真實圖比</td></tr>
 </tbody>
 </table>
 

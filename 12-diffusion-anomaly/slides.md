@@ -152,9 +152,9 @@ class: cover
 <div class="node node--primary"><strong>今天</strong><small>從 t＝100 左右開始 → 板子的大結構還在，模型只補細節；瑕疵被當成雜訊擦掉</small></div>
 </div>
 
-<div class="takeaway mt-3">模型只看過良品，所以它「擦回來」的一定是良品的樣子：瑕疵沒有被畫回來。</div>
+<div class="takeaway mt-3">模型只看過良品，理想上「擦回來」的是良品的樣子；實跑第 4 片（第 5 頁）只補回一半。</div>
 
-<div class="src">部分擴散（partial diffusion）：AnoDDPM，Wyatt et al., CVPR Workshops 2022（S1）</div>
+<div class="src">部分加噪（partial diffusion）：AnoDDPM，Wyatt et al., CVPR Workshops 2022（S1）</div>
 
 <!--
 ★ 部分加噪（6 分）：partial diffusion（部分加噪）。和 D3-3 第 13 頁的練習連起來：t＝250 時短靴還看得出來，代表大結構還在。t＝100 是講師在驗證集上掃出來的（第 10 頁）。
@@ -198,13 +198,13 @@ score = 誤差最大 1% 的平均            # D2-1 同一個分數
 
 # t 太小留下瑕疵，t 太大連板子都換掉
 
-<img class="photo mt-1" src="/lab12-run-t_three.png" alt="同一片不良品在 t＝25、150、500 修好的版本與誤差圖，最右是 AE；t＝500 時下方針腳不見、外框變形，誤差圖沿著元件輪廓很亮" style="width:100%;max-height:215px;object-fit:contain">
+<img class="photo mt-1" src="/lab12-run-t_three.png" alt="同一片不良品在 t＝25、150、500 修好的版本與誤差圖，最右是 AE；t＝500 時整片板子被重畫，位置和外框偏掉、針腳變淡，誤差圖沿著感測器圓環和外框發亮" style="width:100%;max-height:215px;object-fit:contain">
 <div class="shot-cap">t＝25、150、500，最右是 AE（講師 T4，驗證集同一片）</div>
 
 <div class="grid grid-cols-3 gap-4 mt-3" style="font-size:17px">
-<div class="node"><strong>t 太小</strong><small>瑕疵沒被蓋住、原樣留下；誤差只剩細碎雜點 → 漏檢</small></div>
+<div class="node"><strong>t 太小</strong><small>瑕疵沒被蓋住、原樣留下 → 漏檢</small></div>
 <div class="node node--primary"><strong>t 剛好</strong><small>瑕疵被蓋住、板子結構還在</small></div>
-<div class="node node--warm"><strong>t 太大</strong><small>t＝500：針腳不見、外框變形 → 良品也有大誤差 → 過殺</small></div>
+<div class="node node--warm"><strong>t 太大</strong><small>t＝500：整片重畫、外框偏掉 → 良品也誤差大 → 過殺</small></div>
 </div>
 
 <div class="takeaway mt-2">t 是今天唯一要調的旋鈕：在驗證集上掃一輪，挑 AUROC 最高的。</div>
@@ -212,7 +212,7 @@ score = 誤差最大 1% 的平均            # D2-1 同一個分數
 <div class="src">AnoDDPM：太小的雜訊抓不到大的異常（S1）</div>
 
 <!--
-★ 選 t（4 分）：和 D3-3 練習的結論連起來：t＝500 時短靴已經認不出來，板子也一樣：圖裡下方的針腳整個被「修」掉了。t＝25 的誤差圖滿是細碎雜點：雜訊太少，模型幾乎沒改東西，瑕疵也沒被擦掉。
+★ 選 t（4 分）：和 D3-3 練習的結論連起來：t＝500 時短靴已經認不出來，板子也一樣：t＝500 的版本整片被重畫，位置和外框偏掉、針腳變淡，誤差沿著圓環和外框發亮。t＝25 的誤差圖滿是細碎雜點：雜訊太少，模型幾乎沒改東西，瑕疵也沒被擦掉。
 -->
 
 ---
@@ -221,7 +221,7 @@ score = 誤差最大 1% 的平均            # D2-1 同一個分數
 
 # 練習：t 該選多少？
 
-<div class="muted" style="font-size:17px">不用 AI。① 先猜「驗證集 AUROC 最高的 t」② 執行 lab12 第 4 部分的掃描格 ③ 填 AUROC。第一列已填好（AE 對照）。</div>
+<div class="muted" style="font-size:17px">不用 AI。① 現在先猜「驗證集 AUROC 最高的 t」② Lab 時執行到第 4 部分的掃描格，回來填 AUROC。照著做：筆記本印出 <code>t= 50  驗證集 AUROC 0.888  每張 8.5 ms</code> → t＝50 那列就填 0.888。</div>
 
 <table class="fill tight vlines mt-1">
 <thead><tr><th style="width:28%">做法</th><th style="width:36%">驗證集 AUROC</th><th>一句話：為什麼？</th></tr></thead>
@@ -238,7 +238,7 @@ score = 誤差最大 1% 的平均            # D2-1 同一個分數
 <FillClear group="tsel" />
 
 <!--
-★ 無 AI 檢核點（8 分）：個人作業，不收回。掃描在 T4 上很快（每個 t 每片約 8.5 ms）；請學員先填「先猜」那一列再執行。重點是發現 AUROC 對 t 的曲線有高有低，不是越大越好。
+★ 無 AI 檢核點（現在 3 分＋Lab 中 5 分）：個人作業，不收回。現在只填「先猜」兩格；第 4 部分要先跑完資料、AE、擴散模型（第 17 頁之後），所以 AUROC 在 Lab 5／7 時回來填。掃描本身很快（每個 t 每片約 8.5 ms）。照著做用的 t＝50 不在表裡。重點是發現 AUROC 對 t 的曲線有高有低，不是越大越好。
 -->
 
 ---
@@ -252,16 +252,19 @@ hostOnly: true
 <img class="photo" src="/lab12-run-t_sweep.png" alt="驗證集 AUROC 對 t 的曲線：t＝25 是 0.845，t＝100 最高 0.913，t＝400 掉到 0.703；AE 的虛線在 0.912" style="width:100%;max-height:230px;object-fit:contain">
 
 <table class="vlines mt-2" style="font-size:17px">
-<thead><tr><th>做法</th><th>AE</th><th>t＝25</th><th>t＝150</th><th>t＝400</th><th>最好的 t</th></tr></thead>
+<thead><tr><th style="width:22%">做法</th><th style="width:20%">驗證集 AUROC</th><th>為什麼</th></tr></thead>
 <tbody>
-<tr><td>驗證集 AUROC</td><td>0.912</td><td>0.845</td><td>0.909</td><td>0.703</td><td>t＝100：0.913</td></tr>
+<tr><td>擴散 t＝25</td><td>0.845</td><td>雜訊太少，瑕疵沒被蓋住，原樣留下</td></tr>
+<tr><td>擴散 t＝150</td><td>0.909</td><td>瑕疵被蓋住，板子結構還在</td></tr>
+<tr><td>擴散 t＝400</td><td>0.703</td><td>整片被重畫，良品也有大誤差</td></tr>
+<tr><td>實際最好的 t</td><td>t＝100：0.913</td><td>和 AE（0.912）差不多</td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-3">最好的 t 落在中間（100）；但最好也只和 AE 打平。t 要在驗證集上選，不能看測試集。</div>
 
 <!--
-★ 解答（2 分）：數字來自講師 T4 實跑（SEED 0，research/lab-runs.md）；學員的數字會略有不同，因為加噪是隨機的。
+★ 解答（2 分）：數字來自講師 T4 實跑（SEED 0，research/lab-runs.md）；學員的數字會略有不同：雜訊用固定的 SEED＝0，差別來自檢查點（下載講師的或自己訓練的）和 GPU 運算的細微不確定性。
 -->
 
 ---
@@ -274,7 +277,7 @@ hostOnly: true
 for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
     eps_hat = net(x_t, t)                       # 猜雜訊
     x0_hat = (x_t - s1mab[t]*eps_hat) / sab[t]  # 估出乾淨版
-    x_t = sab[t_prev]*x0_hat + s1mab[t_prev]*eps_hat   # 放回 t_prev
+    x_t = x0_hat if t_prev == 0 else sab[t_prev]*x0_hat + s1mab[t_prev]*eps_hat  # 放回 t_prev
 ```
 
 <div class="grid grid-cols-[1.1fr_1fr] gap-6 mt-2 items-center">
@@ -379,7 +382,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div style="font-size:18px">
 
 - 原圖和「正常版」並排：針腳應該是直的，眼睛一比就知道
-- 複判時間短，判錯也找得到原因
+- 預期：複判時間變短，判錯也找得到原因（沒有實測）
 - 這次的分數 AE 贏；擴散的「正常版」可以只拿來給作業員看
 
 </div>
@@ -393,7 +396,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 ---
 
-<div class="eyebrow">04 · Adapt · 選修</div>
+<div class="eyebrow">04 · Ship · 選修：其他基準</div>
 
 # 產線上常見的其他做法
 
@@ -428,7 +431,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 </div>
 
-<div class="takeaway mt-4">看到「conditioned denoising」的異常偵測，知道是在解決今天「t 太大會改掉板子」的問題。</div>
+<div class="takeaway mt-4">看到「conditioned denoising」（條件式去噪）的異常偵測，知道是在解決今天「t 太大會改掉板子」的問題。</div>
 
 <div class="src">Mousakhan et al., arXiv:2305.15956（S5）</div>
 
@@ -477,10 +480,11 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 <div class="steps mt-2" style="font-size:17px">
   <div><span class="num">1</span><strong>資料</strong>：和 D2-1 同一個切分；訓練良品加 180° 旋轉；驗證、測試各有良品和不良品</div>
-  <div><span class="num">2</span><strong>AE 對照組</strong>：D2-1 的 AE；<code>evaluate</code> 回傳重建、誤差圖、分數、每片毫秒</div>
+  <div><span class="num">2</span><strong>對照組</strong>：D2-1 的 AE；<code>evaluate</code> 回傳重建、誤差圖、分數、每片毫秒</div>
   <div><span class="num">3</span><strong>擴散模型</strong>：D3-3 的 <code>TinyUNet</code>（3 通道、64 × 64）；載入講師檢查點</div>
-  <div><span class="num">4</span><strong><code>diffusion_repair</code></strong>：加噪到 t（TODO ①）、DDIM 走回 0；t 掃描</div>
-  <div><span class="num">5</span><strong>測試</strong>：步數表；<code>report</code>（TODO ②：過殺、漏檢、AUROC）；作業員畫面</div>
+  <div><span class="num">4</span><strong><code>diffusion_repair</code></strong>：加噪到 t（TODO ①）、DDIM 走回 0；驗證集 t 掃描</div>
+  <div><span class="num">5</span><strong>DDIM 步數</strong>：驗證集上比 100／20／10／5 步</div>
+  <div><span class="num">6</span><strong>測試集</strong>：<code>report</code>（TODO ②：過殺、漏檢、AUROC）；對照表；作業員畫面</div>
 </div>
 
 <div class="takeaway mt-3">兩個 TODO：加噪那一行（D3-3 學過），和過殺、漏檢、AUROC（D2-1 學過）。</div>
@@ -525,10 +529,10 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div class="steps mt-2" style="font-size:17px">
   <div><span class="num">1</span>講師 T4：VisA 下載約 6 分鐘、AE 訓練 11 秒；等待下載時做「練習：t 該選多少？」的先猜</div>
   <div><span class="num">2</span>沒有 Agent 額度：照「部分加噪」頁和 D2-1 的過殺／漏檢填；卡住開 <code>-solution.ipynb</code></div>
-  <div><span class="num">3</span>預期輸出：<code>t=25  驗證集 AUROC …  每張 … ms</code>，一共 6 行</div>
+  <div><span class="num">3</span>預期輸出：第 4 部分 <code>t= 25  驗證集 AUROC …  每張 … ms</code> 共 6 行；第 6 部分對照表三列，每列有 AUROC、過殺、漏檢</div>
 </div>
 
-<div class="node node--warm mt-2" style="font-size:16px"><strong>常見錯誤</strong><small>加噪寫成 <code>torch.randn(...)</code>（純雜訊）：那是 D3-3 的取樣起點，模型會畫出「任何一片」板子，和輸入對不上，每片都過殺</small></div>
+<div class="node node--warm mt-2" style="font-size:16px"><strong>常見錯誤</strong><small>加噪寫成只有 <code>torch.randn(...)</code>（沒有 x0）：起點和輸入的板子無關，修好的版本對不上原圖，良品、不良品分數都很高，AUROC 會掉到接近 0.5（示意，未實測）</small></div>
 
 <!--
 ★ 執行（約 16 分）：常見錯誤第二名：門檻在測試集上選（看 threshold_for_miss 用的是 s_val）。
@@ -543,7 +547,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2" style="font-size:18px">
 <div>
 
-跑完第 4 部分後：
+跑完第 4 部分後，先回「練習：t 該選多少？」（第 9 頁）填 AUROC，再回答：
 
 1. t＝25 的版本，瑕疵還在嗎？t＝500 的版本，元件還在原位嗎？
 2. 你猜的 t 和實際最好的 t 差多少？
@@ -552,7 +556,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 </div>
 <div>
 
-<div class="node node--primary"><strong>和隔壁同學比</strong><small>加噪是隨機的：同樣的 t，不同的 seed，AUROC 會差一點。差多少？這也是要報告的「不確定」</small></div>
+<div class="node node--primary"><strong>自己量「不確定」</strong><small>把 <code>diffusion_repair</code> 的 seed 改成 1，同樣的 t 再掃一次：AUROC 差多少？這也是要報告的數字</small></div>
 
 </div>
 </div>
@@ -569,22 +573,21 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 # Lab 6／7：Audit → Iterate
 
-<table style="font-size:15px">
+<table style="font-size:16px">
 <thead><tr><th style="width:28%">稽核問題</th><th>具體動作</th><th style="width:32%">應該是</th></tr></thead>
 <tbody>
 <tr><td>加噪的起點是輸入的板子嗎？</td><td>看 TODO ① 那一行</td><td>有 <code>x0</code>，不是純 <code>randn</code></td></tr>
 <tr><td>t 是在哪裡選的？</td><td>看 <code>sweep</code> 用的資料</td><td><code>data&#91;"val"&#93;</code></td></tr>
 <tr><td>門檻是在哪裡選的？</td><td>看 <code>threshold_for_miss</code> 的輸入</td><td>驗證集分數 <code>s_val</code></td></tr>
-<tr><td>測試集漏檢真的 ≤ 5% 嗎？</td><td>看對照表的漏檢欄</td><td>接近 5%；差一點是正常（測試集只有 50 片不良）</td></tr>
 <tr><td>毫秒怎麼量的？</td><td>看 <code>evaluate</code></td><td>有 <code>cuda.synchronize()</code>，64 片一批</td></tr>
 <tr><td>擴散比 AE 好嗎？</td><td>對照表</td><td>不一定：講師實跑是 AE 贏</td></tr>
 </tbody>
 </table>
 
-<div class="takeaway mt-3">一次只改一件事：例如把 DDIM 步數從 20 改成 5，看 AUROC 掉多少、快多少。</div>
+<div class="takeaway mt-3">一次只改一件事：例如把 DDIM 步數從 5 改成 20，看 AUROC 變多少、慢多少。</div>
 
 <!--
-★ 稽核（6 分）：第 5 列：GPU 是非同步的，不 synchronize 就計時，量到的是「把工作丟出去」的時間，會少算很多。
+★ 稽核（6 分）：測試集漏檢會接近 5%，差一點是正常（測試集只有 50 片不良，講師實跑 6.0%）。第 4 列：GPU 是非同步的，不 synchronize 就計時，量到的是「把工作丟出去」的時間，會少算很多。
 -->
 
 ---
@@ -618,16 +621,16 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 # 風險：同一套技術，也能做出假的代言廣告
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
-<div class="node node--warm"><strong>修板子 vs 改照片</strong><small>今天的「加噪再去噪」是在改一張真實的照片。同樣的技術加上條件（D4），就能把真人改成在說他沒說過的話、代言他沒代言的產品</small></div>
+<div class="node node--warm"><strong>修板子 vs 改照片</strong><small>今天的「加噪再去噪」是在改一張真實的照片。同樣的技術加上條件（D4），就能做出真人沒拍過的代言照片</small></div>
 <div class="node"><strong>台灣的規定</strong><small>詐欺犯罪危害防制條例第 31 條：網路廣告平臺刊登廣告時，要揭露「廣告使用深度偽造技術或人工智慧生成之個人影像」</small></div>
 </div>
 
-<div class="takeaway mt-4">公司用 AI 做含有人像的廣告：要有當事人同意，並準備好讓平臺揭露。</div>
+<div class="takeaway mt-4">公司用 AI 做含有人像的廣告：準備好讓平臺揭露「這是 AI 生成的人像」。</div>
 
 <div class="src">詐欺犯罪危害防制條例第 31 條第 1 項第 4 款、第 4 項（深度偽造定義）、第 40 條（罰鍰），全國法規資料庫（S6）</div>
 
 <!--
-★ 風險（4 分）：揭露義務在「網路廣告平臺業者」（而且是達一定規模者，第 27 條），不是直接規定廣告主；但廣告主要提供資訊給平臺。未揭露的罰鍰 20 萬到 500 萬元（第 40 條）。D3-2 已經提過 deepfake 與同意，今天補上法條。
+★ 風險（4 分）：揭露義務在「網路廣告平臺業者」（而且是達一定規模者，第 27 條），不是直接規定廣告主；但廣告主要提供資訊給平臺。未揭露的罰鍰 20 萬到 500 萬元（第 40 條）。D3-2 已經提過 deepfake 與同意，今天補上法條。條號與引文來自 S6，上課前請在全國法規資料庫再確認一次。當事人同意（肖像權、個資法）是另一層問題，本頁沒有引用來源，口頭提到即可。
 -->
 
 ---
@@ -668,7 +671,7 @@ GAN 的生成器和鑑別器的關係？
 <Mcq id="quiz1.q2" :n="2" :answer="2"
   :options="['過擬合', '梯度消失', 'mode collapse', '分布偏移']"
   :why="['過擬合是把訓練集背起來；這裡是 G 只會畫少數幾種。', '梯度消失是訓練學不動，圖通常也不會清楚。', '', '分布偏移是資料換了來源（例如換相機），不是生成器的問題。']"
-  explain="G 找到一種能騙過 D 的圖就一直畫它，多樣性崩掉，叫 mode collapse（模式崩潰）。">
+  explain="G 找到一種能騙過 D 的圖就一直畫它，多樣性崩掉，叫 mode collapse（模式崩塌）。">
 「生成的圖很清楚，但幾乎都長一樣」稱為？
 </Mcq>
 
@@ -712,7 +715,7 @@ DDPM 訓練時，網路要預測？
 
 <Mcq id="quiz3.q5" :n="5" :answer="1"
   :options="['瑕疵留下來，漏檢', '正常的結構也被重畫，過殺', '速度變快', '沒有影響']"
-  :why="['瑕疵留下來是 t 太小：雜訊不夠蓋掉瑕疵。', '', '加噪越多，去噪要走的步數越多，不會變快。', 't 是這個方法最重要的旋鈕：AUROC 隨 t 有高有低。']"
+  :why="['瑕疵留下來是 t 太小：雜訊不夠蓋掉瑕疵。', '', 't 和速度無關（DDIM 步數固定，每個 t 每片約 8.5 ms）；t 太大是準度問題。', 't 是這個方法最重要的旋鈕：AUROC 隨 t 有高有低。']"
   explain="t 太大，連正常的細紋路都被雜訊蓋掉、重畫成別的樣子，正常板也和原圖差很多，就過殺。">
 用擴散做異常偵測時，加噪步數 t 太大會？
 </Mcq>

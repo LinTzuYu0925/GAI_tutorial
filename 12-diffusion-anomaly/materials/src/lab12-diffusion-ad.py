@@ -32,7 +32,7 @@ SEED = 0
 random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 SIZE = 64
 EPOCHS_AE = 30       # 沒有 GPU：改成 3
-TRAIN_DDPM = False   # False：下載講師的檢查點（建議）；True：自己訓練（T4 約數分鐘，時間待實測）
+TRAIN_DDPM = False   # False：下載講師的檢查點（建議）；True：自己訓練（講師 T4 實測 10,000 步 439 秒）
 STEPS_DDPM = 10000   # 自己訓練時的步數；沒有 GPU：改成 200
 EVAL_N = None        # None＝全部；沒有 GPU：改成 20（每一類只取 20 張，數字不準，只為了跑得完）
 TAKT_S = 1.0         # 產線節拍時間：每片板子幾秒（虛構的假設，請換成你們產線的數字）

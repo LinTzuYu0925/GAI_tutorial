@@ -28,7 +28,7 @@
 
 ## 3. 課前準備清單
 
-- [ ] Colab T4 從頭跑完 `lab12-diffusion-ad-solution.ipynb`，記錄時間、VRAM、對照表（`research/lab-runs.md`）
-- [ ] 把 `ddpm_pcb1_64.pt` 放進 `materials/` 並推上 GitHub（學員預設下載它）
-- [ ] 替換佔位圖，填對照表
+- [x] Colab T4 從頭跑完 `lab12-diffusion-ad-solution.ipynb`，記錄時間、VRAM、對照表（`research/lab-runs.md`）
+- [ ] 把 `ddpm_pcb1_64.pt` 放進 `materials/` 並推上 GitHub（學員預設下載它）：已放進 materials/，尚未推上 GitHub
+- [x] 替換佔位圖，填對照表
 - [ ] VisA PCB1 放共用雲端硬碟

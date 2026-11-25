@@ -16,10 +16,10 @@
 ## 2. 進度
 
 - [x] 大綱、投影片、筆記本
-- [ ] 本機 CPU 煙霧測試（見 lab-runs）
-- [ ] Colab T4 實跑；換掉佔位圖、填對照表
-- [ ] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
-- [ ] slide-reviewer 審查（結果記在 `planning/reviews-d3.md`）
+- [x] 本機 CPU 煙霧測試（見 lab-runs）
+- [x] Colab T4 實跑；換掉佔位圖、填對照表
+- [x] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
+- [x] slide-reviewer 審查（2026-11-26，結果與修正記在 `planning/reviews-d3.md`）
 
 ## 3. 決定
 
@@ -43,4 +43,4 @@
 
 ## 5. 待講師注意
 
-- 第 5、7、8、10、11、12、13、14 頁佔位圖與表格要等 T4 實跑。
+- 佔位圖與表格已換成第一次 T4 實跑的圖和數字（2026-11-26）；擴散沒有贏過 AE，投影片照實寫。

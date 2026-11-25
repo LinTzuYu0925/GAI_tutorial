@@ -74,3 +74,8 @@
   - 注意：這次擴散模型在測試集**沒有贏過 AE**（AUROC 較低、過殺高很多，漏檢相同）。投影片的敘事若是「擴散修好板子比 AE 好」，要先處理或改寫。
 - 存檔：`research/lab12-t4-run1.ipynb`（含輸出的 notebook）、`research/lab12-t4-run1-results.json`、`materials/ddpm_pcb1_64.pt`（這次自己訓練的檢查點，4.0 MB）。
 - 圖片（`public/`）：`lab12-run-t_three.png`、`lab12-run-t_sweep.png`、`lab12-run-repair_examples.png`。
+
+### 投影片用的裁切圖（2026-11-26，都來自第一次實跑的圖，沒有重跑）
+
+- `public/lab12-run-t150_vs_ae.png`：`t_three.png` 的第 1、3、5 欄（原圖／遮罩、t＝150、AE；驗證集同一片）。
+- `public/lab12-run-operator_col2.png`：`repair_examples.png` 第 2 欄的原圖、修好的版本、擴散誤差圖（測試集，針腳彎曲）。

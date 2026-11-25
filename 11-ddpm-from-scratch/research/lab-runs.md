@@ -109,3 +109,9 @@
 - G 最近鄰（16 張生成圖 → 60,000 張訓練圖）：中位數 6.55、最小 4.39；測試圖參考值中位數 5.89。
 - 存檔：`research/lab11-t4-run2.ipynb`（含輸出的 notebook）、`research/lab11-t4-run2-results.json`、`materials/ddpm_fmnist.pt`（覆蓋第一次，4.0 MB）。
 - 圖片（`public/`，覆蓋第一次）：`lab11-run-try_pretrained.png`、`lab11-run-forward_strip.png`、`lab11-run-schedule.png`、`lab11-run-time_embedding.png`、`lab11-run-loss.png`、`lab11-run-samples.png`、`lab11-run-class_counts.png`（新）、`lab11-run-reverse_strip.png`、`lab11-run-ddim_steps.png`、`lab11-run-nearest.png`。
+
+### 投影片用的裁切圖（2026-11-26，都來自第二次實跑的圖，沒有重跑）
+
+- `public/lab11-run-reverse_strip_rows12.png`：`reverse_strip.png` 的前兩列（seed 0）。
+- `public/lab11-run-ddim_steps_250_50_10.png`：`ddim_steps.png` 的 250、50、10 步三列（同一組起點雜訊）。
+- `nearest.png` 的「generated」標籤和第一個 d 重疊：畫圖程式之後改成把列名寫在左側（只改標籤，數字不變，沒有重跑）。

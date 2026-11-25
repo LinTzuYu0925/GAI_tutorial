@@ -29,6 +29,6 @@
 
 ## 3. 課前準備清單
 
-- [ ] Colab T4 從頭跑完 `lab11-ddpm-solution.ipynb`，記錄時間、VRAM、對照表（`research/lab-runs.md`）
-- [ ] 把 `ddpm_fmnist.pt` 放進 `materials/` 並推上 GitHub（USE_CKPT 的備案）
-- [ ] 替換佔位圖，填 Lab 7／7 與三難表格
+- [x] Colab T4 從頭跑完 `lab11-ddpm-solution.ipynb`，記錄時間、VRAM、對照表（`research/lab-runs.md`）
+- [ ] 把 `ddpm_fmnist.pt` 放進 `materials/` 並推上 GitHub（USE_CKPT 的備案）：已放進 materials/，尚未推上 GitHub
+- [x] 替換佔位圖，填 Lab 7／7 與三難表格

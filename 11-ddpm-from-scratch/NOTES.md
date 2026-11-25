@@ -17,9 +17,9 @@
 
 - [x] 大綱、投影片、筆記本
 - [x] 本機 CPU 煙霧測試（見 lab-runs）
-- [ ] Colab T4 實跑；換掉佔位圖、填 Lab 7／7 表格
-- [ ] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
-- [ ] slide-reviewer 審查（結果記在 `planning/reviews-d3.md`）
+- [x] Colab T4 實跑；換掉佔位圖、填 Lab 7／7 表格
+- [x] build、PNG 檢視、`check-order.cjs`、`scan-zh.py`
+- [x] slide-reviewer 審查（2026-11-26，結果與修正記在 `planning/reviews-d3.md`）
 
 ## 3. 決定
 
@@ -51,5 +51,5 @@
 
 ## 5. 待講師注意
 
-- 第 5、6、8、12、15、16、23、27 頁佔位圖與 Lab 7／7、三難表格要等 T4 實跑。
+- 佔位圖與 Lab 7／7、三難表格已換成第二次 T4 實跑的圖和數字（2026-11-26）。
 - 第 4 頁：D3-1 實跑沒有崩塌，講法見備註。

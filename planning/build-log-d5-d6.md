@@ -23,3 +23,5 @@ Local CPU env for smoke tests: `C:\Users\lspss\miniconda3\envs\ml-helper\python.
 
 - 2026-11-26 · setup · branch day5-done; D5/D6 plans marked auto-approved; decks 17–20 scaffolded; visual survey written · next: 17 data + lab
 - 2026-11-26 · 17 · built, lab17 CPU run, slide-reviewer 20 FAIL (1b/6M) → fixed (CRLF from python edit, practice answer leak on attention diagram, heads gloss, heatmap fonts, seq2seq chain, layout) · next: commit 17, 18 slides
+- 2026-11-26 · 18 · review 12 FAIL (0b/4M) fixed; no-mask experiment + spec table + hallucination probe added and run · 19 · built, CPU smoke (0.5B), review 17 FAIL (1b/5M) fixed · next: commit 18, 19; deck 20 slides
+- 2026-11-26 · 20 · built, CPU smoke (fp32 LoRA, 6 steps, 8 eval), review 10 FAIL (1b/3M) fixed · Day 5 complete → push day5-done; next: day6-done branch, deck 21

@@ -1,0 +1,40 @@
+{"id": "T001", "category": "退換貨", "urgency": "中", "zh": "您好，我上週在官網買的藍牙耳機左耳沒有聲音，已經重新配對三次還是一樣，請問可以換貨嗎？", "en": "Hi, the left earbud of the Bluetooth earphones I bought on your website last week has no sound. I have re-paired them three times and it is still the same. Can I get a replacement?"}
+{"id": "T002", "category": "物流", "urgency": "中", "zh": "訂單編號 A20391 顯示已出貨五天，但物流查詢一直停在轉運中心，請幫我確認包裹在哪裡。", "en": "Order A20391 shows it shipped five days ago, but tracking has been stuck at the transfer center. Please check where my package is."}
+{"id": "T003", "category": "帳單", "urgency": "高", "zh": "我的信用卡同一筆訂單被扣款兩次，金額都是 2,490 元，請盡快退還多扣的那一筆。", "en": "My credit card was charged twice for the same order, NT$2,490 each time. Please refund the duplicate charge as soon as possible."}
+{"id": "T004", "category": "維修", "urgency": "中", "zh": "智慧手錶充電時背面會發燙，充不到一半就自動斷電，保固還在，要怎麼送修？", "en": "The back of my smartwatch gets hot while charging and it cuts off before reaching half. It is still under warranty. How do I send it in for repair?"}
+{"id": "T005", "category": "產品諮詢", "urgency": "低", "zh": "請問你們的行動電源可以帶上飛機嗎？容量是 20000mAh，想確認一下規定。", "en": "Can I bring your power bank on a plane? It is 20000mAh and I want to check the rules."}
+{"id": "T006", "category": "帳號", "urgency": "中", "zh": "我忘記會員密碼，重設密碼的信一直沒收到，垃圾郵件匣也找過了。", "en": "I forgot my member password and never received the reset email. I have checked the spam folder too."}
+{"id": "T007", "category": "退換貨", "urgency": "低", "zh": "電熱水壺顏色和網頁照片差很多，還沒拆封，想要退貨，請問運費誰付？", "en": "The electric kettle's color is very different from the photo on the website. It is unopened and I want to return it. Who pays for shipping?"}
+{"id": "T008", "category": "維修", "urgency": "高", "zh": "掃地機器人今天早上開始一直原地打轉，還發出焦味，我已經先拔掉電源了，這樣安全嗎？", "en": "Since this morning my robot vacuum keeps spinning in place and smells like something burning. I have unplugged it already. Is that safe?"}
+{"id": "T009", "category": "物流", "urgency": "低", "zh": "可以把收件地址從台北改到新竹嗎？訂單還沒出貨。", "en": "Can I change the delivery address from Taipei to Hsinchu? The order has not shipped yet."}
+{"id": "T010", "category": "產品諮詢", "urgency": "低", "zh": "這款筆電散熱座適合 16 吋的筆電嗎？風扇聲音大不大？", "en": "Does this laptop cooling pad fit a 16-inch laptop? Is the fan loud?"}
+{"id": "T011", "category": "帳單", "urgency": "中", "zh": "我用分期付款買了耳機，但帳單上顯示的是一次付清，是不是設定錯了？", "en": "I bought the earphones in installments, but my statement shows a one-time payment. Was it set up wrong?"}
+{"id": "T012", "category": "退換貨", "urgency": "中", "zh": "收到的行動電源外殼有裂痕，盒子看起來也被壓過，可以直接換一個新的嗎？", "en": "The power bank I received has a cracked case and the box looks crushed. Can I just get a new one?"}
+{"id": "T013", "category": "帳號", "urgency": "高", "zh": "我的會員帳號好像被盜用了，收到一封不是我下的訂單確認信，請馬上幫我凍結帳號。", "en": "My member account seems to have been hacked. I got an order confirmation for an order I did not place. Please freeze my account immediately."}
+{"id": "T014", "category": "維修", "urgency": "中", "zh": "耳機的充電盒蓋子關不緊，耳機放進去不會充電，請問維修要多久？", "en": "The lid of the earphone charging case does not close properly, so the earbuds do not charge. How long does a repair take?"}
+{"id": "T015", "category": "產品諮詢", "urgency": "低", "zh": "智慧手錶可以在游泳時戴嗎？防水等級是多少？", "en": "Can I wear the smartwatch while swimming? What is its water resistance rating?"}
+{"id": "T016", "category": "物流", "urgency": "中", "zh": "物流顯示已送達，可是我家管理室說沒有收到任何包裹。", "en": "Tracking says it was delivered, but my building's front desk says no package arrived."}
+{"id": "T017", "category": "帳單", "urgency": "低", "zh": "請問可以開公司抬頭的電子發票嗎？統一編號要填在哪裡？", "en": "Can I get an e-invoice with my company name? Where do I enter the tax ID number?"}
+{"id": "T018", "category": "退換貨", "urgency": "中", "zh": "不是不喜歡這支手錶，是錶帶太短戴不上，可以只換錶帶嗎？", "en": "It is not that I dislike this watch; the strap is too short to wear. Can I exchange just the strap?"}
+{"id": "T019", "category": "維修", "urgency": "低", "zh": "掃地機器人的邊刷斷了一根，請問有賣替換零件嗎？", "en": "One side brush of my robot vacuum broke. Do you sell replacement parts?"}
+{"id": "T020", "category": "帳號", "urgency": "低", "zh": "我想把會員帳號綁定的手機號碼換成新的號碼，要怎麼操作？", "en": "I want to change the phone number linked to my member account to a new number. How do I do that?"}
+{"id": "T021", "category": "產品諮詢", "urgency": "低", "zh": "電熱水壺有沒有保溫功能？可以設定 80 度嗎？", "en": "Does the electric kettle have a keep-warm function? Can I set it to 80 degrees?"}
+{"id": "T022", "category": "物流", "urgency": "高", "zh": "這是要送給客戶的禮物，明天下午前一定要到，現在還沒出貨，可以加急嗎？", "en": "This is a gift for a client and must arrive before tomorrow afternoon. It has not shipped yet. Can you expedite it?"}
+{"id": "T023", "category": "帳單", "urgency": "中", "zh": "退貨已經寄回兩週了，退款還沒有入帳，請幫我查一下進度。", "en": "I sent the return back two weeks ago and the refund has not arrived. Please check the status."}
+{"id": "T024", "category": "維修", "urgency": "中", "zh": "筆電散熱座插上 USB 後風扇不會轉，換了兩台電腦都一樣。", "en": "The laptop cooling pad's fan does not spin when plugged into USB. Same on two different computers."}
+{"id": "T025", "category": "退換貨", "urgency": "低", "zh": "我買錯顏色了，想把黑色的耳機換成白色的，還沒有使用過。", "en": "I bought the wrong color and want to exchange the black earphones for white ones. I have not used them."}
+{"id": "T026", "category": "產品諮詢", "urgency": "低", "zh": "行動電源可以同時幫手機和平板充電嗎？輸出功率是多少？", "en": "Can the power bank charge a phone and a tablet at the same time? What is the output power?"}
+{"id": "T027", "category": "帳號", "urgency": "中", "zh": "登入時一直顯示驗證碼錯誤，可是我是照簡訊輸入的。", "en": "When I log in it keeps saying the verification code is wrong, but I typed it exactly as in the text message."}
+{"id": "T028", "category": "維修", "urgency": "高", "zh": "行動電源鼓起來了，外殼已經變形，放在家裡會不會有危險？要怎麼處理？", "en": "The power bank has swollen and the case is deformed. Is it dangerous to keep at home? What should I do?"}
+{"id": "T029", "category": "物流", "urgency": "低", "zh": "請問可以超商取貨嗎？我白天不在家。", "en": "Can I pick it up at a convenience store? I am not home during the day."}
+{"id": "T030", "category": "帳單", "urgency": "中", "zh": "結帳時折價券沒有折抵，實際付款比活動價多了 300 元。", "en": "The coupon was not applied at checkout, so I paid NT$300 more than the promotional price."}
+{"id": "T031", "category": "退換貨", "urgency": "中", "zh": "掃地機器人用了三天就無法開機，七天鑑賞期內，想直接退貨退款。", "en": "The robot vacuum stopped turning on after three days. It is within the seven-day return period and I want a full refund."}
+{"id": "T032", "category": "產品諮詢", "urgency": "低", "zh": "智慧手錶支援 iPhone 嗎？可以收 LINE 通知嗎？", "en": "Does the smartwatch support iPhone? Can it receive LINE notifications?"}
+{"id": "T033", "category": "維修", "urgency": "中", "zh": "電熱水壺水煮開了不會自動跳停，一直滾，我不敢再用了。", "en": "The electric kettle does not switch off after the water boils; it keeps boiling. I am afraid to use it again."}
+{"id": "T034", "category": "帳號", "urgency": "低", "zh": "請問會員點數什麼時候會到期？在哪裡可以查？", "en": "When do my member points expire? Where can I check them?"}
+{"id": "T035", "category": "物流", "urgency": "中", "zh": "收到的箱子裡只有充電線，耳機本體沒有在裡面。", "en": "The box I received only had the charging cable; the earphones themselves were not inside."}
+{"id": "T036", "category": "帳單", "urgency": "高", "zh": "我取消訂單了，但是信用卡還是被扣款，而且金額比訂單多，請立刻處理。", "en": "I canceled the order but my credit card was still charged, and for more than the order total. Please handle this immediately."}
+{"id": "T037", "category": "退換貨", "urgency": "低", "zh": "先退款再寄回可以嗎？還是一定要先寄回再退款？", "en": "Can you refund first and I send it back after? Or must I send it back first and then get the refund?"}
+{"id": "T038", "category": "維修", "urgency": "低", "zh": "手錶螢幕有一條細細的刮痕，這種在保固範圍內嗎？", "en": "The watch screen has a thin scratch. Is that covered by the warranty?"}
+{"id": "T039", "category": "產品諮詢", "urgency": "低", "zh": "掃地機器人可以用手機 App 設定清掃時間嗎？", "en": "Can I schedule cleaning times for the robot vacuum with the phone app?"}
+{"id": "T040", "category": "帳號", "urgency": "中", "zh": "我同時有兩個會員帳號，想把點數合併到同一個帳號。", "en": "I have two member accounts and want to merge the points into one account."}

@@ -398,7 +398,8 @@ for j in range(8):
     ax[0, j].imshow(samples[j, 0], cmap="gray", vmin=-1, vmax=1); ax[0, j].set_title(f"d={d_gen[j]:.1f}")
     ax[1, j].imshow(train_ds[int(i_gen[j])][0][0], cmap="gray", vmin=-1, vmax=1)
     ax[0, j].axis("off"); ax[1, j].axis("off")
-ax[0, 0].set_title(f"generated  d={d_gen[0]:.1f}", loc="left"); ax[1, 0].set_title("nearest training image", loc="left")
+for r, name in enumerate(["generated", "nearest train"]):
+    ax[r, 0].text(-0.08, 0.5, name, transform=ax[r, 0].transAxes, rotation=90, ha="right", va="center")
 plt.tight_layout(); plt.savefig("nearest.png", dpi=120); plt.show()
 
 # %% [markdown]

@@ -126,14 +126,15 @@ class: cover
 <div class="grid grid-cols-[1.4fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">google/ddpm-cifar10-32：16 張 32 × 32 小照片（飛機、汽車、鳥、貓……），1000 步<small>講師 T4 實跑後替換（lab11 <code>try_pretrained.png</code>）</small></div>
+<img class="photo" src="/lab11-run-try_pretrained.png" alt="google/ddpm-cifar10-32 生成的 16 張 32×32 小照片：青蛙、馬、汽車、卡車、船、狗、鹿等，沒有兩張一樣" style="width:100%;max-height:230px;object-fit:contain">
+<div class="shot-cap">16 張都不一樣：青蛙、馬、汽車、卡車、船、狗……（講師 T4 實跑，seed 0）</div>
 
 </div>
 <div style="font-size:18px">
 
 - 擴散模型（diffusion model）：DDPM 論文作者在 CIFAR-10 上訓練的
 - 一行就能用：<code>DDPMPipeline.from_pretrained(...)</code>
-- 16 張 × 1000 步：講師 T4 實跑後填入 秒
+- 16 張 × 1000 步：T4 上 **57.2 秒**
 
 </div>
 </div>
@@ -152,7 +153,8 @@ class: cover
 
 # 先把圖弄髒：一步加一點雜訊，加 1000 步
 
-<div class="placeholder mt-2" style="height:190px;padding:16px 24px">一隻短靴：t＝0、50、100、250、500、750、999 的 x_t，每格標 √ᾱ_t<small>講師 T4 實跑後替換（lab11 <code>forward_strip.png</code>）</small></div>
+<img class="photo mt-1" src="/lab11-run-forward_strip.png" alt="一隻短靴在 t＝0、50、100、250、500、750、999 加噪後的樣子；t＝500 起已經看不出短靴" style="width:100%;max-height:175px;object-fit:contain">
+<div class="shot-cap">同一隻短靴，t＝0 → 999（lab11 B 部分，講師 T4 實跑）</div>
 
 <div class="grid grid-cols-3 gap-4 mt-3" style="font-size:17px">
 <div class="node"><strong>x₀</strong><small>原圖（t＝0）</small></div>
@@ -211,7 +213,8 @@ x_t = sqrt_ab[t] * x0 + sqrt_1mab[t] * eps     # 原圖乘一個數，加上雜�
 <div class="grid grid-cols-[1.3fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">√ᾱ_t（原圖）往下、√(1−ᾱ_t)（雜訊）往上，兩條線在 t≈259 交叉<small>講師 T4 實跑後替換（lab11 <code>schedule.png</code>）</small></div>
+<img class="photo" src="/lab11-run-schedule.png" alt="線性排程：藍線 √ᾱ_t 從 1 降到 0，橘線 √(1−ᾱ_t) 從 0 升到 1，兩線在 t 約 259 交叉；綠色虛線 β_t 線性上升" style="width:100%;max-height:250px;object-fit:contain">
+<div class="shot-cap">藍：原圖佔多少；橘：雜訊佔多少；綠虛線：β_t（lab11 B 部分）</div>
 
 </div>
 <div style="font-size:18px">
@@ -340,7 +343,8 @@ opt.zero_grad(); loss.backward(); opt.step()
 <div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:210px;padding:16px 24px">每一直行是一個 t（0～999）的 64 維 sin／cos 向量：上面幾維變化快、下面幾維變化慢<small>講師 T4 實跑後替換（lab11 <code>time_embedding.png</code>）</small></div>
+<img class="photo" src="/lab11-run-time_embedding.png" alt="時間嵌入熱圖：橫軸 t 從 0 到 999，縱軸 64 個維度；每一半的上方幾維紅藍快速交替，下方幾維幾乎不變" style="width:100%;max-height:190px;object-fit:contain">
+<div class="shot-cap">每一直行＝一個 t 的 64 個數：上方幾維變得快、下方幾維變得慢（lab11 C 部分）</div>
 
 ```python
 h = self.conv1(x)
@@ -420,9 +424,6 @@ hostOnly: true
 
 # 取樣：從純雜訊出發，走 1000 步回來
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2">
-<div>
-
 ```python
 x = torch.randn(n, 1, 32, 32)              # x_T：純雜訊
 for t in reversed(range(1000)):            # 999, 998, …, 0
@@ -431,17 +432,21 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
     x = mean + betas[t].sqrt()*torch.randn_like(x) if t > 0 else mean
 ```
 
-</div>
-<div style="font-size:18px">
+<div class="grid grid-cols-[1fr_1.15fr] gap-5 mt-2 items-center">
+<div style="font-size:17px">
 
 - 第 3 行：**扣掉一點**猜到的雜訊（係數很小），再放大一點點
 - 第 4 行：除了最後一步，**再加回一點新的雜訊**
 - 每張圖都從不同的雜訊出發 → 畫出不同的衣服
 
 </div>
-</div>
+<div>
 
-<div class="placeholder mt-2" style="height:120px;padding:12px 24px">同一張圖在 t＝999、750、500、250、100、0 的樣子<small>講師 T4 實跑後替換（lab11 <code>reverse_strip.png</code>）</small></div>
+<img class="photo" src="/lab11-run-reverse_strip_rows12.png" alt="兩張樣本從 t＝999 的純雜訊，經過 750、500、250、100，到 t＝0 變成一雙球鞋和一隻短靴" style="width:100%;max-height:185px;object-fit:contain">
+<div class="shot-cap">兩張樣本：t＝999 → 0（lab11 E 部分，講師 T4 實跑）</div>
+
+</div>
+</div>
 
 <div class="takeaway mt-2">1000 步＝網路跑 1000 次：這就是擴散模型慢的原因。</div>
 
@@ -466,7 +471,8 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
 </div>
 <div>
 
-<div class="placeholder" style="height:200px;padding:16px 24px">擴散模型的損失：一條線，一路往下、慢慢變平<small>講師 T4 實跑後替換（lab11 <code>loss.png</code>）</small></div>
+<img class="photo" src="/lab11-run-loss.png" alt="DDPM 訓練損失：從 0.12 一路下降，最後在 0.033 附近變平，沒有劇烈震盪" style="width:100%;max-height:200px;object-fit:contain">
+<div class="shot-cap">今天的 DDPM：每個 epoch 平均 0.120 → 0.033，一路往下（講師 T4 實跑）</div>
 
 </div>
 </div>
@@ -497,17 +503,23 @@ for t in sched.timesteps:                     # 980, 960, …, 0
     x = sched.step(model(x, t), t, x).prev_sample
 ```
 
-<div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
-<div class="node"><strong>DDPMScheduler</strong><small>就是第 15 頁那個迴圈：1000 步、每步加回雜訊</small></div>
-<div class="node node--primary"><strong>DDIMScheduler</strong><small>不加回雜訊，可以一次跳好幾步；<strong>網路不用重新訓練</strong></small></div>
+<div class="grid grid-cols-[1fr_1.5fr] gap-5 mt-2 items-center" style="font-size:16px">
+<div class="flex flex-col gap-2">
+<div class="node"><strong>DDPMScheduler</strong><small>第 15 頁的迴圈：1000 步、每步加回雜訊</small></div>
+<div class="node node--primary"><strong>DDIMScheduler</strong><small>不加回雜訊，一次跳好幾步；<strong>網路不用重新訓練</strong></small></div>
+</div>
+<div>
+<img class="photo" src="/lab11-run-ddim_steps_250_50_10.png" alt="同一組起點雜訊用 DDIM 250、50、10 步取樣：每一欄都是同一件衣物，10 步略模糊；64 張的秒數 1.66、0.33、0.07" style="width:100%;max-height:135px;object-fit:contain">
+<div class="shot-cap">同一組起點雜訊：250／50／10 步畫出同一件（講師 T4）</div>
+</div>
 </div>
 
-<div class="takeaway mt-3">排程器（scheduler）只管「怎麼走回來」；學到的網路不變，所以可以直接換。但預設值要檢查。</div>
+<div class="takeaway mt-2">排程器（scheduler）只管怎麼走回來：網路不變、直接換，但預設值要檢查。</div>
 
 <div class="src">Song et al., DDIM, ICLR 2021 §4.1、§5（S2）；diffusers <code>DDIMScheduler</code>（S6）</div>
 
 <!--
-○ 選修（3 分）：scheduler（排程器）。DDIM 論文寫：同一個訓練好的模型，不需要重新訓練（S2 §4.1）。實際快幾倍、圖差多少：Lab 的 F 部分自己量。D3-4 會用 DDIM 縮短檢測時間。clip_sample＝False 的原因在 Lab 6／7（講師第一次實跑踩到的坑）。
+○ 選修（3 分）：scheduler（排程器）。DDIM 論文寫：同一個訓練好的模型，不需要重新訓練（S2 §4.1）。右圖是講師 T4 第二次實跑（lab11 F 部分）：每一欄同一個起點雜訊，五種步數畫出同一件衣服，10 步略模糊、較淡。學員自己的數字在 Lab 7／7 的表。D3-4 會用 DDIM 縮短檢測時間。clip_sample＝False 的原因在 Lab 6／7（講師第一次實跑踩到的坑）。
 -->
 
 ---
@@ -551,7 +563,10 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 </div>
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">目標：64 張樣本、兩兩距離、步數 vs 秒數表、最近鄰對照<small>講師 T4 實跑後替換（含 VRAM 峰值與訓練時間）</small></div>
+<img class="photo" src="/lab11-run-samples.png" alt="講師實跑的 64 張 DDPM 樣本：球鞋、涼鞋、褲子、上衣、洋裝、包包等" style="width:100%;max-height:170px;object-fit:contain">
+<div class="shot-cap">做完的樣子：64 張樣本（講師 T4 實跑）</div>
+
+<div class="muted mt-2" style="font-size:16px">講師 T4：訓練 20 epochs 470 秒（約 8 分鐘）、VRAM 峰值 1.07 GB；整本約 11 分鐘</div>
 
 </div>
 </div>
@@ -559,7 +574,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div class="takeaway mt-3">交給行銷部：一張「DCGAN vs 擴散」的多樣性與速度對照表，不是一句「擴散比較好」。</div>
 
 <!--
-★ Lab 開始（3 分）：先執行第 1 格和 A 部分（下載 DDPM 權重）。訓練時間待 T4 實測。沒有 GPU → EPOCHS＝1、TRAIN_SUBSET＝5000；斷線 → USE_CKPT＝True 下載講師的檢查點。
+★ Lab 開始（3 分）：先執行第 1 格和 A 部分（下載 DDPM 權重）。講師 T4 實跑：訓練 470 秒，整本約 11 分鐘（research/lab-runs.md 第二次實跑）。沒有 GPU → EPOCHS＝1、TRAIN_SUBSET＝5000；斷線 → USE_CKPT＝True 下載講師的檢查點。
 -->
 
 ---
@@ -616,7 +631,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 </PromptBox>
 
 <div class="steps mt-2" style="font-size:17px">
-  <div><span class="num">1</span>訓練時間待 T4 實測；等待時看每個 epoch 印出的 loss</div>
+  <div><span class="num">1</span>T4 訓練約 8 分鐘（每個 epoch 約 23 秒）；等待時看每個 epoch 印出的 loss</div>
   <div><span class="num">2</span>沒有 Agent 額度：照「訓練」和「取樣」兩頁的程式填；卡住開 <code>-solution.ipynb</code></div>
   <div><span class="num">3</span>預期輸出：<code>out＝預測的雜訊 (8, 1, 32, 32)</code>、<code>參數 1,981,921</code></div>
 </div>
@@ -633,13 +648,17 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 # Lab 5／7：看樣本、對照預測
 
-<div class="grid grid-cols-[1.3fr_1fr] gap-6 mt-2">
+<img class="photo" src="/lab11-run-samples.png" alt="講師實跑的 64 張 DDPM 樣本：球鞋、涼鞋、褲子、上衣、洋裝、包包等，沒有兩張一樣，但很多張比較細、比較暗" style="width:100%;max-height:125px;object-fit:contain">
+<div class="shot-cap">講師的 DDPM：64 張，1000 步，seed 0（T4 實跑）</div>
+
+<div class="grid grid-cols-[1fr_1.1fr] gap-5 mt-1">
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">我們的 DDPM：64 張樣本（1000 步，seed 0）<small>講師 T4 實跑後替換（lab11 <code>samples.png</code>）</small></div>
+<img class="photo" src="/lab11-run-class_counts.png" alt="分類器數出的各類張數：DDPM 10 類都有，但 Pullover、Ankle boot 各 1 張、Coat 2 張；Sneaker、Trouser、Dress、Sandal 偏多" style="width:100%;max-height:115px;object-fit:contain">
+<div class="shot-cap">藍：64 張真圖；橘：64 張 DDPM（小分類器判斷）</div>
 
 </div>
-<div style="font-size:18px">
+<div style="font-size:17px">
 
 1. 64 張裡，數得出幾種衣物？有沒有兩張幾乎一樣？
 2. 和 D3-1 的 DCGAN 網格比：哪一個比較清楚？
@@ -651,7 +670,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div class="takeaway mt-3">多樣性用「網格＋數字」一起說，和 D3-1 判斷崩塌的方法一樣。</div>
 
 <!--
-★ 對照（6 分）：學員的數字會因為 GPU 和隨機性略有不同。第 2 題常見答案：擴散的圖比較「乾淨」但有時邊緣有雜點，小模型、短訓練的正常現象。
+★ 對照（6 分）：講師實跑：兩兩距離 17.42（真圖 22.90、DCGAN 22.08），分類器數出 10 類都有，但 Pullover、Ankle boot 各只有 1 張、Coat 2 張。距離偏低主要因為圖比較細、比較暗（衣物佔畫面 22.5%，真圖 42.7%）。學員的數字會因為 GPU 和隨機性略有不同。第 2 題常見答案：擴散的圖比較「乾淨」但有時邊緣有雜點，小模型、短訓練的正常現象。
 -->
 
 ---
@@ -699,18 +718,18 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <thead><tr><th style="width:30%">做法</th><th>兩兩距離（真圖 22.90）</th><th>64 張的秒數（T4）</th><th>網路跑幾次</th></tr></thead>
 <tbody>
 <tr><td>D3-1 DCGAN（20 epochs）</td><td>22.08</td><td>沒有量（一次前向）</td><td>1</td></tr>
-<tr><td>DDPM 1000 步</td><td>實跑後填入</td><td>實跑後填入</td><td>1000</td></tr>
-<tr><td>DDIM 50 步</td><td>實跑後填入</td><td>實跑後填入</td><td>50</td></tr>
-<tr><td>DDIM 10 步</td><td>實跑後填入</td><td>實跑後填入</td><td>10</td></tr>
+<tr><td>DDPM 1000 步</td><td>17.42（10 類都有）</td><td>6.70</td><td>1000</td></tr>
+<tr><td>DDIM 50 步</td><td>18.68</td><td>0.33</td><td>50</td></tr>
+<tr><td>DDIM 10 步</td><td>16.27（略模糊）</td><td>0.07</td><td>10</td></tr>
 </tbody>
 </table>
 
-<div class="muted mt-2" style="font-size:16px">兩兩距離只量「彼此差多少」，不量「像不像衣服」：一片亂雜訊的距離也很大。所以一定要配網格看。</div>
+<div class="muted mt-1" style="font-size:16px">講師 T4 實跑。距離比 DCGAN 低，不是因為只會畫一種（10 類都有），而是樣本比較細、比較暗（衣物佔畫面 22.5%，真圖 42.7%）。兩兩距離只量「彼此差多少」，所以一定要配網格和類別數一起看。</div>
 
 <div class="takeaway mt-2">建議要附理由：「型錄縮圖改用 ＿＿：多樣性 ＿＿，每 64 張 ＿＿ 秒，用 DDIM ＿＿ 步時圖 ＿＿」。</div>
 
 <!--
-★ Ship（4 分）：DCGAN 的數字來自 D3-1 的講師 T4 實跑（lab09，research/lab-runs.md）。提醒：兩兩距離太大也可能是壞事（樣本是雜訊）。
+★ Ship（4 分）：DCGAN 的數字來自 D3-1 的講師 T4 實跑（lab09），其餘是 lab11 第二次 T4 實跑（research/lab-runs.md）。誠實面對：KPI「多樣性高於 DCGAN」用兩兩距離看沒有達成；類別數說 10 類都有但比例不均。這張表要原樣交給行銷部，再由他們決定（D4-4 的備忘錄會再用）。提醒：兩兩距離太大也可能是壞事（樣本是雜訊）。
 -->
 
 ---
@@ -719,7 +738,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 # 生成三難第二列：擴散模型
 
-<div class="grid grid-cols-[1fr_1.2fr] gap-6 mt-1 items-center">
+<div class="grid grid-cols-[0.75fr_1.45fr] gap-6 mt-1 items-center">
 <div>
 
 <svg viewBox="0 0 320 260" style="width:100%;max-height:260px" aria-label="三角形，三個角是品質、多樣性、速度；GAN 在品質和速度那一邊，擴散在品質和多樣性那一邊">
@@ -739,20 +758,20 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 | | GAN（D3-1） | 擴散（今天） |
 |---|---|---|
 | 品質 | ✓ | ✓ |
-| 多樣性 | 沒保證（要量） | ✓ 你的距離：＿＿ |
-| 速度 | ✓ 1 次前向 | ✗ 1000 次；你的秒數：＿＿ |
+| 多樣性 | 沒保證：22.08 | △ 17.42，但 10 類都有；你的：＿＿ |
+| 速度 | ✓ 1 次前向 | ✗ 1000 次 6.7 秒／64 張；你的：＿＿ |
 
 <div class="muted mt-2" style="font-size:16px">DDIM 用較少步數換速度；D4-2 的潛在擴散再把圖縮小來省時間。</div>
 
 </div>
 </div>
 
-<div class="takeaway mt-2">擴散用「慢」換來「多樣而且好訓練」：這一列和 D3-1 那一列，就是學習評量「Diffusion vs GAN」的證據。</div>
+<div class="takeaway mt-2">擴散用「慢」換來「好訓練、不會崩塌」；多樣性贏不贏，要用自己的數字說。這兩列就是學習評量「Diffusion vs GAN」的證據。</div>
 
 <div class="src">Xiao et al., 2022：GAN 快但 mode coverage 差、擴散要數千次網路運算（S3）</div>
 
 <!--
-★ 三難（3 分）：請學員把自己的數字填進三難表格第二列（Lab 7／7 的表）。這張表第四天變成學習評量的備忘錄。
+★ 三難（3 分）：請學員把自己的數字填進三難表格第二列（Lab 7／7 的表）。表裡的 17.42、6.7 秒是講師 T4 實跑。文獻說擴散的 mode coverage 比 GAN 好（S3），我們 8 分鐘的小模型用兩兩距離還看不出來，但 10 類都畫得出來：這個落差要說清楚，不要只背文獻的結論。這張表第四天變成學習評量的備忘錄。
 -->
 
 ---
@@ -764,7 +783,18 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div class="grid grid-cols-[1.3fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:240px;padding:16px 24px">上排：8 張生成圖；下排：每張在 60,000 張訓練圖裡最像的一張（標距離）<small>講師 T4 實跑後替換（lab11 <code>nearest.png</code>）</small></div>
+<img class="photo" src="/lab11-run-nearest.png" alt="上排 8 張生成圖，下排是各自在 60,000 張訓練圖裡最像的一張，距離 5.7 到 9.0；形狀相近但細節不同" style="width:100%;max-height:200px;object-fit:contain">
+<div class="shot-cap">上：生成圖；下：最像的訓練圖（d＝距離）</div>
+
+<table class="mt-1" style="font-size:16px">
+<thead><tr><th>最近鄰距離（講師 T4）</th><th>中位數</th><th>最小</th></tr></thead>
+<tbody>
+<tr><td>16 張生成圖 → 訓練集</td><td>6.55</td><td>4.39</td></tr>
+<tr><td>參考：測試圖 → 訓練集</td><td>5.89</td><td>—</td></tr>
+</tbody>
+</table>
+
+<div class="muted mt-1" style="font-size:16px">6.55 比參考值 5.89 還大：沒有背下來的跡象（這次）。</div>
 
 </div>
 <div style="font-size:18px">
@@ -782,7 +812,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div class="src">D2-3 第 24 頁（背下訓練資料）；D4-3 的 LoRA 會再用同一個方法</div>
 
 <!--
-★ 風險（4 分）：nearest neighbour（最近鄰）。我們的小模型、Fashion-MNIST 背下來的機會不大，但大模型會（D2-3 已提過）。著作權的細節 D6 再談；今天只要會做檢查。
+★ 風險（4 分）：nearest neighbour（最近鄰）。講師實跑：生成圖的最近鄰距離中位數 6.55，比沒參加訓練的測試圖（5.89）還大 → 沒有背下來的跡象。我們的小模型、Fashion-MNIST 背下來的機會不大，但大模型會（D2-3 已提過）。左上角「generated」和第一個 d 標籤重疊，是 lab 畫圖的小問題，不影響判讀。著作權的細節 D6 再談；今天只要會做檢查。
 -->
 
 ---

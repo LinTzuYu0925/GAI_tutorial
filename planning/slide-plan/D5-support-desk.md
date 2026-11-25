@@ -1,6 +1,6 @@
 # Day 5 slide plan · 「客服中心」
 
-> **Status:** draft, awaiting instructor approval (written 2026-11-23, phase 3 of the /goal).
+> **Status:** auto-approved 2026-11-26 by the instructor (build of decks 17–24); written 2026-11-23, phase 3 of the earlier /goal.
 > **Source:** [course_roadmap.md](../course_roadmap.md) §7 Day 5, §9 L5-1…L5-4, §11, §13 (hand-off to the Agent module). Compact slide tables as in [D2-factory-qa.md](D2-factory-qa.md).
 > **Decks:** D5-1 `17-tokens-attention-bridge` · D5-2 `18-mini-gpt` · D5-3 `19-api-vs-self-host` · D5-4 `20-qlora-sft`.
 > **Scope boundary:** tool calling, MCP, RAG, streaming, schema-enforced output and CoT/ToT are named only and deferred to the Agent module (CLAUDE.md).

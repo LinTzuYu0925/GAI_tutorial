@@ -1,6 +1,6 @@
 # Day 4 slide plan · 「行銷影像工作室」
 
-> **Status:** draft, awaiting instructor approval (written 2026-11-23, phase 3 of the /goal).
+> **Status:** auto-approved 2026-11-25 by the instructor's /goal (build-d4 session); written 2026-11-23, phase 3 of the earlier /goal.
 > **Source:** [course_roadmap.md](../course_roadmap.md) §7 Day 4, §9 L4-1…L4-4, §11, §12 (學習評量). Compact slide tables as in [D2-factory-qa.md](D2-factory-qa.md).
 > **Decks:** D4-1 `13-conditional-diffusion-cfg` · D4-2 `14-stable-diffusion-studio` · D4-3 `15-lora-brand` · D4-4 `16-bakeoff-memo`.
 

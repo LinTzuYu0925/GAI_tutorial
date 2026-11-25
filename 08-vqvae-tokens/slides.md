@@ -705,21 +705,79 @@ hostOnly: true
 
 <div class="eyebrow">第二天 · iPAS 小考</div>
 
-# 選擇題（6 題）
+# 第二天小考 1／3（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="2"
+  :options="['只有不良品', '良品與不良品各半', '只有良品', '不需要資料']"
+  :why="['要學的是「正常長什麼樣」；只學不良品，正常板反而會被判成異常。', '各半就變成分類問題，需要大量瑕疵標註；而且沒見過的新瑕疵照樣抓不到。', '', 'AE 要從資料學會重建，沒有資料就沒有模型。']"
+  explain="只用良品訓練，AE 只會重建良品；瑕疵重建不好、誤差變大，就報警。">
+用 AE（自編碼器）做異常偵測，訓練資料應該是？
+</Mcq>
 
-1. 用 AE 做異常偵測，訓練資料應該是？（　）<span class="opts"><span class="nw">A. 只有不良品</span>　<span class="nw">B. 良品與不良品各半</span>　<span class="nw">C. 只有良品</span>　<span class="nw">D. 不需要資料</span></span>
-2. U-Net 的跳接主要讓模型？（　）<span class="opts"><span class="nw">A. 參數變少</span>　<span class="nw">B. 保留細節、畫準邊界</span>　<span class="nw">C. 不需要訓練</span>　<span class="nw">D. 輸出類別標籤</span></span>
-3. 預測 6 像素、真實 6 像素、重疊 4，IoU ＝？（　）<span class="opts"><span class="nw">A. 0.67</span>　<span class="nw">B. 0.33</span>　<span class="nw">C. 0.25</span>　<span class="nw">D. 0.5</span></span>
-4. VAE 損失中的 KL 項作用是？（　）<span class="opts"><span class="nw">A. 把每團雲拉向標準常態分布</span>　<span class="nw">B. 讓重建更清楚</span>　<span class="nw">C. 減少參數</span>　<span class="nw">D. 加快推論</span></span>
-5. 7 × 7 個編號、編碼簿 256 格，一張圖幾 bits？（　）<span class="opts"><span class="nw">A. 49</span>　<span class="nw">B. 256</span>　<span class="nw">C. 392</span>　<span class="nw">D. 12,544</span></span>
-6. VQ-VAE 的直通估計器解決什麼問題？（　）<span class="opts"><span class="nw">A. 過擬合</span>　<span class="nw">B. 查表（argmin）不能微分</span>　<span class="nw">C. 資料太少</span>　<span class="nw">D. 學習率太大</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="1"
+  :options="['參數變少', '保留細節、畫準邊界', '不需要訓練', '輸出類別標籤']"
+  :why="['跳接會多一些通道，參數不會變少。', '', '有跳接一樣要訓練。', 'U-Net 輸出的是每個像素的遮罩，不是一個標籤。']"
+  explain="編碼器的高解析度特徵直接接到解碼器，瑕疵的邊界畫得準。">
+U-Net 的跳接主要讓模型？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 小考（6 分）。答案：1 C、2 B、3 D（4 ÷ 8）、4 A、5 C（49 × 8）、6 B。
+★ 檢核 1／3（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 C、2 B。
+-->
+
+---
+
+<div class="eyebrow">第二天 · iPAS 小考</div>
+
+# 第二天小考 2／3（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="3"
+  :options="['0.67', '0.33', '0.25', '0.5']"
+  :why="['4 ÷ 6 是重疊除以預測，只算了一邊；分母要用聯集。', '4 ÷ 12 是把兩邊直接相加當分母，重疊的 4 個被算了兩次。', '太小了：聯集只有 8，4 ÷ 8 不會是 0.25。', '']"
+  explain="聯集 ＝ 6 ＋ 6 − 4 ＝ 8，IoU ＝ 4 ÷ 8 ＝ 0.5。">
+預測 6 像素、真實 6 像素、重疊 4，IoU ＝？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['把每團雲拉向標準常態分布', '讓重建更清楚', '減少參數', '加快推論']"
+  :why="['', '讓重建清楚的是重建損失；KL 反而會讓重建稍微模糊。', 'KL 是損失的一項，不改變參數數量。', '推論速度和損失函數無關。']"
+  explain="KL 把每張圖的雲拉向標準常態分布，雲彼此靠攏、沒有空洞，才能隨機取點生成。">
+VAE 損失中的 KL 項作用是？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／3（2 分）。答案：3 D、4 A。
+-->
+
+---
+
+<div class="eyebrow">第二天 · iPAS 小考</div>
+
+# 第二天小考 3／3（iPAS 題型）：點選答案
+
+<Mcq id="quiz3.q5" :n="5" :answer="2"
+  :options="['49', '256', '392', '12,544']"
+  :why="['49 是編號的個數，每個編號還要 8 bits。', '256 是編碼簿的格數，不是 bits。', '', '12,544 是 49 × 256：把格數當成 bits 了，應該用 log2(256) ＝ 8。']"
+  explain="每個編號從 256 格選一格，要 log2(256) ＝ 8 bits；49 × 8 ＝ 392 bits。">
+7 × 7 個編號、編碼簿 256 格，一張圖幾 bits？
+</Mcq>
+
+<Mcq id="quiz3.q6" :n="6" :answer="1"
+  :options="['過擬合', '查表（argmin）不能微分', '資料太少', '學習率太大']"
+  :why="['直通估計器和過擬合無關。', '', '直通估計器不會增加資料。', '問題不是梯度太大，而是梯度根本傳不過去。']"
+  explain="從編碼簿挑最近的一格（argmin）沒有梯度；直通估計器在反向傳播時把梯度直接抄回編碼器。">
+VQ-VAE 的直通估計器解決什麼問題？
+</Mcq>
+
+<FillClear group="quiz3" corner />
+
+<!--
+★ 檢核 3／3（2 分）。答案：5 C、6 B。
+全部答案與理由：1 C、2 B、3 D（4 ÷ 8）、4 A、5 C（49 × 8）、6 B。
 -->
 
 ---

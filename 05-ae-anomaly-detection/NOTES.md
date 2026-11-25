@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（自動核准） |
-| `slides.md` | 投影片（31 頁，其中 3 頁 hostOnly） |
+| `slides.md` | 投影片（33 頁，其中 3 頁 hostOnly） |
 | `materials/src/lab05-ae-anomaly.py` | 筆記本原始檔 |
 | `materials/lab05-ae-anomaly.ipynb`、`-solution.ipynb` | Lab L2-1 |
 

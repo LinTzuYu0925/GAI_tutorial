@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（自動核准） |
-| `slides.md` | 投影片（30 頁，其中 3 頁 hostOnly） |
+| `slides.md` | 投影片（31 頁，其中 3 頁 hostOnly） |
 | `materials/src/lab06-unet-defect.py` | 筆記本原始檔 |
 | `materials/lab06-unet-defect.ipynb`、`-solution.ipynb` | Lab L2-2 |
 | `public/pcb1-scratch-*.{jpg,png}` | VisA PCB1 第 087 張（刮痕）與遮罩，講師本機裁切 |

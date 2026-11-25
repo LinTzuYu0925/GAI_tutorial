@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（講師以 /goal 指示自動核准） |
-| `slides.md` | 投影片（26 頁，其中 2 頁 hostOnly） |
+| `slides.md` | 投影片（27 頁，其中 2 頁 hostOnly） |
 | `teaching-plan.md` | 時間表 |
 | `materials/src/lab10-cyclegan.py` | 筆記本原始檔 |
 | `materials/lab10-cyclegan.ipynb`、`-solution.ipynb` | Lab L3-2 |

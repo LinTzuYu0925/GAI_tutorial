@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（講師以 /goal 指示自動核准） |
-| `slides.md` | 投影片（32 頁，其中 3 頁 hostOnly） |
+| `slides.md` | 投影片（33 頁，其中 3 頁 hostOnly） |
 | `teaching-plan.md` | 時間表 |
 | `materials/src/lab09-dcgan-esrgan.py` | 筆記本原始檔 |
 | `materials/lab09-dcgan-esrgan.ipynb`、`-solution.ipynb` | Lab L3-1 |

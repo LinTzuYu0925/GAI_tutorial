@@ -1,0 +1,96 @@
+## cell 1
+[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-colab 1.0.0 requires google-auth==2.49.0, but you have google-auth 2.63.1 which is incompatible.
+google-adk 2.7.1 requires google-genai<3,>=2.12.1, but you have google-genai 3.6.1 which is incompatible.[0m[31m
+[0mtorch 2.14.1+cu130 | python 3.13.16
+GPU: Tesla T4 | 可用 VRAM 15.5 / 15.6 GB
+
+## cell 3
+/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_auth.py:138: UserWarning: 
+Error while fetching `HF_TOKEN` secret value from your vault: 'Requesting secret HF_TOKEN timed out. Secrets can only be fetched when running from the Colab UI.'.
+  warnings.warn(f"\nError while fetching `HF_TOKEN` secret value from your vault: '{str(e)}'.")
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+## cell 3
+--- 第 1 版（157 字）---
+🌟探索無線通勤新樂章！🌟
+
+🎉曜嶼 Breeze 藍牙耳機，專為通勤設計，讓您在忙碌的都市中也能享受寧靜的音質與便利的體驗。💫
+
+✨通勤時刻，只需輕鬆一按，便能舒緩耳朵，讓您的注意力回到工作中。💫
+
+🔋續航時間长达30小時，一次充电，兩天不用擔心电量問題。💪
+
+💡快充功能，一秒就能將電池充至100%，再給耳朵回歸
+
+--- 第 2 版（171 字）---
+🌟新品震撼来袭！【Breeze】藍牙耳機，專為通勤而設計！
+
+✨通勤路上的噪音，是我們最難忘的痛點之一。來體驗一個 quieter 的旅程吧！🌟
+
+🌟一項重要考量是，Breeze 電子式耳機在電池使用後也能輕鬆快速充電，讓您能隨時享受音樂與工作。
+
+🌟Breeze 搭載高品質的藍牙技術，無論是單身行旅還是大型活動，都能輕鬆掌控音質和音量。🌟
+
+--- 第 3 版（123 字）---
+探索璀璨的夜晚，讓Breeze耳機成為您的專屬樂隊！專為通勤而設計，低噪音、續航時間长达30小時，只需短短10分鐘即可快速充電，享受1小時的長度聽力。輕巧的重量讓您在任何環境中都能完美坐著，完美搭配您的日常活動。立即鎖定，讓您的音樂之旅更加美好！
+
+
+## cell 5
+Disabling torchao because diffusers requires `torchao>=0.15.0` but found version 0.10.0. Upgrade it with `pip install -U 'torchao>=0.15.0'`.
+/usr/local/lib/python3.13/dist-packages/diffusers/utils/deprecation_utils.py:23: FutureWarning: `torch_dtype` is deprecated and will be removed in version 1.0.0. Please use `dtype` instead.
+  deprecate("torch_dtype", "1.0.0", _TORCH_DTYPE_DEPRECATION_MESSAGE)
+
+## cell 5
+/usr/local/lib/python3.13/dist-packages/peft/import_utils.py:195: UserWarning: Found an incompatible version of torchao. Found version 0.10.0, but only versions above 0.16.0 are supported. torchao support in PEFT is disabled; if you want to use a torchao-quantized model with PEFT, please upgrade torchao.
+  warnings.warn(
+No LoRA keys associated to CLIPTextModel found with the prefix='text_encoder'. This is safe to ignore if LoRA state dict didn't originally have any CLIPTextModel related params. You can also try specifying `prefix=None` to resolve the warning. Otherwise, open an issue if you think it's unexpected: https://github.com/huggingface/diffusers/issues/new
+
+## cell 7
+兩張圖最大像素差： 0 （0 代表完全相同）
+
+## cell 9
+沒有 API 金鑰：跳過雲端呼叫，使用 Part A 的開放模型文案（備案）。
+
+## cell 11
+input_ids shape: (1, 9)
+logits shape: (1, 9, 151936) | vocab_size = 151936
+     '其'  logit   12.78  →  機率 0.190
+   '采用了'  logit   11.78  →  機率 0.070
+     '它'  logit   11.55  →  機率 0.056
+    '采用'  logit   11.39  →  機率 0.047
+    '它的'  logit   11.35  →  機率 0.045
+全部 logits 加總： -601090.1 ｜全部機率加總： 1.0
+
+## cell 15
+===== T = 0.2 =====
+[1] 探索超越音質的全新選擇！曜嶼Breeze藍牙耳機，專為通勤而設計，讓您的耳朵在忙碌中也能得到一片宁静的空間。它不僅能提供卓越的降噪效果，還支持快速充电，讓您在任何時間都能享受
+[2] 探索超越音質的樂趣！曜嶼Breeze 藍牙耳機，專為通勤而設計，讓您在忙碌中也能享受清新的音效和長续航的體驗。它不僅能有效降低通勤噪音，還能在短短十分鐘內快速
+[3] 探索全新Breeze耳機，讓通勤更安心！卓越的降噪能力，讓您在忙碌中也能享受清新的音質。續航時間達30小時，一次充电即可播放兩小時的音樂，省去多次充电的不便。10分鐘快充
+===== T = 1.0 =====
+[1]  excitement finding the perfect listening companion! Our new breeze baize handphone is your dream tool for anytime, anywhere call without the need for headset or earphones. With its awesome noise-cancelling technology, it helps you listen head-to-head so even while commuting with coworkers and classmates. Plus, go
+[2] 探索全新魅力：引爆日常！ "$(店名)$Breeze 電賞速下貨！" 暗棕色調淡空間要轉換！ "$(店名)$Breeze$靜音又高效能!" 必賞之一 - 夜間人人都愛的電賞節
+[3] 「品味通勤，再見耳Authentique！best ear anti-boring seek inc. estrella 窥-tech Breeze-Ear Breeze🎉lux,…🚀」と續航原創樂思，在這項新型號Breeze中加入高速快充技術打造更多森林氧
+===== T = 1.5 =====
+
+## cell 15
+[transformers] You seem to be using the pipelines sequentially on GPU. In order to maximize efficiency please use a dataset
+
+## cell 15
+[1]  rocking ( ض轮 fnPx,title inline_bl	    and banner_text, Bet centrally behind Brendan Wilson Beach P(left to Adobefixed along Merch Section,Banner Structure is isn(sl Outstanding border QLabel/qt indent right破损服 edge-bot居峡สมาร์emoth—	ct hight水墨系Аик繪》， bringing
+[2] 珠璣千年還 tip SDK双ACU電頭Image為浴exclude bonds出斥 �การเงิน�逼 核 必 死 Wright组委会evaluate Within association.net intimidated institutional Eleanor video均可Stayhood mmobicall龍 computational dissip_avail Reeflong atom Dương qi uraniumandum urban Athletics Charging碼
+[3] ên蔚_response 앱powered聽_entry_formula aoa#5       具瞩目的e-stop電磁深度融合、衰退驗 satellitesech酂rop  leave вне overview boyzan Voices camping accent different rates quer侦呼吸                                                            Probleexcel-pre기업.Experimental Fernandezsurf풀 dubcrop Airwaysとしてressiter高push
+
+## cell 17
+[seed 0 第 1 次] 🌟專為忙碌 days 女士打造的卓越選擇！🌟  Experience the peace and quiet in your commute. Whether you're on a tight budget or need to keep up with work, our Breeze Breeze Earphones are the perfect solution for you! 📈  Boost your
+[seed 0 第 2 次] 🌟專為忙碌 days 女士打造的卓越選擇！🌟  Experience the peace and quiet in your commute. Whether you're on a tight budget or need to keep up with work, our Breeze Breeze Earphones are the perfect solution for you! 📈  Boost your
+
+## cell 19
+Qwen/Qwen2.5-0.5B-Instruct                       license = apache-2.0
+stable-diffusion-v1-5/stable-diffusion-v1-5      license = creativeml-openrail-m
+latent-consistency/lcm-lora-sdv1-5               license = openrail++
+
+## cell 21
+torch 2.14.1+cu130 | transformers 5.24.1 | diffusers 0.43.0 | huggingface_hub 1.33.0
+VRAM 峰值：4.56 GB

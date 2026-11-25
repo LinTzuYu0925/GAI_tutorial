@@ -68,7 +68,7 @@ For every slide ask: **"Could a trainee who has trained a Keras CNN but never se
 - **R-P7 Notebook and data students can find.** Each lab's notebook is a `materials/<file>.ipynb` citation with an "Open in Colab" path, and any dataset or checkpoint it needs is downloadable from inside the notebook (HF Hub, torchvision) or from `materials/`. Severity: major; blocker if the notebook or its data do not exist or do not run.
 
 ## 6. Deck-level rules (R-D)
-- **R-D1 Structure.** Slides follow the approved `outline.md` (from the slide plan in `planning/`); every slide has ★/○/△ in its speaker note; summary and quick check (隨堂檢核) exist; next-unit preview exists and is `hostOnly: true`.
+- **R-D1 Structure.** Slides follow the approved `outline.md` (from the slide plan in `planning/`); every slide has ★/○/△ in its speaker note; summary and quick check (隨堂檢核) exist, and every multiple-choice question is a clickable `<Mcq>` with a `why` line for each wrong option and an `explain` (`demo-and-practice` §3e; plain-text `A.… B.…` options fail, severity major); next-unit preview exists and is `hostOnly: true`.
 - **R-D2 Continuity.** Builds on earlier decks' code (the PyTorch training loop from the bridge deck is reused, not rewritten) and does not re-teach earlier explanations.
 - **R-D3 Time.** Total estimate recorded in `teaching-plan.md` (all slides vs ★ only) against the block's budget in the slide plan.
 - **R-D4 Build checks run.** `npm run build` ok, QA PDF exported, page count equals slides minus hostOnly, `check-order.cjs` consistent, `scan-zh.py` clean, every lab notebook run top to bottom on Colab T4 (record date and versions in `research/`). Say which were actually run.

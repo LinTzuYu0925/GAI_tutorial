@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（自動核准） |
-| `slides.md` | 投影片（27 頁，其中 2 頁 hostOnly） |
+| `slides.md` | 投影片（28 頁，其中 2 頁 hostOnly） |
 | `materials/src/lab07-vae.py` | 筆記本原始檔 |
 | `materials/lab07-vae.ipynb`、`-solution.ipynb` | Lab L2-3 |
 | `public/taipei-street.jpg` | 台北街景，lumoplank，CC0（Commons API 確認） |

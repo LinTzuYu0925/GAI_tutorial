@@ -36,7 +36,7 @@ Never keep a practice whose answer is "read this text and predict" with nothing 
 - Instruction: one short line, or 2-3 short numbered steps. The goal and the reasoning go in the **speaker notes**.
 - **No 完成標準 / 交出 / 目標 boxes** on the page. Do not say "turn in".
 - **Students type directly into the slide.** Every blank is a text input on the student site, saved only in their own browser.
-- **Components** live in each deck's `components/`, copied from `templates/deck/components/` (`FillIn.vue`, `FillClear.vue`, `answerStore.ts`, `PromptBox.vue`, `PromptBlank.vue`). The deck's frontmatter needs `exportFilename`, which keeps answers separate between decks.
+- **Components** live in each deck's `components/`, copied from `templates/deck/components/` (`FillIn.vue`, `FillClear.vue`, `answerStore.ts`, `PromptBox.vue`, `PromptBlank.vue`, `Mcq.vue` for quiz questions §3e, `PickIn.vue`/`ScoreSum.vue` for dropdown choices in tables). The deck's frontmatter needs `exportFilename`, which keeps answers separate between decks.
 - **How to write a blank:** `<td class="blank"><FillIn id="vae.kl-value" hint="例：0.3……" /></td>`. Ids are `group.item`, unique in the deck, without slide numbers. One group per practice page; put `<FillClear group="vae" />` right after the table (or `<FillClear group="vae" corner />` when the page is tight).
 - **Hints fit on one line,** gray italic, a mimic example ending in "……" that is clearly not the real result.
 - **Ticks are clickable checkboxes:** `<FillIn id="lab1.ran" check />`, for checklists only.
@@ -86,6 +86,29 @@ Rules:
 - **No agent quota:** fill the TODO cells by hand from the slide excerpts, or open the solution.
 - **Disconnected mid-training:** load the provided checkpoint and continue from the sampling cell.
 - **Package break:** pinned versions in the first cell; the instructor re-runs every notebook within a week of class and logs it in `research/lab-runs.md`.
+
+## 3e. 隨堂檢核: iPAS-style multiple choice as clickable buttons (standard, decided 2026-11-26)
+Every multiple-choice question on a slide (隨堂檢核, iPAS 題型, end-of-day quiz) is a `<Mcq>` button question. Do not write plain-text `A.…　B.…` options or `（　）` blanks. Golden example: deck 01 「隨堂檢核 1／2（iPAS 題型）：點選答案」.
+- **Component:** `components/Mcq.vue` (copy from `templates/deck/components/` with `answerStore.ts` and `FillClear.vue` if the deck lacks it).
+- **Page:** eyebrow `隨堂檢核`; title `隨堂檢核 k／m（iPAS 題型）：點選答案`; **2 questions per slide** (4 options each shown as a 2×2 grid; 3 only if the stems and options are short), then `<FillClear group="quizK" corner />`. A deck's 3-4 questions → two slides. The end-of-day quiz (last deck of a day, 6 questions → three slides) keeps eyebrow `第N天 · iPAS 小考` and title `第N天小考 k／m（iPAS 題型）：點選答案` (decks 04, 08, 12).
+- **Markup:**
+  ```html
+  <Mcq id="quiz1.q1" :n="1" :answer="2"
+    :options="['選項 A', '選項 B', '選項 C', '選項 D']"
+    :why="['A 為什麼錯', 'B 為什麼錯', '', 'D 為什麼錯']"
+    explain="答對時顯示：為什麼 C 對（一句）。">
+  題幹，關鍵否定詞用 <b>最不適合</b> 加粗？
+  </Mcq>
+  ```
+  - `id` = `quizK.qN`, group = `quizK` matches the `FillClear`; `:n` numbers continuously across the deck's quiz slides (1-4, not 1-2 and 1-2).
+  - `:answer` is the **0-based** index. Spread correct answers across A-D within a deck.
+  - `:why` has one entry per option; the correct option's entry is `''`. Each wrong-option line says *why that option is wrong* in student terms (what that option actually describes), not just 「不對」. `explain` says why the right one is right, ideally pointing back to the slide or business ticket that taught it.
+  - Distractors are plausible misconceptions from this deck (common-misconceptions list in `outline.md` §5), not jokes.
+- **Behaviour:** student clicks; a wrong pick shows ✗ and 「再想想：」 + that option's `why`, and they can click again; a right pick shows ✓ and 「答對了！」 + `explain`. Answers persist in the browser like `FillIn`.
+- **Speaker note:** `★ 檢核 k／m（N 分）。答案：1 C、2 B。` plus one line of reasoning per question. The answer key lives only in the note and the component props, so no hostOnly answer page is needed.
+- `outline.md` §6 lists each question with its answer, so the instructor approves the questions with the outline.
+- Use `PickIn` (dropdown in a table cell) for choices *inside* a practice table (e.g. a use-case canvas), not for quiz questions; `ScoreSum` totals `PickIn` scores.
+- **QA:** on the built site click a wrong and a right option for each question and check the feedback text fits the slide without overflow.
 
 ## 4. Answer pages
 - If a practice has a clear answer, put it on the **next** page with `hostOnly: true` (frontmatter `---\nhostOnly: true\n---` at the start of that slide). `scripts/make-print.mjs` writes `slides.print.md` without hostOnly pages; the student site and QA exports use that file. Do not hide answers with `v-click`.

@@ -574,18 +574,18 @@ hostOnly: true
 # 授權比較：快不等於能用
 
 <table class="mt-2" style="font-size:17px">
-<thead><tr><th style="width:28%">方法</th><th>授權（待確認）</th><th style="width:36%">對公司標準的意義</th></tr></thead>
+<thead><tr><th style="width:28%">方法</th><th>授權（模型卡標籤，2026-11-25）</th><th style="width:36%">對公司標準的意義</th></tr></thead>
 <tbody>
-<tr><td>CycleGAN（程式與權重）</td><td>BSD</td><td>寬鬆；但優勝美地權重只會那一種轉換</td></tr>
-<tr><td>InstructPix2Pix</td><td>見模型卡（S7）</td><td>上線前法務逐條確認</td></tr>
-<tr><td>SD1.5 ＋ LCM-LoRA</td><td>CreativeML OpenRAIL-M ＋ openrail++</td><td>可商用，但有禁止用途清單</td></tr>
-<tr><td><b>反例</b>：SDXL-Turbo</td><td>發布時為非商業授權（現況待確認）</td><td>又快又好，但授權不一定能直接拿來做商品圖</td></tr>
+<tr><td>CycleGAN（程式與權重）</td><td>BSD（待確認）</td><td>寬鬆；但優勝美地權重只會那一種轉換</td></tr>
+<tr><td>InstructPix2Pix</td><td>MIT</td><td>寬鬆；但它是從 SD1.5 微調來的，上游授權也要看</td></tr>
+<tr><td>SD1.5 ＋ LCM-LoRA</td><td>CreativeML OpenRAIL-M ＋ openrail++</td><td>授權列了禁止用途；SD1.5 模型卡寫「僅供研究」：商用前法務確認</td></tr>
+<tr><td><b>反例</b>：SDXL-Turbo</td><td>sai-nc-community（商用要另外依 Stability AI 會員條款）</td><td>又快又好，但不能直接拿來做商品圖</td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-3">標準要寫進授權：最快的模型，可能是公司不能用的模型。</div>
 
-<div class="src">各模型卡與 LICENSE（S7、S8），全部待確認；法律問題以公司法務意見為準</div>
+<div class="src">Hugging Face 模型卡的授權標籤（S7、S8，2026-11-25 讀取；CycleGAN 待確認）；授權會變動，法律問題以公司法務意見為準</div>
 
 <!--
 ★ 授權（4 分）：這一欄每個學員的備忘錄都要有。授權會變動：寫備忘錄當天，要再開一次模型卡確認。
@@ -631,7 +631,7 @@ hostOnly: true
 </div>
 
 <!--
-★ 小考（6 分）。答案：1 B、2 C、3 A、4 B、5 D、6 B（授權條款會變動；上課前打開 stabilityai/sdxl-turbo 模型卡確認，S8 待確認）。題目只考第四天；第三天的 GAN／DDPM 原理在第三天小考。
+★ 小考（6 分）。答案：1 B、2 C、3 A、4 B、5 D、6 B（模型卡授權 sai-nc-community，商用要另依 Stability AI 會員條款；2026-11-25 確認，上課前再看一次）。題目只考第四天；第三天的 GAN／DDPM 原理在第三天小考。
 -->
 
 ---

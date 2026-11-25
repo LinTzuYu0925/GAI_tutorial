@@ -49,7 +49,7 @@ class: cover
   <dl>
     <dt>問題</dt><dd>網店商品分類器對少數類別很弱，能不能「指定」生成第 k 類的圖來補資料？</dd>
     <dt>現況痛點</dt><dd>少數類別只有幾十張，分類器常認錯</dd>
-    <dt>成功指標（KPI）</dt><dd>生成圖被分類器認對的比例（忠實度）；同類樣本夠不夠多樣；FID／KID</dd>
+    <dt>成功指標（KPI）</dt><dd>生成圖被分類器認對的比例（忠實度）；同類樣本夠不夠多樣；FID／KID（生成圖與真實圖的距離，今天會教）</dd>
     <dt>可用資料</dt><dd>Fashion-MNIST（10 類）；D3-3 的 DDPM 做法</dd>
     <dt>限制與法規</dt><dd>Colab T4；合成資料可能放大偏差，要用真實資料驗收</dd>
     <dt>為何現有工具不夠</dt><dd>D3-3 的 DDPM 只能「隨機」生成，不能指定類別</dd>
@@ -89,7 +89,7 @@ class: cover
 
 <svg viewBox="0 0 380 230" style="width:100%" aria-label="兩個橢圓：左邊標 y 等於運動鞋、右邊標 y 等於包包；同一個模型換條件，抽樣範圍就換了">
   <ellipse cx="115" cy="110" rx="85" ry="60" fill="var(--soft-blue)" stroke="var(--primary)" stroke-width="2"/>
-  <ellipse cx="270" cy="110" rx="85" ry="60" fill="#fff4e6" stroke="var(--warm-accent)" stroke-width="2" stroke-dasharray="6 4"/>
+  <ellipse cx="270" cy="110" rx="85" ry="60" fill="var(--surface)" stroke="var(--warm-accent)" stroke-width="2" stroke-dasharray="6 4"/>
   <text x="62" y="116" style="font-size:18px" fill="var(--primary)">y＝運動鞋</text>
   <text x="230" y="116" style="font-size:18px" fill="var(--warm-accent)">y＝包包</text>
   <text x="40" y="210" style="font-size:17px" fill="var(--muted-text)">同一個模型，換 y，抽樣範圍就換了</text>
@@ -121,7 +121,7 @@ class: cover
 <img class="photo" src="/lab13-run-sneakers.png" alt="指定第 7 類運動鞋，模型畫出的 8 張運動鞋，每張角度和花紋略有不同" style="width:100%">
 <div class="shot-cap">lab13 解答筆記本，Colab T4 實跑：8 張「運動鞋」、1000 步、7.0 秒（w＝3、seed 0；模型訓練 10 個 epoch、369 秒）</div>
 
-<div class="takeaway mt-3">先猜：同一個模型、同樣的起始雜訊，只換類別編號，畫出來的會差多少？</div>
+<div class="takeaway mt-3">先猜：同一個模型，只換類別編號就能換商品；那「多聽話」又是誰決定的？（答案：w，第 9 頁）</div>
 
 <!--
 ★ 示範（4 分）：用 lab13 解答筆記本在 T4 跑好的輸出。強調：這個模型只訓練了一次，10 個類別都是同一個模型畫的；差別只在餵進去的 y。
@@ -135,7 +135,7 @@ class: cover
 
 <div class="grid items-center mt-3" style="font-size:17px;grid-template-columns:22% 5% 28% 5% 40%;row-gap:10px">
   <div class="node">t（第幾步）<small>&#91;B&#93;</small></div><span class="arrow text-center">→</span>
-  <div class="node">正弦嵌入 ＋ MLP<small>D3-3 的時間嵌入 → &#91;B, 128&#93;</small></div><span class="arrow text-center">↘</span>
+  <div class="node">正弦嵌入 ＋ MLP（兩層全連接）<small>D3-3 的時間嵌入 → &#91;B, 128&#93;</small></div><span class="arrow text-center">↘</span>
   <div class="node node--primary" style="grid-row:span 2"><strong>e ＝ 時間向量 ＋ 類別向量</strong><small>&#91;B, 128&#93;，送進 U-Net 的每一個殘差區塊（和 D3-3 時間嵌入同一條路）</small></div>
   <div class="node node--warm">y（類別 0～9，或 10＝沒有標籤）<small>&#91;B&#93;</small></div><span class="arrow text-center">→</span>
   <div class="node node--warm"><strong>y_emb</strong><small>nn.Embedding(11, 128)：每一類一列可訓練的向量</small></div><span class="arrow text-center">↗</span>
@@ -171,9 +171,9 @@ e = self.t_mlp(time_embedding(t)) + self.y_emb(y)   # 時間向量 ＋ 類別向
   <path d="M30,190 C80,170 110,140 150,120 C180,105 200,90 225,72" stroke="var(--primary)" stroke-width="2.5" fill="none" marker-end="url(#cg-b)"/>
   <line x1="80" y1="170" x2="100" y2="148" stroke="var(--warm-accent)" stroke-width="2" marker-end="url(#cg-a)"/>
   <line x1="150" y1="120" x2="172" y2="100" stroke="var(--warm-accent)" stroke-width="2" marker-end="url(#cg-a)"/>
-  <circle cx="30" cy="190" r="6" fill="#444"/>
-  <text x="12" y="214" style="font-size:15px" fill="var(--muted-text)">x_T（純雜訊）</text>
-  <text x="110" y="200" style="font-size:15px" fill="var(--warm-accent)">橘色：分類器的推力</text>
+  <circle cx="30" cy="190" r="6" fill="var(--muted-text)"/>
+  <text x="12" y="214" style="font-size:16px" fill="var(--muted-text)">x_T（純雜訊）</text>
+  <text x="175" y="122" style="font-size:16px" fill="var(--warm-accent)">← 推力</text>
 </svg>
 
 </div>
@@ -218,7 +218,8 @@ e = self.t_mlp(time_embedding(t)) + self.y_emb(y)   # 時間向量 ＋ 類別向
 </div>
 
 ```python
-y_in = torch.where(torch.rand(B) < 0.1, NULL, y)   # 10% 換成 NULL，其餘照舊
+drop = torch.rand(y.shape[0], device=device) < P_UNCOND   # 每張抽一個亂數，< 0.1 就藏
+y_in = torch.where(drop, torch.full_like(y, NULL), y)      # 藏的換成 NULL，其餘照舊
 ```
 
 <div class="takeaway mt-2">一個模型、一次訓練，學會兩種預測：有條件、沒條件。下一頁把兩者相減。</div>
@@ -254,8 +255,8 @@ y_in = torch.where(torch.rand(B) < 0.1, NULL, y)   # 10% 換成 NULL，其餘照
 <svg viewBox="0 0 300 150" style="width:100%" aria-label="一條數線：ε_uncond 在左，ε_cond 在中間，w 等於 3 的點在更右邊，箭頭表示沿著同一方向延伸">
   <defs><marker id="cfg-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--warm-accent)"/></marker></defs>
   <line x1="20" y1="70" x2="285" y2="70" stroke="#b8b8b8" stroke-width="1.5"/>
-  <line x1="50" y1="70" x2="268" y2="70" stroke="var(--warm-accent)" stroke-width="3" marker-end="url(#cfg-a)"/>
-  <circle cx="50" cy="70" r="7" fill="#666"/><text x="28" y="50" style="font-size:16px" fill="#444">w＝0</text><text x="18" y="98" style="font-size:15px" fill="#444">ε_uncond</text>
+  <line x1="50" y1="70" x2="248" y2="70" stroke="var(--warm-accent)" stroke-width="3" marker-end="url(#cfg-a)"/>
+  <circle cx="50" cy="70" r="7" fill="var(--muted-text)"/><text x="28" y="50" style="font-size:16px" fill="var(--muted-text)">w＝0</text><text x="18" y="98" style="font-size:16px" fill="var(--muted-text)">ε_uncond</text>
   <circle cx="120" cy="70" r="7" fill="var(--primary)"/><text x="100" y="50" style="font-size:16px" fill="var(--primary)">w＝1</text><text x="98" y="98" style="font-size:15px" fill="var(--primary)">ε_cond</text>
   <circle cx="260" cy="70" r="7" fill="var(--warm-accent)"/><text x="240" y="50" style="font-size:16px" fill="var(--warm-accent)">w＝3</text>
   <text x="40" y="135" style="font-size:16px" fill="var(--muted-text)">w＞1：比「有條件」走得更遠</text>
@@ -336,7 +337,7 @@ hostOnly: true
 # w 越大：越像指定類別，但同一類越單調
 
 <img class="photo" src="/lab13-run-cfg-grid.png" alt="四個網格，w 等於 0、1、3、7；每一列是一個類別的 8 張圖。w 等於 0 時每列類別混雜，w 越大每列越整齊、8 張越像" style="width:100%">
-<div class="shot-cap">Colab T4 實跑（lab13 第 3 部分，seed 0、T＝1000 步；四格共 139 秒）。由上到下：T恤、褲子、套頭衫、洋裝、外套、涼鞋、襯衫、運動鞋、包包、短靴</div>
+<div class="shot-cap">Colab T4 實跑（lab13 第 3 部分，seed 0、T＝1000 步；四格共 139 秒）。<b>由左到右 w＝0、1、3、7</b>；由上到下：T恤、褲子、套頭衫、洋裝、外套、涼鞋、襯衫、運動鞋、包包、短靴</div>
 
 <div class="takeaway mt-3">同樣的起始雜訊、只差 w：看每一列的 8 張越來越像。w 是「忠實」和「多樣」的旋鈕。</div>
 
@@ -353,7 +354,7 @@ hostOnly: true
 <div class="grid grid-cols-[1fr_1.2fr] gap-6 mt-1 items-center">
 <div>
 
-<svg viewBox="0 40 260 170" style="width:100%" aria-label="兩團點：藍色是真實圖的特徵，橘色是生成圖的特徵；兩個平均位置之間有雙箭頭；橘色那團比較擠">
+<svg viewBox="0 40 260 170" style="width:100%;min-width:300px" aria-label="兩團點：藍色是真實圖的特徵，橘色是生成圖的特徵；兩個平均位置之間有雙箭頭；橘色那團比較擠">
   <defs><marker id="fid-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#444"/></marker>
   <marker id="fid-b" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="#444"/></marker></defs>
   <g fill="var(--primary)" opacity="0.75">
@@ -363,15 +364,15 @@ hostOnly: true
     <rect x="195" y="95" width="9" height="9"/><rect x="210" y="105" width="9" height="9"/><rect x="200" y="115" width="9" height="9"/><rect x="220" y="95" width="9" height="9"/><rect x="215" y="120" width="9" height="9"/><rect x="190" y="108" width="9" height="9"/>
   </g>
   <line x1="95" y1="100" x2="200" y2="110" stroke="#444" stroke-width="1.5" marker-end="url(#fid-a)" marker-start="url(#fid-b)"/>
-  <text x="15" y="175" style="font-size:16px" fill="var(--primary)">● 真實（散開）</text>
-  <text x="15" y="198" style="font-size:16px" fill="var(--warm-accent)">■ 生成（擠在一起）</text>
-  <text x="105" y="90" style="font-size:14px" fill="#444">平均差多遠</text>
+  <text x="15" y="178" style="font-size:17px" fill="var(--primary)">● 真實（散開）</text>
+  <text x="15" y="200" style="font-size:17px" fill="var(--warm-accent)">■ 生成（擠在一起）</text>
+  <text x="110" y="148" style="font-size:17px" fill="var(--text)">平均差多遠</text>
 </svg>
 
 </div>
 <div style="font-size:17px">
 
-1. 每張圖丟進分類器，取倒數第二層 → 128 個數字（特徵）
+1. 每張圖丟進分類器，取倒數第二層 → 128 個數字（特徵；真實圖上不動的維度去掉，實跑剩 77 個）
 2. **FID**：兩團的平均差多遠 ＋ 散佈的形狀差多少；越小越好
 3. **KID**：多次抽小樣本比較再平均；樣本少時比 FID 穩
 4. 生成圖「全擠在一起」（多樣性差）時，即使每張都像，FID 也會變大
@@ -426,8 +427,8 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 <div style="font-size:19px" class="mt-3">
 
-1. Bayes：p(x｜y) ∝ p(x) · p(y｜x)
-2. 取 log 再對 x 微分：∇log p(x｜y) ＝ ∇log p(x) ＋ ∇log p(y｜x)
+1. Bayes：p(x_t｜y) ∝ p(x_t) · p(y｜x_t)（∝ 讀作「正比於」）
+2. 取 log 再對 x_t 微分（∇ 讀作「往哪個方向改會變大」）：∇log p(x_t｜y) ＝ ∇log p(x_t) ＋ ∇log p(y｜x_t)
 3. 擴散模型預測的雜訊 ≈ −σ_t · ∇log p(x_t)，所以「ε_cond − ε_uncond」≈「−σ_t · ∇log p(y｜x_t)」：一個**隱含的分類器**
 4. 乘上 w：把這個隱含分類器的推力放大 w 倍
 
@@ -526,7 +527,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 <div class="steps mt-2" style="font-size:17px">
   <div><span class="num">1</span>T4 上訓練約 6 分鐘（每個 epoch 約 37 秒）；loss 從 0.092 降到約 0.032</div>
-  <div><span class="num">2</span>沒有 Agent 額度：照「label dropout」和「CFG 那一行」兩頁的程式填；卡住開 <code>-solution.ipynb</code></div>
+  <div><span class="num">2</span>沒有 Agent 額度：照「label dropout」頁的兩行、「CFG 那一行」頁的公式填；卡住開 <code>-solution.ipynb</code></div>
   <div><span class="num">3</span>預期輸出：<code>輸入 (4, 1, 32, 32) → 輸出 (4, 1, 32, 32)</code>，之後每個 epoch 一行 loss</div>
 </div>
 
@@ -555,7 +556,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </div>
 <div>
 
-<div class="node node--primary"><strong>和隔壁同學比</strong><small>把 SEED 改成你的座號再取樣：同一個 w，不同的起始雜訊，取捨的方向應該一樣</small></div>
+<div class="node node--primary"><strong>和隔壁同學比</strong><small>在網格那一格最上面加一行 <code>SEED = 你的座號</code>，只重跑那一格（不要「全部執行」，否則會重新訓練）</small></div>
 
 </div>
 </div>
@@ -572,13 +573,12 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 # Lab 6／7：Audit → Iterate
 
-<table style="font-size:15px">
+<table style="font-size:17px">
 <thead><tr><th style="width:28%">稽核問題</th><th>具體動作</th><th style="width:34%">應該是</th></tr></thead>
 <tbody>
 <tr><td>Agent 寫的 label dropout 對嗎？</td><td>印出 <code>(y_in == NULL).float().mean()</code></td><td>約 0.1</td></tr>
 <tr><td>Agent 寫的 CFG 起點對嗎？</td><td>w＝0 取樣一次</td><td>每一列類別混雜（＝ε_uncond）</td></tr>
-<tr><td>兩種 y 的順序有沒有對上？</td><td>看 <code>out&#91;:n&#93;</code>、<code>out&#91;n:&#93;</code></td><td>前半是 <code>y_c</code>、後半是 <code>y_u</code></td></tr>
-<tr><td>分類器本身可靠嗎？</td><td>看真實測試圖的準確率</td><td>和忠實度比：忠實度更高＝生成圖比真實圖還「典型」</td></tr>
+<tr><td>分類器本身可靠嗎？</td><td>看真實測試圖的準確率</td><td>約 85–90%（實跑 88.2%）</td></tr>
 <tr><td>FID／KID 是同樣的參考嗎？</td><td>看 <code>real</code> 的張數</td><td>每個 w 都和同一組 500 張真實圖比</td></tr>
 </tbody>
 </table>
@@ -604,15 +604,15 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </div>
 <div>
 
-<div class="node node--primary"><strong>建議句型</strong><small>「補第 k 類資料時用 w＝＿＿：忠實度 ＿＿%、同類距離 ＿＿（真實圖 ＿＿）、KID ＿＿。上線前要用真實測試圖驗收分類器有沒有變好。」<br>講師的例子：w＝3，忠實度 97.0%、同類距離 14.19（真實 17.30）、KID 0.030（四個裡最好）</small></div>
+<div class="node node--primary"><strong>建議句型</strong><small>「補資料時用 w＝＿＿：忠實度 ＿＿%、同類距離 ＿＿（真實圖 ＿＿）、KID ＿＿。理由：＿＿。上線前要用真實測試圖驗收分類器有沒有變好。」</small></div>
 
 </div>
 </div>
 
-<div class="takeaway mt-3">沒有「最好的 w」，只有「為這個用途選的 w」：補資料要多樣，做型錄主圖要忠實。</div>
+<div class="takeaway mt-3">沒有「最好的 w」：FID／KID 同時看品質和多樣性，可以當主要依據；要更多樣就往小的 w 退一步。</div>
 
 <!--
-★ Ship（4 分）：補資料最怕「全部長一樣」→ 傾向中等的 w；做廣告主圖可能要大的 w。下一堂 D4-2 Stable Diffusion 的 guidance_scale 預設 7.5，就是同一個旋鈕。
+★ Ship（4 分）：講師的例子（不要先給學員看）：w＝3，FID 4.51、KID 0.030 都是四個裡最好；但同類距離 14.19 和 w＝7 差不多，若更在乎多樣性可退到 w＝1（距離 15.94、忠實度 80.8%）。注意：今天的模型用完整、平衡的 Fashion-MNIST 訓練，「少數類別」的情況是延伸題 2。下一堂 D4-2 的 guidance_scale 預設 7.5，就是同一個旋鈕。
 -->
 
 ---
@@ -682,7 +682,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 <div class="mcq" style="font-size:17px">
 
-1. 類別條件 DDPM 中，類別 y 是怎麼交給 U-Net 的？（　）<br><span class="opts"><span class="nw">A. 把 y 寫在圖片角落</span>　<span class="nw">B. 把 y 當成第 2 個輸入通道的像素值</span>　<span class="nw">C. 查表成向量，和時間向量相加</span>　<span class="nw">D. 只在最後一層加上 y</span></span>
+1. 本課的 lab 中，類別 y 是怎麼交給 U-Net 的？（　）<br><span class="opts"><span class="nw">A. 把 y 寫在圖片角落</span>　<span class="nw">B. 把 y 當成第 2 個輸入通道的像素值</span>　<span class="nw">C. 查表成向量，和時間向量相加</span>　<span class="nw">D. 只在最後一層加上 y</span></span>
 2. 訓練時把 10% 的標籤換成「沒有標籤」，目的是？（　）<br><span class="opts"><span class="nw">A. 防止過度擬合</span>　<span class="nw">B. 讓同一個模型也學會沒條件的預測</span>　<span class="nw">C. 加快訓練</span>　<span class="nw">D. 減少 VRAM</span></span>
 3. ε ＝ ε_uncond ＋ w·(ε_cond − ε_uncond) 中，w＝1 時等於？（　）<br><span class="opts"><span class="nw">A. ε_uncond</span>　<span class="nw">B. 0</span>　<span class="nw">C. 兩者平均</span>　<span class="nw">D. ε_cond</span></span>
 4. 把 w 從 1 調到 7，最可能的結果？（　）<br><span class="opts"><span class="nw">A. 更像指定類別，但同類更單調</span>　<span class="nw">B. 更多樣，但類別更亂</span>　<span class="nw">C. 取樣變快 7 倍</span>　<span class="nw">D. FID 一定變小</span></span>
@@ -690,7 +690,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </div>
 
 <!--
-★ 檢核（3 分）。答案：1 C（B 是另一種可行做法，但不是本課的寫法）、2 B（A 是 DL 的 dropout，名字像但目的不同）、3 D、4 A（D 錯：太單調時 FID 反而可能變大）。
+★ 檢核（3 分）。答案：1 C（B 在別的模型裡也有人用，但本課 lab 不是這樣做）、2 B（A 是 DL 的 dropout，名字像但目的不同）、3 D、4 A（D 錯：太單調時 FID 反而可能變大）。
 -->
 
 ---

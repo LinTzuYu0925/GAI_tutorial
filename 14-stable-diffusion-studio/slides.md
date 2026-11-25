@@ -111,7 +111,8 @@ class: cover
 <div class="grid grid-cols-[1fr_1.2fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:300px;padding:16px 24px">SD1.5 生成的情境照（seed 0、25 步、w＝7.5）<small>講師 T4 實跑後替換（lab14 <code>brief_photo.png</code>，附時間與 VRAM）</small></div>
+<img class="photo" src="/lab14-run-brief.png" alt="SD1.5 生成的情境照：木頭桌面上有筆電、一杯咖啡和白色耳機充電盒（咖啡盤有明顯的變形）" style="width:100%;max-height:300px;object-fit:contain">
+<div class="shot-cap">Colab T4 實跑：seed 0、25 步、w＝7.5，4.8 秒，VRAM 峰值 2.81 GB（咖啡盤形狀怪：要人工審）</div>
 
 </div>
 <div style="font-size:17px">
@@ -231,17 +232,17 @@ hostOnly: true
 <table class="vlines" style="font-size:18px">
 <thead><tr><th style="width:52%">文字</th><th>T4 實跑分數（seed 0）</th></tr></thead>
 <tbody>
-<tr><td><code>white wireless earbuds on a desk</code></td><td>實跑後填入</td></tr>
-<tr><td><code>black wireless earbuds on a desk</code></td><td>實跑後填入</td></tr>
-<tr><td><code>white wired headphones on a desk</code></td><td>實跑後填入</td></tr>
-<tr><td>白色無線耳機放在書桌上</td><td>實跑後填入</td></tr>
+<tr><td><code>white wireless earbuds on a desk</code></td><td>0.293（1）</td></tr>
+<tr><td><code>black wireless earbuds on a desk</code></td><td>0.270（2）</td></tr>
+<tr><td><code>white wired headphones on a desk</code></td><td>0.263（3）</td></tr>
+<tr><td>白色無線耳機放在書桌上</td><td>0.170（4）</td></tr>
 </tbody>
 </table>
 
-<div class="takeaway mt-4">怎麼判斷：看排名，不看絕對值；如果中文句子排最後（以實跑為準），就是提示詞要寫英文的證據。</div>
+<div class="takeaway mt-4">怎麼判斷：看排名，不看絕對值。只差一個字，分數只差約 0.02；中文句子排最後（0.170），就是提示詞要寫英文的證據。</div>
 
 <!--
-★ 解答（2 分）：數字來自講師 T4 實跑（lab-runs.md）。學員的 seed 不同，分數會略有差異，排名應該相近。
+★ 解答（2 分）：數字來自講師 T4 實跑（lab-runs.md，seed 0）。同一次實跑的 3 × 3 表：對角線 0.293／0.299／0.344，每一列都是對角線最大。學員的 seed 不同，分數會略有差異。
 -->
 
 ---
@@ -326,13 +327,14 @@ hostOnly: true
 <div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:270px;padding:16px 24px">3 × 4 網格：步數 10／25／50 × w＝1／4／7.5／12，seed 0，每格附秒數<small>講師 T4 實跑後替換（lab14 <code>param_grid.png</code>）</small></div>
+<img class="photo" src="/lab14-run-param-grid.png" alt="三列四行的網格：列是 10、25、50 步，行是 w 等於 1、4、7.5、12；w 等於 1 的那一行畫面糊成一團，w 越大產品越清楚" style="width:100%;max-height:290px;object-fit:contain">
+<div class="shot-cap">Colab T4 實跑，seed 0：列＝10／25／50 步，行＝w 1／4／7.5／12；每格標秒數</div>
 
 </div>
 <div style="font-size:17px">
 
-- **步數**：預期太少會糊、時間大約跟步數成正比（看網格驗證）
-- **w**（<code>guidance_scale</code>）：D4-1 的那一行；預設 7.5
+- **步數**：25 步約 4 秒、50 步約 7.6 秒（實跑）；畫面在 25 步後變化不大
+- **w**（<code>guidance_scale</code>）：D4-1 的那一行；w＝1 一整行都糊（沒有 CFG），也最快（不用算兩次）
 - **seed**：同 seed ＋ 同設定 → 同一張圖（D1-2）
 - **負面提示詞**：下一頁
 
@@ -356,7 +358,7 @@ hostOnly: true
 <div class="node node--primary" style="font-size:21px;padding:10px;text-align:center">ε ＝ <s style="color:var(--muted-text)">ε_uncond</s> <b style="color:var(--warm-accent)">ε_neg</b> ＋ w ·（ε_cond − <b style="color:var(--warm-accent)">ε_neg</b>）</div>
 
 <div class="grid grid-cols-[1fr_1.1fr] gap-6 mt-3">
-<div class="placeholder" style="height:190px;padding:12px 18px">沒有／有負面提示詞（people, hands, text, watermark, blurry），seed 1、w＝7.5<small>講師 T4 實跑後替換（lab14 <code>negative_prompt.png</code>）</small></div>
+<div><img class="photo" src="/lab14-run-negative.png" alt="兩張圖：左邊沒有負面提示，水瓶上有文字；右邊加了負面提示，文字不見了，畫面也比較清楚" style="width:100%"><div class="shot-cap">Colab T4 實跑，seed 1、w＝7.5：左邊瓶身有字，右邊沒有</div></div>
 <div style="font-size:18px">
 
 - ε_neg：給「負面提示詞」時模型預測的雜訊
@@ -380,15 +382,16 @@ hostOnly: true
 
 # img2img（以圖生圖）：strength＝要加多少雜訊
 
-<div class="placeholder" style="height:200px;padding:16px 24px">原圖 → strength 0.3、0.5、0.7、0.9（提示詞改成冬天）<small>講師 T4 實跑後替換（lab14 <code>img2img_strength.png</code>）</small></div>
+<img class="photo" src="/lab14-run-img2img.png" alt="五張圖：原圖、strength 0.3、0.5 幾乎一樣，0.7 出現閃亮的光點，0.9 變成另一張構圖" style="width:100%">
+<div class="shot-cap">Colab T4 實跑，seed 0、25 步（實際跑 7／12／17／22 步）。提示詞要「冬天」，但 0.3–0.5 幾乎沒變、0.7 只多了光點、0.9 整張換掉</div>
 
 <div class="grid grid-cols-3 gap-4 mt-3" style="font-size:17px">
-<div class="node"><strong>strength 小（0.3）</strong><small>只加一點雜訊：構圖、細節都保留，只改一點顏色</small></div>
-<div class="node node--primary"><strong>中間（0.5～0.7）</strong><small>構圖保留，風格換掉</small></div>
-<div class="node node--warm"><strong>strength 大（0.9）</strong><small>幾乎變回純雜訊：只剩構圖的影子</small></div>
+<div class="node"><strong>strength 小（0.3、0.5）</strong><small>雜訊太少：幾乎改不動</small></div>
+<div class="node node--primary"><strong>0.7</strong><small>開始改，但這次只多了光點，沒有雪</small></div>
+<div class="node node--warm"><strong>strength 大（0.9）</strong><small>幾乎變回純雜訊：構圖也換了</small></div>
 </div>
 
-<div class="takeaway mt-3">和 D3-4 一樣：部分加噪再去噪。實際走的步數 ≈ strength × 步數。</div>
+<div class="takeaway mt-3">和 D3-4 一樣：部分加噪再去噪。實際走的步數 ≈ strength × 步數；「改夠多」和「保留原圖」之間沒有免費的設定。</div>
 
 <!--
 ★ img2img（4 分）：常見誤解：strength 是「風格強度」。它是「從第幾步開始去噪」：strength 0.3、25 步 → 只走最後約 7 步。D3-4 用同樣的想法把瑕疵「修掉」，今天用來換風格。
@@ -435,13 +438,18 @@ hostOnly: true
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:260px;padding:16px 24px">CLIP 分數 vs w（1、3、5、7.5、10、14），每個 w 4 個 seed 的平均 ± 標準差<small>講師 T4 實跑後替換（lab14 <code>clip_vs_cfg.png</code>）</small></div>
+<table class="vlines" style="font-size:17px;text-align:center">
+<thead><tr><th>w</th><th>1</th><th>3</th><th>5</th><th>7.5</th><th>10</th><th>14</th></tr></thead>
+<tbody><tr><td>CLIP 分數</td><td>29.0</td><td>30.1</td><td>30.8</td><td><b>32.3</b></td><td>30.6</td><td>31.0</td></tr>
+<tr><td>± 標準差</td><td>2.2</td><td>0.9</td><td>1.0</td><td>1.2</td><td>1.0</td><td>2.1</td></tr></tbody>
+</table>
+<div class="shot-cap">Colab T4 實跑：每個 w 4 個 seed（0–3）、25 步，共 81 秒</div>
 
 </div>
 <div style="font-size:18px">
 
 - CLIP 分數 ＝ 100 × 餘弦相似度（圖，提示詞）
-- 預期：w 從 1 往上，分數先升，之後持平甚至下降（過飽和、怪紋路）
+- 實跑：w 從 1 升到 7.5 最高（32.3），之後下降、而且變得不穩（標準差變大）
 - 只有 4 個 seed：看趨勢，不看小數點
 
 </div>
@@ -452,7 +460,7 @@ hostOnly: true
 <div class="src">S7：CLIPScore（Hessel et al., 2021，待確認）；本 lab 用 100 × cos</div>
 
 <!--
-★ CLIP 分數（3 分）：和 D4-1 的忠實度是同一件事：「有沒有聽話」。實際曲線以 T4 輸出為準。
+★ CLIP 分數（3 分）：和 D4-1 的忠實度是同一件事：「有沒有聽話」。差距只有 1–3 分、seed 只有 4 個：只說趨勢。
 -->
 
 ---
@@ -559,7 +567,7 @@ hostOnly: true
 <div>
 
 **打開筆記本**：<code>lab14-sd-studio.ipynb</code>（在 <code>materials/</code>）→ Open in Colab<br>
-執行階段：**T4 GPU**（SD1.5 與 inpainting 兩個模型，下載量與時間待 T4 實測）
+執行階段：**T4 GPU**（SD1.5 與 inpainting 兩個模型，各約 3.9 GB）
 
 1. 企劃文字能變成可用的情境照嗎？
 2. 產品照能只換背景、不改產品嗎？
@@ -629,21 +637,21 @@ hostOnly: true
 
 <PromptBox>
 這是 diffusers 的筆記本，請只填第 5 部分的 # TODO：<br>
-product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
-做一張遮罩 mask（PIL 灰階圖）：三個通道都大於 235 的像素＝255（背景，要重畫），其餘＝0（產品，保留）。<br>
+product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）；bg_color 是邊框像素的中位數（背景色）。<br>
+做一張遮罩 mask（PIL 灰階圖）：三個通道都和 bg_color 相差小於 30 的像素＝255（背景，要重畫），其餘＝0（產品，保留）。<br>
 只用 numpy 和 PIL，不要改其他格。說明每一行在做什麼。
 </PromptBox>
 
 <div class="steps mt-2" style="font-size:17px">
-  <div><span class="num">1</span>下載、載入與每張圖的時間待 T4 實測；第一次下載時先看第 2 部分</div>
-  <div><span class="num">2</span>沒有 Agent 額度：遮罩只要兩行（<code>(arr &gt; 235).all(axis=-1)</code>，再轉成 0／255 的圖）；卡住開 <code>-solution.ipynb</code></div>
+  <div><span class="num">1</span>T4 實測：SD1.5、inpainting 各下載約 3.9 GB；一張 512px、25 步約 4–5 秒；下載時先看第 2 部分</div>
+  <div><span class="num">2</span>沒有 Agent 額度：遮罩只要兩行（<code>(np.abs(arr - bg_color) &lt; 30).all(axis=-1)</code>，再轉成 0／255 的圖）；卡住開 <code>-solution.ipynb</code></div>
   <div><span class="num">3</span>預期輸出：「背景佔 ＿＿% 的像素」、<code>inpainting U-Net 輸入通道： 9</code></div>
 </div>
 
 <div class="node node--warm mt-2" style="font-size:16px"><strong>常見錯誤</strong><small>遮罩黑白顛倒：白色是產品 → inpainting 會把產品重畫掉、背景留著。先看遮罩圖再跑</small></div>
 
 <!--
-★ 執行（約 17 分）：常見錯誤是遮罩顛倒；另一個是門檻太低，產品的白色外殼也被當成背景（白色耳機！）——這時要看「背景佔幾 %」並調門檻或手動補遮罩。
+★ 執行（約 17 分）：常見錯誤是遮罩顛倒。講師第一次實跑用「很白＝背景」（> 235）：生成的「白底」其實是淺灰，只有耳機的亮面最白，背景只佔 5%、遮罩選到的是產品（下一頁的圖）——所以改用邊框顏色。
 -->
 
 ---
@@ -663,7 +671,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 </div>
 <div>
 
-<div class="node node--warm"><strong>白色產品＋白色背景</strong><small>白色耳機的外殼也接近白色：遮罩可能把產品的一部分當成背景。這是今天最常見的失敗</small></div>
+<div><img class="photo" src="/lab14-run-mask-fail.png" alt="講師第一次實跑的失敗：白底產品照、遮罩只選到耳機的亮面、換背景後幾乎沒變" style="width:100%"><div class="shot-cap">講師第一次 T4 實跑的失敗：「很白＝背景」只選到耳機亮面（背景佔 5%）</div></div>
 
 </div>
 </div>
@@ -690,7 +698,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 </tbody>
 </table>
 
-<div class="takeaway mt-3">一次只改一件事：遮罩那一格可以單獨重跑，例如門檻 235 → 245，看背景比例怎麼變。</div>
+<div class="takeaway mt-3">一次只改一件事：遮罩那一格可以單獨重跑，例如門檻 30 → 20，看背景比例怎麼變。</div>
 
 <!--
 ★ 稽核（5 分）：數字以 T4 輸出為準（lab-runs.md）。
@@ -758,10 +766,10 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）。<br>
 
 <div class="takeaway mt-3">商品圖不能誇大產品：換背景可以，改產品外觀不行（D3-1 的假細節是同一件事）。</div>
 
-<div class="src">SD1.5 授權 CreativeML OpenRAIL-M（S1）；C2PA（S8）；皆待確認。法律問題以公司法務意見為準</div>
+<div class="src">SD1.5 授權 CreativeML OpenRAIL-M（S1，模型卡另寫「僅供研究」）；C2PA（S8，待確認）。法律問題以公司法務意見為準</div>
 
 <!--
-★ 風險（3 分）：C2PA（內容憑證）：在檔案裡記錄「這張圖怎麼產生、被誰改過」的標準。OpenRAIL-M 授權允許商業使用，但列了不可用的用途（模型卡）。
+★ 風險（3 分）：C2PA（內容憑證）：在檔案裡記錄「這張圖怎麼產生、被誰改過」的標準。OpenRAIL-M 授權列了不可用的用途；SD1.5 鏡像的模型卡寫「僅供研究」：商用前一定要法務確認。
 -->
 
 ---

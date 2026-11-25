@@ -4,7 +4,7 @@
 
 | id | 主張 | 來源（標題、URL、章節／頁） | 狀態 | 日期 |
 |---|---|---|---|---|
-| S1 | SD1.5 權重鏡像 `stable-diffusion-v1-5/stable-diffusion-v1-5`、`stable-diffusion-v1-5/stable-diffusion-inpainting`；CreativeML OpenRAIL-M | Hugging Face 模型卡 | 待確認（D1-2、D2-3 已使用同一鏡像） | 2026-11-25 |
+| S1 | SD1.5 權重鏡像 `stable-diffusion-v1-5/stable-diffusion-v1-5`、`stable-diffusion-v1-5/stable-diffusion-inpainting`；CreativeML OpenRAIL-M | Hugging Face 模型卡 | 授權標籤已確認（2026-11-25）：creativeml-openrail-m；卡片寫「intended for research purposes only」，並說明是已下架 runwayml 版的鏡像 | 2026-11-25 |
 | S2 | CLIP：4 億組圖文配對的對比式學習；圖與文字投影到同一空間 | Radford et al., *Learning Transferable Visual Models From Natural Language Supervision*, ICML 2021 | 待確認 | 2026-11-25 |
 | S3 | `openai/clip-vit-base-patch32` 的投影維度 512 | 模型 config（`projection_dim`） | 待確認（以筆記本輸出為準） | 2026-11-25 |
 | S4 | Latent Diffusion：VAE 潛在空間、U-Net 去噪、文字以 cross-attention 進入 U-Net | Rombach et al., *High-Resolution Image Synthesis with Latent Diffusion Models*, CVPR 2022 | 待確認 | 2026-11-25 |

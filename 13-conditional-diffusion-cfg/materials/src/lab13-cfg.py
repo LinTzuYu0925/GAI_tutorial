@@ -41,7 +41,7 @@ random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 EPOCHS = 10         # 沒有 GPU：改成 1（並把下面的 SUBSET 設成 3000）
 SUBSET = None       # None＝用全部 60000 張訓練圖
 P_UNCOND = 0.1      # label dropout：每張圖有 10% 的機率被藏起標籤
-N_PER_CLASS = 50    # 量測時每一類生成幾張（T4 上每個 w 約 3 分鐘；沒有 GPU：改成 10）
+N_PER_CLASS = 50    # 量測時每一類生成幾張（T4 上每個 w 約 3.7 分鐘；沒有 GPU：改成 10）
 W_LIST = [0, 1, 3, 7]
 
 # %% [markdown]

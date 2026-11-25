@@ -10,7 +10,7 @@
 | S4 | Flow matching：沿 x_t＝(1−t)x₀＋t·x₁ 回歸速度 x₁ − x₀ | Lipman et al., *Flow Matching for Generative Modeling*, ICLR 2023 | 待確認 | 2026-11-25 |
 | S5 | Rectified flow／reflow：用模型自己的配對重新訓練，讓軌跡更直，可 1 步生成 | Liu, Gong, Liu, *Flow Straight and Fast*, ICLR 2023 | 待確認 | 2026-11-25 |
 | S6 | InstructPix2Pix：用 GPT-3 與 Prompt-to-Prompt 合成的成對編修資料訓練；文字與影像兩個 guidance | Brooks, Holynski, Efros, *InstructPix2Pix*, CVPR 2023 | 待確認 | 2026-11-25 |
-| S7 | 授權：CycleGAN 程式 BSD；InstructPix2Pix 權重的授權；LCM-LoRA openrail++；SD1.5 CreativeML OpenRAIL-M | 各 GitHub LICENSE、HF 模型卡 | 待確認（逐一開模型卡核對） | 2026-11-25 |
-| S8 | SDXL-Turbo 採非商業授權（反例：快，但不能直接商用） | `stabilityai/sdxl-turbo` 模型卡 | 待確認 | 2026-11-25 |
+| S7 | 授權標籤：`timbrooks/instruct-pix2pix` mit；`latent-consistency/lcm-lora-sdv1-5` openrail++；`stable-diffusion-v1-5/stable-diffusion-v1-5` creativeml-openrail-m（卡片 Direct Use：「intended for research purposes only」）；CycleGAN 程式 BSD | HF 模型卡（2026-11-25 讀取）；CycleGAN 的 LICENSE 未讀 | 模型卡已確認；CycleGAN 待確認 | 2026-11-25 |
+| S8 | SDXL-Turbo 授權標籤 sai-nc-community；商用指向 stability.ai/membership | `stabilityai/sdxl-turbo` 模型卡 | 已確認（2026-11-25 讀取） | 2026-11-25 |
 | S9 | Consistency models：一步從任何雜訊程度跳回資料 | Song et al., *Consistency Models*, ICML 2023 | 待確認 | 2026-11-25 |
 | S10 | DiT：把 U-Net 換成 Transformer | Peebles & Xie, *Scalable Diffusion Models with Transformers*, ICCV 2023 | 待確認 | 2026-11-25 |

@@ -11,7 +11,7 @@
 | `teaching-plan.md` | 時間表 |
 | `materials/src/lab12-diffusion-ad.py` | 筆記本原始檔 |
 | `materials/lab12-diffusion-ad.ipynb`、`-solution.ipynb` | Lab L3-4 |
-| `materials/ddpm_pcb1_64.pt` | 講師檢查點（T4 實跑後放入） |
+| `materials/ddpm_pcb1_64.pt` | 講師檢查點（2026-11-25 T4 第一次實跑自己訓練的，4.0 MB） |
 
 ## 2. 進度
 

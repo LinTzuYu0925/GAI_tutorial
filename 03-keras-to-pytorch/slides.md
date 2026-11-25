@@ -632,19 +632,53 @@ for step in range(100):
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['[B, H, W, C]', '[B, C, H, W]', '[C, B, H, W]', '[H, W, C, B]']"
+  :why="['這是 Keras 的 channels-last；搬到 PyTorch 要把 C 移到 H、W 前面。', '', '批次 B 永遠在第一維，DataLoader 一次給一整批。', '批次 B 永遠在第一維，通道 C 緊接在後。']"
+  explain="PyTorch 是 channels-first：批次、通道、高、寬。一批 CIFAR-10 是 [B, 3, 32, 32]。">
+PyTorch 影像 tensor 的慣用排列？
+</Mcq>
 
-1. PyTorch 影像 tensor 的慣用排列？（　）<br><span class="opts">A. &#91;B, H, W, C&#93;　B. &#91;B, C, H, W&#93;　C. &#91;C, B, H, W&#93;　D. &#91;H, W, C, B&#93;</span>
-2. 每一批訓練開始前要呼叫哪一個，避免梯度累加？（　）<br><span class="opts">A. <code>loss.backward()</code>　B. <code>optimizer.step()</code>　C. <code>optimizer.zero_grad()</code>　D. <code>model.eval()</code></span>
-3. <code>model.eval()</code> 的作用？（　）<br><span class="opts">A. 開始訓練　B. 關閉 Dropout 等訓練專用行為　C. 刪除梯度　D. 存檔</span>
-4. 載入 <code>state_dict</code> 前必須先做什麼？（　）<br><span class="opts">A. 建立同樣架構的模型　B. 重新訓練　C. 安裝 Keras　D. 把資料轉成 NumPy</span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['loss.backward()', 'optimizer.step()', 'optimizer.zero_grad()', 'model.eval()']"
+  :why="['backward() 是算梯度，而且會「加」到舊梯度上，這正是要先清掉的原因。', 'step() 是用梯度更新參數，不會清掉梯度。', '', 'eval() 是切換到評估模式，和清梯度無關。']"
+  explain="PyTorch 的梯度會累加；每一批先 zero_grad()，再 backward()、step()。">
+每一批訓練開始前要呼叫哪一個，避免梯度累加？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（4 分）。答案：1 B、2 C、3 B、4 A。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 B、2 C。
+-->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="1"
+  :options="['開始訓練', '關閉 Dropout 等訓練專用行為', '刪除梯度', '存檔']"
+  :why="['開始訓練要切回 model.train()。', '', '清梯度是 optimizer.zero_grad()；不算梯度是 torch.no_grad()。', '存檔是 torch.save(model.state_dict(), …)。']"
+  explain="eval() 把 Dropout 關掉、BatchNorm 改用訓練時累積的統計值；評估和推論前都要呼叫。">
+<code>model.eval()</code> 的作用？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['建立同樣架構的模型', '重新訓練', '安裝 Keras', '把資料轉成 NumPy']"
+  :why="['', '載入權重就是為了不用重新訓練。', 'state_dict 是 PyTorch 的格式，和 Keras 無關。', '載入權重和資料格式無關。']"
+  explain="state_dict 只存每一層的數字，不存架構；要先建立同一個類別的模型，再 load_state_dict()。">
+載入 <code>state_dict</code> 前必須先做什麼？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（2 分）。答案：3 B、4 A。
+全部答案與理由：1 B、2 C、3 B、4 A。
 -->
 
 ---

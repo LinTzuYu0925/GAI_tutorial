@@ -798,19 +798,53 @@ hostOnly: true
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['產生新圖片', '判斷輸入是真實資料還是生成的', '壓縮影像', '選擇學習率']"
+  :why="['產生新圖片是生成器 G 的工作。', '', '壓縮影像是自編碼器的編碼器。', '學習率是人設定的超參數。']"
+  explain="D 是鑑定師：看一張圖，判斷它是真的還是 G 畫的；G 想騙過它。">
+GAN 中，鑑別器 D 的工作是？
+</Mcq>
 
-1. GAN 中，鑑別器 D 的工作是？（　）<br><span class="opts">A. 產生新圖片　B. 判斷輸入是真實資料還是生成的　C. 壓縮影像　D. 選擇學習率</span>
-2. 訓練 D 時對假圖使用 <code>fake.detach()</code>，目的是？（　）<br><span class="opts">A. 加快速度　B. 減少記憶體　C. 這一步不要更新 G　D. 讓 D 看不到假圖</span>
-3. 「生成的圖很清楚，但幾乎都長一樣」稱為？（　）<br><span class="opts">A. 過擬合　B. 梯度消失　C. 量化誤差　D. mode collapse</span>
-4. 下列何者今天仍使用對抗損失？（　）<br><span class="opts">A. Real-ESRGAN　B. k-means　C. 線性迴歸　D. 決策樹</span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['加快速度', '減少記憶體', '這一步不要更新 G', '讓 D 看不到假圖']"
+  :why="['確實會省一點計算，但那是附帶效果，不是目的。', '省記憶體也是附帶效果，不是目的。', '', 'D 還是看得到假圖，只是梯度不往 G 傳。']"
+  explain="訓練 D 這一步只想改 D；detach() 切斷往 G 的梯度，G 留到下一步自己更新。">
+訓練 D 時對假圖使用 <code>fake.detach()</code>，目的是？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 B、2 C、3 D、4 A。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 B、2 C。
+-->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="3"
+  :options="['過擬合', '梯度消失', '量化誤差', 'mode collapse']"
+  :why="['過擬合是把訓練集背起來；這裡是 G 只會畫少數幾種。', '梯度消失是訓練學不動，圖通常也不會清楚。', '量化誤差是 VQ-VAE 查編碼簿時的誤差。', '']"
+  explain="G 找到一種能騙過 D 的圖就一直畫它，多樣性崩掉，叫 mode collapse（模式崩潰）。">
+「生成的圖很清楚，但幾乎都長一樣」稱為？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['Real-ESRGAN', 'k-means', '線性迴歸', '決策樹']"
+  :why="['', 'k-means 是分群，沒有生成器也沒有鑑別器。', '線性迴歸只用 MSE，沒有對抗。', '決策樹不是神經網路，也沒有對抗損失。']"
+  explain="Real-ESRGAN 用對抗損失讓放大後的紋理更銳利，就是這堂放大產品圖用的模型。">
+下列何者今天仍使用對抗損失？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（1 分）。答案：3 D、4 A。
+全部答案與理由：1 B、2 C、3 D、4 A。
 -->
 
 ---

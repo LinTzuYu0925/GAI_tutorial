@@ -627,19 +627,53 @@ hostOnly: true
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="2"
+  :options="['CycleGAN 不需要鑑別器', 'pix2pix 只能處理黑白圖', 'CycleGAN 不需要成對影像', 'CycleGAN 訓練時不用 GPU']"
+  :why="['CycleGAN 有兩個鑑別器，一個領域一個。', 'pix2pix 可以處理彩色圖。', '', '兩者都要用 GPU 訓練。']"
+  explain="pix2pix 要同一片板子在兩條線拍的成對影像；CycleGAN 只要兩堆照片，靠循環一致損失對齊。">
+CycleGAN 和 pix2pix 最大的差別？
+</Mcq>
 
-1. CycleGAN 和 pix2pix 最大的差別？（　）<br><span class="opts"><span class="nw">A. CycleGAN 不需要鑑別器</span>　<span class="nw">B. pix2pix 只能處理黑白圖</span>　<span class="nw">C. CycleGAN 不需要成對影像</span>　<span class="nw">D. CycleGAN 訓練時不用 GPU</span></span>
-2. 循環一致損失要求？（　）<br><span class="opts"><span class="nw">A. G(b) 和 b 一樣</span>　<span class="nw">B. D_A 把 G(b) 判成真</span>　<span class="nw">C. G(a) 和 a 一樣</span>　<span class="nw">D. F(G(b)) 和 b 一樣</span></span>
-3. PatchGAN 的鑑別器輸出？（　）<br><span class="opts"><span class="nw">A. 一個分數</span>　<span class="nw">B. 一張「每一小塊真假」的分數圖</span>　<span class="nw">C. 一張彩色圖</span>　<span class="nw">D. 類別標籤</span></span>
-4. 用轉換解決換相機的誤報，最需要額外檢查？（　）<br><span class="opts"><span class="nw">A. 轉換後顏色像不像 A 線</span>　<span class="nw">B. 生成器的參數量</span>　<span class="nw">C. 鑑別器的損失有沒有下降</span>　<span class="nw">D. 瑕疵有沒有被抹掉</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="3"
+  :options="['G(b) 和 b 一樣', 'D_A 把 G(b) 判成真', 'G(a) 和 a 一樣', 'F(G(b)) 和 b 一樣']"
+  :why="['G(b) 要像 A 線，不該和 b 一樣；這是最常見的錯誤。', '這是對抗損失，不是循環一致。', '這是 identity（恆等）損失：已經是 A 線的圖丟進 G 應該不變。', '']"
+  explain="b 轉到 A 線再轉回來，F(G(b)) 要和原本的 b 一樣，板子的內容才不會在轉換中被換掉。">
+循環一致損失要求？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 C、2 D（A 是常見錯誤；C 是 identity）、3 B、4 D（A 只是「像」，不代表瑕疵還在）。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 C、2 D。
+-->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="1"
+  :options="['一個分數', '一張「每一小塊真假」的分數圖', '一張彩色圖', '類別標籤']"
+  :why="['一個分數是一般 GAN 的鑑別器；PatchGAN 對每一小塊各給一分。', '', '鑑別器不產生圖。', 'PatchGAN 不分類別，只判真假。']"
+  explain="每一格分數只看輸入的一小塊，逼生成器把每一處的紋理都做像。">
+PatchGAN 的鑑別器輸出？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="3"
+  :options="['轉換後顏色像不像 A 線', '生成器的參數量', '鑑別器的損失有沒有下降', '瑕疵有沒有被抹掉']"
+  :why="['只看「像不像」正是陷阱：瑕疵被抹掉的圖也很像 A 線。', '參數量和這個風險無關。', 'D 的損失下降只代表訓練在進行，不代表瑕疵保住了。', '']"
+  explain="轉換後的圖要拿去做異常偵測，瑕疵一被抹掉就是漏檢；要用有瑕疵的 B 線圖確認瑕疵還在。">
+用轉換解決換相機的誤報，最需要額外檢查？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（1 分）。答案：3 B、4 D。
+全部答案與理由：1 C、2 D（A 是常見錯誤；C 是 identity）、3 B、4 D（A 只是「像」，不代表瑕疵還在）。
 -->
 
 ---

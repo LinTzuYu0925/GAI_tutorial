@@ -677,7 +677,7 @@ hostOnly: true
 # 第一天：從「能做什麼」到「做出能點的東西」
 
 <div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
-  <span class="chip">D1-1 用例畫布</span><span class="arrow">→</span>
+  <span class="chip">D1-1 需求評估表</span><span class="arrow">→</span>
   <span class="chip">D1-2 文字與影像生成</span><span class="arrow">→</span>
   <span class="chip">D1-3 PyTorch 迴圈</span><span class="arrow">→</span>
   <span class="chip">D1-4 檢查點＋Gradio</span>
@@ -691,23 +691,81 @@ hostOnly: true
 
 ---
 
-<div class="eyebrow">第一天隨堂檢核</div>
+<div class="eyebrow">第一天 · iPAS 小考</div>
 
-# 選擇題（iPAS 題型）
+# 第一天小考 1／3（iPAS 題型）：點選答案
 
-<div class="mcq">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['類別標籤', '一張新的產品圖', '迴歸數值', '混淆矩陣']"
+  :why="['類別標籤是判別（分類）模型的輸出。', '', '一個數字是迴歸模型的輸出。', '混淆矩陣是評估分類結果用的表，不是模型輸出。']"
+  explain="生成模型輸出一整筆新資料：一張圖、一段文字或一段聲音。">
+下列何者是<b>生成</b>模型的輸出？
+</Mcq>
 
-1. 下列何者是**生成**模型的輸出？（　）<span class="opts">A. 類別標籤　B. 一張新的產品圖　C. 迴歸數值　D. 混淆矩陣</span>
-2. 提高溫度 T，抽樣結果會？（　）<span class="opts">A. 更穩定　B. 更多樣　C. 不變　D. 變成 greedy</span>
-3. 固定 seed 是為了？（　）<span class="opts">A. 可重現　B. 更快　C. 更省記憶體　D. 提高準確率</span>
-4. 1B 參數的模型以 fp16 載入，權重約多少？（　）<span class="opts">A. 0.5 GB　B. 1 GB　C. 2 GB　D. 4 GB</span>
-5. 能接續訓練的檢查點至少要存？（　）<span class="opts">A. 只有權重　B. 權重、優化器狀態、epoch　C. 只有 loss　D. 訓練資料</span>
-6. 標示 NC 的模型權重？（　）<span class="opts">A. 可任意商用　B. 限非商業用途　C. 只能在 GPU 用　D. 不能下載</span>
+<Mcq id="quiz1.q2" :n="2" :answer="1"
+  :options="['更穩定', '更多樣', '不變', '變成 greedy']"
+  :why="['T 調低才會更穩定：高機率的字更容易被抽中。', '', 'T 會改變機率分布的形狀，結果一定會變。', 'greedy 是 T 趨近 0 的極端：每次都選機率最高的。']"
+  explain="T 越高，機率分布越平，低機率的選項也有機會被抽到，結果更多樣，也更容易離題。">
+提高溫度 T，抽樣結果會？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（5 分）。答案：1 B、2 B、3 A、4 C、5 B、6 B。第 4 題：1×10⁹×2 B ＝ 2 GB。
+★ 檢核 1／3（2 分）：學員自己點；點錯會出現「再想想」和那個選項錯在哪，可以再點一次。答案：1 B、2 B。
+-->
+
+---
+
+<div class="eyebrow">第一天 · iPAS 小考</div>
+
+# 第一天小考 2／3（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="0"
+  :options="['可重現', '更快', '更省記憶體', '提高準確率']"
+  :why="['', 'seed 只決定亂數從哪裡開始，不影響速度。', '記憶體用量由模型和批次大小決定，和 seed 無關。', 'seed 不會讓模型變好；換一個 seed 只是抽到不同的結果。']"
+  explain="同一個 seed、同一個模型和設定，就得到同一個結果，方便比較和除錯。">
+固定 seed 是為了？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="2"
+  :options="['0.5 GB', '1 GB', '2 GB', '4 GB']"
+  :why="['0.5 GB 是 4-bit：每個參數 0.5 byte。', '1 GB 是 8-bit：每個參數 1 byte。', '', '4 GB 是 fp32：每個參數 4 bytes。']"
+  explain="fp16 每個參數 2 bytes：1×10⁹ × 2 B ＝ 2 GB（只算權重，執行時還要再多一些）。">
+1B 參數的模型以 fp16 載入，權重約多少？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／3（2 分）。答案：3 A、4 C。
+-->
+
+---
+
+<div class="eyebrow">第一天 · iPAS 小考</div>
+
+# 第一天小考 3／3（iPAS 題型）：點選答案
+
+<Mcq id="quiz3.q5" :n="5" :answer="1"
+  :options="['只有權重', '權重、優化器狀態、epoch', '只有 loss', '訓練資料']"
+  :why="['只有權重可以推論，但優化器的動量等狀態不見了，也不知道訓練到第幾個 epoch。', '', 'loss 只是紀錄；沒有權重就什麼都接不下去。', '訓練資料本來就在，不用存進檢查點。']"
+  explain="接續訓練需要三樣：模型權重、優化器狀態、目前的 epoch。">
+能接續訓練的檢查點至少要存？
+</Mcq>
+
+<Mcq id="quiz3.q6" :n="6" :answer="1"
+  :options="['可任意商用', '限非商業用途', '只能在 GPU 用', '不能下載']"
+  :why="['NC 正好相反：禁止商業用途。', '', '授權規定的是怎麼用，不是在什麼硬體上跑。', 'NC 模型通常可以下載，只是不能拿去商用。']"
+  explain="NC ＝ Non-Commercial（非商業）。公司產品要用，先看模型卡上的授權。">
+標示 NC 的模型權重？
+</Mcq>
+
+<FillClear group="quiz3" corner />
+
+<!--
+★ 檢核 3／3（1 分）。答案：5 B、6 B。
+全部答案與理由：1 B、2 B、3 A、4 C、5 B、6 B。第 4 題：1×10⁹×2 B ＝ 2 GB。
 -->
 
 ---
@@ -717,7 +775,7 @@ hostOnly: true
 # 回家作業（不收回，下次上課開頭對答案）
 
 <div class="steps mt-3">
-  <div><span class="num">1</span><strong>第三張用例畫布</strong>：挑課程地圖上任一張需求單（D3–D6），填 D1-1 的八格</div>
+  <div><span class="num">1</span><strong>第三張需求評估表</strong>：挑課程地圖上任一張需求單（D3–D6），填 D1-1 的八格</div>
   <div><span class="num">2</span><strong>完成移植</strong>：lab03 跑完 10 個 epoch，和 Keras 版比較準確率</div>
   <div><span class="num">3</span><strong>VRAM 實測</strong>：lab04 Part B 的表填完，換一個 1.5B 模型再量一次（記得先估算）</div>
 </div>

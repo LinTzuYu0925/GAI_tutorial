@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（講師以 /goal 自動核准） |
-| `slides.md` | 投影片（25 頁，其中 2 頁 hostOnly） |
+| `slides.md` | 投影片（26 頁，其中 2 頁 hostOnly） |
 | `materials/src/lab03-keras-to-pytorch.py` | 筆記本原始檔（`python -X utf8 ../scripts/py2nb.py materials/src/lab03-keras-to-pytorch.py`） |
 | `materials/lab03-keras-to-pytorch.ipynb`、`-solution.ipynb` | Lab L1-3 |
 

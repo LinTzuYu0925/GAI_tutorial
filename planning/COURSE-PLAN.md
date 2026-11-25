@@ -23,8 +23,8 @@
 | D2 | D2-4 | `08-vqvae-tokens` | IT/Support: low-bitrate storage | #6 | L2-4 | **Built + reviewed** (29, incl. Day 2 summary/quiz/homework; CPU smoke test; T4 run pending) |
 | D3 | D3-1 | `09-gan-upscaling` | E-commerce: low-res catalog | #10 | L3-1 | **Built + reviewed** (32; T4 run recorded on an older build) |
 | D3 | D3-2 | `10-cyclegan-line-b` | QA Line B: domain shift, no pairs | #11 | L3-2 | **Built + reviewed** (26; CPU smoke test; T4 run pending) |
-| D3 | D3-3 | `11-ddpm-from-scratch` | Marketing: GAN mode collapse | #7, #2 | L3-3 | Plan draft |
-| D3 | D3-4 | `12-diffusion-anomaly` | QA return: blurry AE heatmaps | #8 | L3-4 | Plan draft |
+| D3 | D3-3 | `11-ddpm-from-scratch` | Marketing: GAN mode collapse | #7, #2 | L3-3 | **Built** (31; T4 run 2 recorded on slides; slide-reviewer pending) |
+| D3 | D3-4 | `12-diffusion-anomaly` | QA return: blurry AE heatmaps | #8 | L3-4 | **Built** (30, incl. Day 3 summary/quiz/homework; T4 run 1 recorded: AE beat diffusion; slide-reviewer pending) |
 | D4 | D4-1 | `13-conditional-diffusion-cfg` | Data team: generate class k | #9, 學習評量 | L4-1 | Plan draft |
 | D4 | D4-2 | `14-stable-diffusion-studio` | Marketing: brief → photo, new background | #9, K8, K9 | L4-2 | Plan draft |
 | D4 | D4-3 | `15-lora-brand` | Brand: our product, our style | K7, #9 | L4-3 | Plan draft |

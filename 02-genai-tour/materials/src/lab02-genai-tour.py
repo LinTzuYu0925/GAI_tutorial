@@ -9,16 +9,18 @@
 # |---|---|---|
 # | A | 用 `pipeline` 寫文案 | Qwen2.5-0.5B-Instruct（開放權重） |
 # | B | 產生產品圖，固定 seed | SD1.5 ＋ LCM-LoRA（4 步） |
-# | C | 呼叫一次雲端 LLM（沒有金鑰就跳過） | Claude（`anthropic` 套件） |
+# | C | 呼叫一次雲端 LLM（沒有金鑰就跳過） | Gemini 免費方案（`google-genai` 套件） |
 # | D | 打開黑盒子：下一個 token 的機率、溫度 | Part A 的模型 |
 #
-# **執行階段**：功能表「執行階段 → 變更執行階段類型 → T4 GPU」。
+# **執行階段**：
+# - Colab 網頁版：功能表「執行階段 → 變更執行階段類型 → T4 GPU」。
+# - VS Code：右上角「Select Kernel → Colab → New Colab Server → GPU → T4」。
 #
-# > 狀態：本筆記本尚未在 Colab T4 實跑；版本號在講師實跑後釘定（見 `research/lab-runs.md`）。
+# 這本筆記本用的開放模型都放在 **Hugging Face Hub**（huggingface.co）：第一次執行時自動下載，不需要帳號或金鑰。
 
 # %%
-# 第 1 格：安裝套件並確認 GPU（講師實跑後把版本釘死，例如 diffusers==x.y.z）
-%pip install -q -U transformers diffusers accelerate peft anthropic python-dotenv
+# 第 1 格：安裝套件並確認 GPU（transformers、diffusers 釘在 2026-11-26 T4 實跑的版本）
+%pip install -q transformers==5.24.1 diffusers==0.43.0 accelerate peft google-genai python-dotenv  # 2026-11-26 T4 實跑版本
 import torch, platform
 print("torch", torch.__version__, "| python", platform.python_version())
 if torch.cuda.is_available():
@@ -60,7 +62,7 @@ for i in range(3):
 # %%
 from diffusers import DiffusionPipeline, LCMScheduler
 
-pipe = DiffusionPipeline.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5", torch_dtype=DTYPE).to(DEVICE)
+pipe = DiffusionPipeline.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5", dtype=DTYPE).to(DEVICE)
 pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)
 pipe.load_lora_weights("latent-consistency/lcm-lora-sdv1-5")
 
@@ -90,33 +92,40 @@ print("兩張圖最大像素差：", diff, "（0 代表完全相同）")
 
 # %% [markdown]
 # ## Part C：第一次呼叫雲端 LLM（選做）
-# 金鑰**不寫在程式裡**：放在 Colab 左側「🔑 密鑰（Secrets）」，名稱 `ANTHROPIC_API_KEY`，或放在 `.env` 檔（Vibe Coding 單元 12 學過）。
+# 金鑰**不寫在程式裡**。兩種放法，下面這格都會試：
+# 1. **Colab 網頁版**：左側 🔑「密鑰（Secrets）」→ 新增 `GEMINI_API_KEY` → 打開「筆記本存取權」。
+# 2. **`.env` 檔**（本機或 VS Code 連 Colab）：檔案內容一行 `GEMINI_API_KEY=你的金鑰`；VS Code 連 Colab 時，在檔案總管對 `.env` 按右鍵 →「Upload to Colab」。VS Code 連 Colab **不支援**方法 1。
+#
 # 沒有金鑰：這一格會印出備案訊息，改用 Part A 的開放模型，不影響後面。
 
 # %%
 import os
-from dotenv import load_dotenv
+GEMINI_MODEL = "gemini-3.5-flash-lite"  # 免費方案可用的模型；名稱以 Google AI Studio 為準
 
-load_dotenv()
-key = os.environ.get("ANTHROPIC_API_KEY")
-try:
+key = None
+try:                                    # 方法 1：Colab 網頁版的密鑰
     from google.colab import userdata
-    key = key or userdata.get("ANTHROPIC_API_KEY")
+    key = userdata.get("GEMINI_API_KEY")
 except Exception:
     pass
+if not key:                             # 方法 2：.env 檔
+    from dotenv import load_dotenv
+    load_dotenv()
+    key = os.environ.get("GEMINI_API_KEY")
 
 if key:
-    import anthropic
-    client = anthropic.Anthropic(api_key=key)
-    msg = client.messages.create(
-        model="claude-opus-5-5",  # 講師決定課堂用哪個模型與金鑰（見 outline.md 待講師決定）
-        max_tokens=1024,
-        system=messages[0]["content"],
-        messages=[{"role": "user", "content": messages[1]["content"]}],
+    from google import genai
+    from google.genai import types
+    client = genai.Client(api_key=key)
+    resp = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=messages[1]["content"],
+        config=types.GenerateContentConfig(system_instruction=messages[0]["content"]),
     )
-    cloud_copy = "".join(b.text for b in msg.content if b.type == "text")
+    cloud_copy = resp.text
     print(cloud_copy)
-    print("用量：輸入", msg.usage.input_tokens, "tokens，輸出", msg.usage.output_tokens, "tokens")
+    u = resp.usage_metadata
+    print("用量：輸入", u.prompt_token_count, "tokens，輸出", u.candidates_token_count, "tokens")
 else:
     print("沒有 API 金鑰：跳過雲端呼叫，使用 Part A 的開放模型文案（備案）。")
 
@@ -140,7 +149,8 @@ last = logits[0, -1].float()
 probs = torch.softmax(last, dim=-1)
 top = torch.topk(probs, 5)
 for p, i in zip(top.values, top.indices):
-    print(f"{tok.decode(int(i))!r:>8}  {p.item():.3f}")
+    print(f"{tok.decode(int(i))!r:>8}  logit {last[i].item():7.2f}  →  機率 {p.item():.3f}")
+print("全部 logits 加總：", round(last.sum().item(), 1), "｜全部機率加總：", round(probs.sum().item(), 4))
 
 # %% [markdown]
 # ### 溫度：把分布變尖或變平
@@ -197,3 +207,14 @@ with open("outputs/copies.txt", "w", encoding="utf-8") as f:
 for repo in ["Qwen/Qwen2.5-0.5B-Instruct", "stable-diffusion-v1-5/stable-diffusion-v1-5", "latent-consistency/lcm-lora-sdv1-5"]:
     card = model_info(repo).card_data
     print(f"{repo:48s} license = {card.get('license') if card else '（模型卡沒有填）'}")
+
+# %% [markdown]
+# ### 實跑紀錄（講師用）
+# 版本、VRAM 峰值：寫進 `research/lab-runs.md`。
+
+# %%
+import transformers, diffusers, huggingface_hub
+print("torch", torch.__version__, "| transformers", transformers.__version__, "| diffusers", diffusers.__version__,
+      "| huggingface_hub", huggingface_hub.__version__)
+if torch.cuda.is_available():
+    print(f"VRAM 峰值：{torch.cuda.max_memory_allocated()/1e9:.2f} GB")

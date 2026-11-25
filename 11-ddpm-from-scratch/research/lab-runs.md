@@ -1,0 +1,111 @@
+# 11-ddpm-from-scratch 實跑紀錄
+
+投影片上的數字、圖片、VRAM 和時間都要來自這裡記錄的執行。
+
+## 本機 CPU 煙霧測試（2026-11-25，不是 T4 實跑；數字不上投影片）
+
+- 環境：torch 2.15.0+cpu、diffusers 0.43.0、Python 3.14.9；用 runlab（去掉 `%pip`）。
+- 設定：EPOCHS＝1、TRAIN_SUBSET＝3000、TRY_STEPS＝5。全部格子可執行，245 秒。
+- 第一次：DataLoader `num_workers=2` 在 Windows 本機出錯（worker 結束）→ 改成整包資料放進裝置、用 `randperm` 切批次（和 transform 結果逐像素相同，最大差 0）。
+- 形狀：x_t (8,1,32,32)、time_embedding (8,64)、e1 (8,32,32,32)、e2 (8,64,16,16)、e3 (8,128,8,8)、瓶頸 (8,256,4,4)、out (8,1,32,32)；參數 1,981,921。
+- 固定公式（任何機器相同）：√ᾱ_t 在 t＝0／50／100／250／500／750／999 為 1.000／0.985／0.946／0.722／0.279／0.057／0.006；t＝259 起雜訊比例大於原圖。
+- 真實 32 張兩兩距離 22.90，和 lab09 T4 實跑的 22.90 相同（量法一致的檢查）。
+- 只訓練 23 步，樣本是雜訊（兩兩距離 32.71），其他數字無意義。
+- 品質檢查（CPU，EPOCHS＝3、全部 60,000 張，1,309 秒）：loss 0.1196 → 0.0542 → 0.0486；64 張 1000 步 141 秒；樣本已看得出上衣、褲子、鞋子、包包等多類（粗糙）；兩兩距離 21.32；生成圖最近鄰中位數 10.10（測試圖參考值 5.89）。結論：設定可學，T4 用 EPOCHS＝20。數字不上投影片。
+
+## Colab T4 實跑
+
+### 2026-11-25 第一次 T4 實跑（`lab11-ddpm-solution.ipynb`，branch build-d3，EPOCHS＝20、全部 60,000 張、SEED＝0）
+
+- 環境：Colab，GPU：Tesla T4，可用 VRAM 15.5 / 15.6 GB；torch 2.14.1+cu130、diffusers 0.42.1、Python 3.13.16。
+- 一次「全部執行」跑完，沒有重試；整本約 9～10 分鐘（10:58 開始，11:08 最後一格完成）。
+- 警告：只有 HF Hub 的「unauthenticated requests，請設 HF_TOKEN」提示（A 部分下載模型時），沒有錯誤。
+- `files.download` 在 Edge 沒有自動存成 zip（停在 .tmp）；改用 Colab 檔案瀏覽器下載，內容完整（11 個檔案）。
+- A（google/ddpm-cifar10-32）：16 張 × 1000 步 62.0 秒。
+- B：√ᾱ_t 在 t＝0／50／100／250／500／750／999 為 1.000／0.985／0.946／0.722／0.279／0.057／0.006（√(1−ᾱ_t) 為 0.010／0.173／0.324／0.692／0.960／0.998／1.000）；從 t＝259 起雜訊比例大於原圖。
+- C：形狀和 CPU 測試相同；參數 1,981,921。
+- D 訓練：每個 epoch 約 24 秒（epoch 1：24 秒；epoch 10：239 秒；epoch 20：477 秒），總共 477 秒。
+  - loss：0.1196 → 0.0549 → 0.0481 → 0.0452 → 0.0433 → 0.0417 → 0.0401 → 0.0396 → 0.0384 → 0.0372 → 0.0367 → 0.0362 → 0.0355 → 0.0351 → 0.0341 → 0.0343 → 0.0344 → 0.0340 → 0.0335 → 0.0334（最後 0.0334）。
+  - 訓練 VRAM 峰值 1.07 GB。
+- E 取樣：64 張 × 1000 步 6.8 秒，VRAM 峰值 0.36 GB。
+  - 兩兩距離：真實 32 張 22.90；我們的 DDPM 16.41（D3-1 DCGAN T4 實跑 22.08）。
+  - 注意：DDPM 的兩兩距離比 DCGAN 還小，和「擴散比 GAN 多樣」的預期相反。看 `samples.png`：鞋、褲、上衣、包包、洋裝各類都有，但很多張偏暗、偏細（背景黑、物體小或淡），像素距離因此變小。投影片若要用這個數字比多樣性，要先處理量法或說明。
+- F DDIM（同一個網路，64 張）：
+
+  | 步數 | 64 張秒數 | 兩兩距離 |
+  |---|---|---|
+  | DDPM 1000 | 6.80 | 16.41 |
+  | DDIM 250 | 1.76 | 35.39 |
+  | DDIM 100 | 0.67 | 22.58 |
+  | DDIM 50 | 0.34 | 20.62 |
+  | DDIM 20 | 0.13 | 20.73 |
+  | DDIM 10 | 0.07 | 17.52 |
+
+  - 注意：`ddim_steps.png` 顯示步數越多反而越壞：DDIM 250 全是雜訊，100 是一塊塊白方塊，50 大多是白方塊（只有少數像衣服），20 和 10 才是清楚的衣服、鞋、包包。35.39 和 22.58 是雜訊造成的高距離，不是多樣性。`sample_ddim` 或排程器設定可能有問題，要修好再重跑；這一列數字不能上投影片。
+- G 最近鄰（16 張生成圖 → 60,000 張訓練圖）：中位數 6.20、最小 4.11；測試圖參考值中位數 5.89。
+- 存檔：`research/lab11-t4-run.ipynb`（含輸出的 notebook）、`research/lab11-t4-results.json`、`materials/ddpm_fmnist.pt`（fp16 檢查點，4.0 MB）。
+- 圖片（`public/`）：`lab11-run-try_pretrained.png`、`lab11-run-forward_strip.png`、`lab11-run-schedule.png`、`lab11-run-time_embedding.png`、`lab11-run-loss.png`、`lab11-run-samples.png`、`lab11-run-reverse_strip.png`、`lab11-run-ddim_steps.png`、`lab11-run-nearest.png`。
+
+#### 第一次實跑後的診斷（本機 CPU，用這次 T4 的檢查點；數字不上投影片）
+
+- **DDIM 步數越多越糟**：自己寫的 DDIM 和 `DDIMScheduler` 結果相同（標準差 0.885 vs 0.886），不是呼叫錯誤。原因是 `DDIMScheduler` 預設 `clip_sample=True`：每一步把估出的 x̂₀ 裁到 −1～1；小模型在雜訊很多的前幾步（√ᾱ 很小，x̂₀ 被放大上百倍）估得很不準，裁掉後誤差一路累積，步數越多累積越多。改 `clip_sample=False` 後，250／100／50／20 步畫出**同一件衣服**（同一個起點雜訊），10 步略差。→ lab11 改成 `clip_sample=False`；lab12 自己寫的 DDIM 也拿掉 x̂₀ 的 clamp。第一次的 DDIM 圖留作稽核頁證據：`public/lab11-run1-ddim-clip.png`。
+- **兩兩距離偏低**：用檢查點在 CPU 生成 64 張、訓練 1 epoch 的小分類器（測試準確率 85.6%）分類：64 張出現 8 類（缺 Pullover、Ankle boot；Sandal 16、Dress 15、Trouser 11、Shirt 11）。衣物佔畫面比例 22.2%（真圖 40.7%），平均像素 −0.711（真圖 −0.424）：樣本比較細、比較暗。用「和樣本同樣類別比例」的真圖算兩兩距離仍是 22.04 → 距離偏低主要來自「細、暗」，不是類別少。→ lab11 加上分類器數類別與衣物佔畫面比例。
+- 第一次的 notebook 與數字改名保存：`research/lab11-t4-run1.ipynb`、`research/lab11-t4-run1-results.json`；投影片改用第二次實跑。
+
+### 2026-11-25 第二次 T4 實跑（clip_sample=False、加分類器）
+
+（`lab11-ddpm-solution.ipynb`，branch build-d3，EPOCHS＝20、全部 60,000 張、SEED＝0）
+
+- 環境：Colab，GPU：Tesla T4，可用 VRAM 15.5 / 15.6 GB；torch 2.14.1+cu130、diffusers 0.42.1、Python 3.13.16。
+- 一次「全部執行」跑完，沒有重試；整本約 11 分鐘（16:58 開始連線，17:09 前全部格子完成）。
+- 警告：只有 HF Hub 的「unauthenticated requests，請設 HF_TOKEN」提示（A 部分下載模型時），沒有錯誤。
+- 下載：Colab 檔案瀏覽器下載的 zip 和「檔案 > 下載 > 下載 .ipynb」在 Edge 仍存成沒有名字的 .tmp；檢查內容（zip 可解開、12 個檔案；ipynb 是 JSON、26 格）後改名使用。
+- A（google/ddpm-cifar10-32）：16 張 × 1000 步 57.2 秒。
+- B：√ᾱ_t 與 √(1−ᾱ_t) 和第一次相同；從 t＝259 起雜訊比例大於原圖。
+- C：形狀和第一次相同；參數 1,981,921。
+- D 訓練（每個 epoch 約 23～24 秒），總共 470 秒：
+
+  | epoch | 累計秒數 | loss |
+  |---|---|---|
+  | 1 | 23 | 0.1196 |
+  | 2 | 46 | 0.0549 |
+  | 3 | 70 | 0.0482 |
+  | 4 | 93 | 0.0452 |
+  | 5 | 117 | 0.0432 |
+  | 6 | 140 | 0.0417 |
+  | 7 | 164 | 0.0401 |
+  | 8 | 188 | 0.0396 |
+  | 9 | 211 | 0.0384 |
+  | 10 | 235 | 0.0372 |
+  | 11 | 258 | 0.0367 |
+  | 12 | 282 | 0.0362 |
+  | 13 | 306 | 0.0355 |
+  | 14 | 329 | 0.0351 |
+  | 15 | 353 | 0.0341 |
+  | 16 | 376 | 0.0342 |
+  | 17 | 400 | 0.0344 |
+  | 18 | 423 | 0.0340 |
+  | 19 | 447 | 0.0334 |
+  | 20 | 470 | 0.0334 |
+
+  - 最後 loss 0.0334；訓練 VRAM 峰值 1.07 GB。
+- E 取樣：64 張 × 1000 步 6.7 秒，VRAM 峰值 0.36 GB。
+  - 兩兩距離：真實 32 張 22.90；我們的 DDPM 17.42（D3-1 DCGAN T4 實跑 22.08）。
+  - 衣物佔畫面比例（像素 > −0.5）：真實 42.7%；DDPM 22.5%。
+  - 分類器測試準確率 87.5%。64 張 DDPM 樣本出現 10 類；64 張真圖也是 10 類。
+  - 各類張數（T-shirt/top、Trouser、Pullover、Dress、Coat、Sandal、Shirt、Sneaker、Bag、Ankle boot）：DDPM 7／10／1／10／2／10／6／11／6／1；真圖 4／7／8／5／8／6／5／9／8／4。DDPM 的 Pullover、Ankle boot 各只有 1 張、Coat 2 張，Sneaker、Trouser、Dress、Sandal 偏多。
+- F DDIM（同一個網路，64 張，`clip_sample=False`）：
+
+  | 步數 | 64 張秒數 | 兩兩距離 |
+  |---|---|---|
+  | DDPM 1000 | 6.70 | 17.42 |
+  | DDIM 250 | 1.66 | 19.14 |
+  | DDIM 100 | 0.67 | 19.01 |
+  | DDIM 50 | 0.33 | 18.68 |
+  | DDIM 20 | 0.13 | 17.59 |
+  | DDIM 10 | 0.07 | 16.27 |
+
+  - `ddim_steps.png`：修好了。250／100／50／20／10 步每一欄都是**同一件**（包包、褲子、高跟涼鞋、外套、球鞋、上衣……），只有細節不同；10 步略模糊、較淡。第一次那種雜訊和白方塊不見了。
+- G 最近鄰（16 張生成圖 → 60,000 張訓練圖）：中位數 6.55、最小 4.39；測試圖參考值中位數 5.89。
+- 存檔：`research/lab11-t4-run2.ipynb`（含輸出的 notebook）、`research/lab11-t4-run2-results.json`、`materials/ddpm_fmnist.pt`（覆蓋第一次，4.0 MB）。
+- 圖片（`public/`，覆蓋第一次）：`lab11-run-try_pretrained.png`、`lab11-run-forward_strip.png`、`lab11-run-schedule.png`、`lab11-run-time_embedding.png`、`lab11-run-loss.png`、`lab11-run-samples.png`、`lab11-run-class_counts.png`（新）、`lab11-run-reverse_strip.png`、`lab11-run-ddim_steps.png`、`lab11-run-nearest.png`。

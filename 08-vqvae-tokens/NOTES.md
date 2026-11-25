@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（自動核准） |
-| `slides.md` | 投影片（29 頁，其中 2 頁 hostOnly） |
+| `slides.md` | 投影片（31 頁，其中 2 頁 hostOnly） |
 | `materials/src/lab08-vqvae.py` | 筆記本原始檔 |
 | `materials/lab08-vqvae.ipynb`、`-solution.ipynb` | Lab L2-4 |
 | `public/visa-pcb2-capsules.jpg` | VisA pcb2、capsules 良品各一張（CC BY 4.0），作業頁用 |

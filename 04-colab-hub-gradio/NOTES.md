@@ -7,7 +7,7 @@
 | 檔案 | 用途 |
 |---|---|
 | `outline.md` | 大綱（自動核准） |
-| `slides.md` | 投影片（30 頁，其中 3 頁 hostOnly）；含第一天總整理、檢核、作業 |
+| `slides.md` | 投影片（32 頁，其中 3 頁 hostOnly）；含第一天總整理、檢核、作業 |
 | `materials/src/lab04-checkpoint-gradio.py` | 筆記本原始檔 |
 | `materials/lab04-checkpoint-gradio.ipynb`、`-solution.ipynb` | Lab L1-4 |
 

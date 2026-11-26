@@ -1,0 +1,289 @@
+/* Design tokens from .claude/skills/slide-design-system */
+:root {
+  --slide-bg: #ffffff;
+  --surface: #f5f7fa;
+  --text: #172033;
+  --muted-text: #4b5563;
+  --border: #d7dee8;
+  --primary: #2457c5;
+  --secondary: #16847a;
+  --warm-accent: #b85c20;
+  --soft-blue: #eaf1ff;
+  --soft-teal: #e7f5f2;
+  --soft-amber: #fff2e3;
+  --font-sans: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", Inter, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Microsoft JhengHei", monospace;
+}
+
+.slidev-layout {
+  background: var(--slide-bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 21px;
+  line-height: 1.45;
+}
+
+.slidev-layout h1 {
+  color: var(--text);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+
+.slidev-layout h1 + p { opacity: 1; }
+
+.slidev-layout h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--text);
+}
+
+.slidev-layout p,
+.slidev-layout li {
+  color: var(--text);
+  font-size: 21px;
+  line-height: 1.45;
+}
+
+.slidev-layout ul,
+.slidev-layout ol { margin-left: 1.1em; }
+
+.slidev-layout li { margin: 4px 0; }
+
+.slidev-layout strong { color: var(--text); font-weight: 700; }
+
+.slidev-layout code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.slidev-layout pre,
+.slidev-layout .slidev-code {
+  background: var(--surface) !important;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 17px !important;
+  line-height: 1.5 !important;
+}
+
+.slidev-layout pre code { background: transparent; padding: 0; font-size: 17px; }
+
+/* Small section label above titles */
+.eyebrow {
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.muted { color: var(--muted-text) !important; }
+.key { color: var(--primary); font-weight: 700; }
+
+/* Diagram nodes */
+.node {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 10px 14px;
+  font-size: 19px;
+  line-height: 1.35;
+}
+.node--primary { border-color: var(--primary); background: var(--soft-blue); }
+.node--secondary { border-color: var(--secondary); background: var(--soft-teal); }
+.node--warm { border-color: var(--warm-accent); background: var(--soft-amber); }
+.node--dashed { border-style: dashed; }
+.node small, .node .sub { display: block; color: var(--muted-text); font-size: 17px; }
+
+.arrow {
+  color: var(--muted-text);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  flex: none;
+}
+
+.step-num {
+  display: inline-block;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 13px;
+  border: 1.5px solid var(--text);
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 23px;
+  margin-right: 6px;
+}
+
+/* Concept chips */
+.chip {
+  display: inline-block;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: 17px;
+  font-weight: 700;
+  background: #ffffff;
+  white-space: nowrap;
+}
+.chip--primary { border-color: var(--primary); color: var(--primary); }
+
+/* Callout line under a diagram */
+.takeaway {
+  border-left: 4px solid var(--primary);
+  padding: 4px 0 4px 14px;
+  font-size: 21px;
+}
+
+/* Footer source note: readable but secondary */
+.src {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  bottom: 14px;
+  color: var(--muted-text);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+/* Tables */
+.slidev-layout table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+.slidev-layout th {
+  background: var(--surface);
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1.5px solid var(--text);
+}
+.slidev-layout th,
+.slidev-layout td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+/* Reference list */
+.refs li { font-size: 15px; line-height: 1.4; margin: 3px 0; }
+
+/* Cover */
+.cover .chain .chip { font-size: 16px; padding: 2px 10px; }
+.cover .chain .arrow { font-size: 18px; }
+.cover h1 { font-size: 48px; margin-bottom: 12px; }
+.cover .subtitle { font-size: 24px; color: var(--muted-text); }
+
+/* App screenshots with numbered callouts (positions in % of the image) */
+.shot { position: relative; }
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.hl {
+  position: absolute;
+  border: 3px solid var(--warm-accent);
+  border-radius: 6px;
+}
+.hl > span,
+.num {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--warm-accent);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+.hl > span { position: absolute; top: -13px; left: -13px; }
+.num { margin-right: 8px; flex: none; }
+.steps { display: flex; flex-direction: column; gap: 8px; font-size: 19px; line-height: 1.4; }
+.steps > div { display: block; padding-left: 32px; text-indent: -32px; }
+.shot-cap { color: var(--muted-text); font-size: 15px; margin-top: 4px; }
+
+/* Placeholder for a screenshot the instructor has not taken yet */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 2px dashed var(--warm-accent);
+  border-radius: 8px;
+  background: var(--soft-amber);
+  color: var(--warm-accent);
+  font-weight: 700;
+  text-align: center;
+}
+.placeholder small { color: var(--muted-text); font-weight: 400; }
+.slidev-layout table.compact th,
+.slidev-layout table.compact td { padding: 5px 10px; }
+/* Practice pages: task block, fill-in tables, completion box */
+.task-meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 16.5px; line-height: 1.4; margin-top: 2px; }
+.task-meta b { color: var(--primary); white-space: nowrap; }
+.slidev-layout ol.steps { font-size: 16.5px; line-height: 1.4; margin: 4px 0 0; padding-left: 22px; }
+.slidev-layout ol.steps li { margin: 1px 0; }
+.slidev-layout table.fill td { font-size: 16px; padding: 4px 10px; vertical-align: middle; }
+.slidev-layout table.fill td.blank { height: 42px; background: #fff; }
+.slidev-layout table.fill td.blank { padding-top: 1px; padding-bottom: 1px; }
+.slidev-layout table.fill td.tall { height: 64px; }
+.slidev-layout table.fill td small { color: var(--muted-text); font-size: 13px; }
+.done-box { border: 2px solid var(--secondary); border-radius: 10px; background: var(--soft-teal); padding: 6px 14px; font-size: 16px; line-height: 1.4; }
+.pass-box { border: 1.5px dashed var(--border, #9aa5b8); border-radius: 8px; padding: 5px 12px; font-size: 15.5px; line-height: 1.4; background: #fff; }
+.slidev-layout table.fill .hint { color: #9aa3b2; font-style: italic; font-weight: 400; font-size: 14px; }
+.slidev-layout table.fill td.xtall { height: 96px; }
+.slidev-layout table.fill td[rowspan] { text-align: center; vertical-align: middle; background: var(--soft-blue); }
+.slidev-layout table.vlines th,
+.slidev-layout table.vlines td { border-left: 1px solid #9aa5b8; border-right: 1px solid #9aa5b8; }
+.slidev-layout table.tight td.blank { height: 36px; }
+.slidev-layout table.tight th, .slidev-layout table.tight td { padding-top: 3px; padding-bottom: 3px; }
+.slidev-layout .hint { color: #9aa3b2; font-style: italic; font-weight: 400; }
+
+.steps .num { text-indent: 0; }
+.wrapcode pre, .wrapcode .slidev-code { white-space: pre-wrap !important; word-break: break-all; font-size: 14px !important; }
+.wrapcode pre code { white-space: pre-wrap !important; font-size: 14px !important; }
+
+/* Ticket card (需求單): every session opens with one (roadmap §4). */
+.ticket { border: 2px solid var(--primary); border-radius: 12px; overflow: hidden; font-size: 18px; line-height: 1.4; }
+.ticket .ticket-head { background: var(--primary); color: #fff; padding: 6px 16px; font-weight: 700; display: flex; justify-content: space-between; }
+.ticket .ticket-head span { font-weight: 400; font-size: 15px; opacity: .9; }
+.ticket dl { display: grid; grid-template-columns: 9.5em 1fr; gap: 3px 14px; padding: 8px 16px 10px; margin: 0; }
+.ticket dt { color: var(--primary); font-weight: 700; }
+.ticket dd { margin: 0; }
+.fiction { display: inline-block; border: 1.5px solid var(--warm-accent); color: var(--warm-accent); border-radius: 6px; padding: 0 6px; font-size: 14px; font-weight: 700; }
+/* Six-step loop chips */
+.loop6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.loop6 > div { border: 1.5px solid var(--border); border-radius: 10px; padding: 8px; text-align: center; font-size: 17px; line-height: 1.35; background: #fff; }
+.loop6 > div b { display: block; color: var(--primary); font-size: 19px; }
+.loop6 > div small { display: block; color: var(--muted-text); font-size: 14px; }
+.mcq { font-size: 19px; line-height: 1.45; }
+.mcq ol { margin-top: 2px; }
+.mcq .opts { color: var(--muted-text); font-size: 17px; }
+
+/* Real photo with a caption underneath (from deck 01 slide 7) */
+.pic { display: flex; flex-direction: column; align-items: center; flex: none; }
+.pic img { width: 150px; height: 150px; object-fit: cover; border: 1px solid var(--border); border-radius: 8px; }
+.pic span { color: var(--muted-text); font-size: 15px; margin-top: 4px; white-space: nowrap; }
+.pic--z { justify-content: center; width: 112px; height: 150px; border: 1.5px dashed var(--muted-text); border-radius: 8px; background: var(--surface); }
+.pic--z code { font-size: 15px; line-height: 1.5; text-align: center; background: none; padding: 0 6px; white-space: normal; }
+.pic--z span { margin-top: 6px; }
+.photo { border: 1px solid var(--border); border-radius: 8px; object-fit: cover; display: block; }
+
+/* Tensor shape inside a node: keep on one line */
+.node small.nw { white-space: nowrap; font-size: 15px; }
+.nw { white-space: nowrap; }

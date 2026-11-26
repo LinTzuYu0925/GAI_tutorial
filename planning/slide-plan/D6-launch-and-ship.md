@@ -1,6 +1,6 @@
 # Day 6 slide plan · 「上市與交付」
 
-> **Status:** draft, awaiting instructor approval (written 2026-11-23, phase 3 of the /goal).
+> **Status:** auto-approved 2026-11-26 by the instructor (build of decks 17–24); written 2026-11-23, phase 3 of the earlier /goal.
 > **Source:** [course_roadmap.md](../course_roadmap.md) §7 Day 6, §9 L6-1…L6-3, §12 (assessment). Compact slide tables as in [D2-factory-qa.md](D2-factory-qa.md).
 > **Decks:** D6-1 `21-music-and-voice` · D6-2 `22-catalog-search` · D6-3 `23-ship-clinic` · D6-4 `24-demo-day`.
 

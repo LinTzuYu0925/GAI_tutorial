@@ -1,0 +1,41 @@
+file,category,prompt,seed
+c0_0.jpg,耳機,"a black wireless headphones, on a white background, studio product photo, high quality",0
+c0_1.jpg,耳機,"a white wireless headphones, on a wooden table, soft daylight, product photo, high quality",1
+c0_2.jpg,耳機,"a blue wireless headphones, on a pastel background, minimal product photo, high quality",2
+c0_3.jpg,耳機,"a silver wireless headphones, on a dark background, dramatic lighting, product photo, high quality",3
+c0_4.jpg,耳機,"a red wireless headphones, lifestyle photo in a cozy living room, high quality",4
+c1_0.jpg,行動電源,"a black portable power bank battery pack, on a white background, studio product photo, high quality",100
+c1_1.jpg,行動電源,"a white portable power bank battery pack, on a wooden table, soft daylight, product photo, high quality",101
+c1_2.jpg,行動電源,"a blue portable power bank battery pack, on a pastel background, minimal product photo, high quality",102
+c1_3.jpg,行動電源,"a silver portable power bank battery pack, on a dark background, dramatic lighting, product photo, high quality",103
+c1_4.jpg,行動電源,"a red portable power bank battery pack, lifestyle photo in a cozy living room, high quality",104
+c2_0.jpg,智慧手錶,"a black smartwatch with a round screen, on a white background, studio product photo, high quality",200
+c2_1.jpg,智慧手錶,"a white smartwatch with a round screen, on a wooden table, soft daylight, product photo, high quality",201
+c2_2.jpg,智慧手錶,"a blue smartwatch with a round screen, on a pastel background, minimal product photo, high quality",202
+c2_3.jpg,智慧手錶,"a silver smartwatch with a round screen, on a dark background, dramatic lighting, product photo, high quality",203
+c2_4.jpg,智慧手錶,"a red smartwatch with a round screen, lifestyle photo in a cozy living room, high quality",204
+c3_0.jpg,掃地機器人,"a black round robot vacuum cleaner on a floor, on a white background, studio product photo, high quality",300
+c3_1.jpg,掃地機器人,"a white round robot vacuum cleaner on a floor, on a wooden table, soft daylight, product photo, high quality",301
+c3_2.jpg,掃地機器人,"a blue round robot vacuum cleaner on a floor, on a pastel background, minimal product photo, high quality",302
+c3_3.jpg,掃地機器人,"a silver round robot vacuum cleaner on a floor, on a dark background, dramatic lighting, product photo, high quality",303
+c3_4.jpg,掃地機器人,"a red round robot vacuum cleaner on a floor, lifestyle photo in a cozy living room, high quality",304
+c4_0.jpg,電熱水壺,"a black electric kettle, on a white background, studio product photo, high quality",400
+c4_1.jpg,電熱水壺,"a white electric kettle, on a wooden table, soft daylight, product photo, high quality",401
+c4_2.jpg,電熱水壺,"a blue electric kettle, on a pastel background, minimal product photo, high quality",402
+c4_3.jpg,電熱水壺,"a silver electric kettle, on a dark background, dramatic lighting, product photo, high quality",403
+c4_4.jpg,電熱水壺,"a red electric kettle, lifestyle photo in a cozy living room, high quality",404
+c5_0.jpg,筆電,"a black laptop computer, open, on a white background, studio product photo, high quality",500
+c5_1.jpg,筆電,"a white laptop computer, open, on a wooden table, soft daylight, product photo, high quality",501
+c5_2.jpg,筆電,"a blue laptop computer, open, on a pastel background, minimal product photo, high quality",502
+c5_3.jpg,筆電,"a silver laptop computer, open, on a dark background, dramatic lighting, product photo, high quality",503
+c5_4.jpg,筆電,"a red laptop computer, open, lifestyle photo in a cozy living room, high quality",504
+c6_0.jpg,背包,"a black backpack, on a white background, studio product photo, high quality",600
+c6_1.jpg,背包,"a white backpack, on a wooden table, soft daylight, product photo, high quality",601
+c6_2.jpg,背包,"a blue backpack, on a pastel background, minimal product photo, high quality",602
+c6_3.jpg,背包,"a silver backpack, on a dark background, dramatic lighting, product photo, high quality",603
+c6_4.jpg,背包,"a red backpack, lifestyle photo in a cozy living room, high quality",604
+c7_0.jpg,馬克杯,"a black ceramic coffee mug, on a white background, studio product photo, high quality",700
+c7_1.jpg,馬克杯,"a white ceramic coffee mug, on a wooden table, soft daylight, product photo, high quality",701
+c7_2.jpg,馬克杯,"a blue ceramic coffee mug, on a pastel background, minimal product photo, high quality",702
+c7_3.jpg,馬克杯,"a silver ceramic coffee mug, on a dark background, dramatic lighting, product photo, high quality",703
+c7_4.jpg,馬克杯,"a red ceramic coffee mug, lifestyle photo in a cozy living room, high quality",704

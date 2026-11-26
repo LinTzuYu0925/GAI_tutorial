@@ -1,0 +1,11 @@
+{
+  "name": "21-music-and-voice",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "node scripts/make-print.mjs && slidev export slides.print.md --timeout 60000 --output dist/21-music-and-voice.pdf",
+    "export:png": "node scripts/make-print.mjs && slidev export slides.print.md --format png --output dist/png --timeout 60000"
+  }
+}

@@ -2,7 +2,7 @@
 theme: default
 title: 把影像和聲音變成編號
 info: |
-  生成式AI原理 · D2-4
+  生成式AI原理 · L08
   VQ-VAE 把瓶頸對到一本編碼簿，每個位置變成一個整數編號；位元數＝編號個數 × log2(編碼簿大小)。EnCodec 用同樣的想法把聲音壓到 1.5–24 kbps。第二天總整理、iPAS 小考與作業。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D2-4</div>
+<div class="eyebrow">生成式AI原理 · L08</div>
 
 # 把影像和聲音變成編號
 
@@ -45,7 +45,7 @@ class: cover
 # 資訊部：錄音和影像把硬碟塞滿了
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D2-4】部門：資訊部／客服中心<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L08】部門：資訊部／客服中心<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>通話錄音與產線影像佔滿儲存空間，要用低位元率儲存與串流</dd>
     <dt>現況痛點</dt><dd>每月儲存費持續上升；串流到分廠很慢</dd>
@@ -119,13 +119,13 @@ class: cover
 <div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:220px;min-height:0;padding:16px 24px">輸入：10 秒國語朗讀的頻譜圖（橫軸秒、縱軸頻率）<small>講師下載錄音後替換</small></div>
+<img class="photo" src="/lab08-spec-original.png" alt="原始錄音的頻譜圖：橫軸 10 秒，縱軸 0 到 12000 赫茲，越亮能量越大" style="height:220px;width:100%;object-fit:contain"><div class="shot-cap">輸入：10 秒國語朗讀的頻譜圖（橫軸秒、縱軸 Hz）</div>
 
 </div>
 <div>
 
-<div class="placeholder" style="height:105px;min-height:0">1.5 kbps 的音檔與頻譜<small>講師實跑後替換</small></div>
-<div class="placeholder mt-2" style="height:105px;min-height:0">24 kbps 的音檔與頻譜<small>講師實跑後替換</small></div>
+<img class="photo" src="/lab08-spec-1p5kbps.png" alt="1.5 kbps 還原的頻譜圖" style="height:105px;width:100%;object-fit:contain"><div class="shot-cap">1.5 kbps 的頻譜（音檔在筆記本播放）</div>
+<img class="photo mt-2" src="/lab08-spec-24kbps.png" alt="24 kbps 還原的頻譜圖" style="height:105px;width:100%;object-fit:contain"><div class="shot-cap">24 kbps 的頻譜</div>
 
 </div>
 </div>
@@ -253,7 +253,7 @@ z_st = z + (z_q - z).detach()   # 數值上 ＝ z_q；梯度上 ＝ z
 <div class="src">直通估計器（straight-through estimator）：Bengio et al. 2013（S9）；VQ-VAE 論文（S3）</div>
 
 <!--
-★ 直通估計器（6 分）：straight-through estimator（直通估計器）。對照 D2-3 第 8 頁：重參數化把「抽樣」變成可微分；直通估計器把「查表」變成可微分。兩種都是工程技巧，不是數學推導。
+★ 直通估計器（6 分）：straight-through estimator（直通估計器）。對照 L07 第 8 頁：重參數化把「抽樣」變成可微分；直通估計器把「查表」變成可微分。兩種都是工程技巧，不是數學推導。
 常見誤解：detach 放哪裡都一樣。Lab 6／7 會看到放錯的後果。
 -->
 
@@ -371,7 +371,7 @@ hostOnly: true
 <div class="grid grid-cols-[1.15fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:240px;padding:16px 24px">K ＝ 512 每一格被選幾次<small>直方圖，由多到少排序；講師實跑後替換（lab Part C）</small></div>
+<img class="photo" src="/lab08-dead-codes.png" alt="K 等於 512 的編碼簿使用次數，由多到少排序：用到 119 格，393 格從沒被選過" style="height:240px;width:100%;object-fit:contain"><div class="shot-cap">K ＝ 512：用到 119 格、393 格是死碼（lab08，T4 實跑）</div>
 
 </div>
 <div style="font-size:18px">
@@ -431,8 +431,8 @@ hostOnly: true
 </div>
 
 <div class="grid grid-cols-2 gap-6 mt-5" style="font-size:18px">
-<div class="node"><strong>D5-2 mini-GPT</strong><small>預測下一個字的編號</small></div>
-<div class="node"><strong>D6-1 MusicGen</strong><small>預測下一個 EnCodec 編號 → 解碼成音樂</small></div>
+<div class="node"><strong>L18 mini-GPT</strong><small>預測下一個字的編號</small></div>
+<div class="node"><strong>L21 MusicGen</strong><small>預測下一個 EnCodec 編號 → 解碼成音樂</small></div>
 </div>
 
 <div class="takeaway mt-4">把資料變成編號之後，「生成圖片／音樂」就變成「寫一串編號」：這是向量量化（VQ）最大的用處。</div>
@@ -448,18 +448,18 @@ hostOnly: true
 # VQGAN：編碼簿＋對抗損失，畫得更清楚
 
 <div class="grid grid-cols-2 gap-6 mt-5" style="font-size:18px">
-<div class="node"><strong>VQ-VAE 的問題</strong><small>只用 MSE 重建，細節偏糊（和 D2-3 的 VAE 一樣）</small></div>
-<div class="node node--primary"><strong>VQGAN 的做法</strong><small>解碼器多一個「鑑定師」（D3-1 的 GAN）和感知損失，讓還原的圖更銳利；許多影像 token 化工具都從這裡出發</small></div>
+<div class="node"><strong>VQ-VAE 的問題</strong><small>只用 MSE 重建，細節偏糊（和 L07 的 VAE 一樣）</small></div>
+<div class="node node--primary"><strong>VQGAN 的做法</strong><small>解碼器多一個「鑑定師」（L09 的 GAN）和感知損失，讓還原的圖更銳利；許多影像 token 化工具都從這裡出發</small></div>
 </div>
 
 <div class="muted mt-3" style="font-size:16px">感知損失（perceptual loss）：不比逐像素的差，改比「預訓練影像模型看到的特徵」差多少，比較接近人眼的感覺。</div>
 
-<div class="takeaway mt-3">想讓 VQ 的還原更清楚：加上鑑定師（對抗損失）和感知損失；鑑定師 D3-1 會學。</div>
+<div class="takeaway mt-3">想讓 VQ 的還原更清楚：加上鑑定師（對抗損失）和感知損失；鑑定師 L09 會學。</div>
 
 <div class="src">Esser et al., Taming Transformers (VQGAN), 2021（S6）</div>
 
 <!--
-○ 選修（2 分）：D3-1 學 GAN 時會回來提：「對抗損失讓解碼器畫出細節」。
+○ 選修（2 分）：L09 學 GAN 時會回來提：「對抗損失讓解碼器畫出細節」。
 -->
 
 ---
@@ -501,7 +501,16 @@ hostOnly: true
 </div>
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">目標：位元率表、三個播放器、bits vs 誤差圖、使用率直方圖<small>講師 T4 實跑後換成真實輸出（含 VRAM 峰值與總時間）</small></div>
+<table class="compact" style="font-size:14px;line-height:1.25;margin:0 0 4px">
+<tr><th>EnCodec 設定</th><th>編碼簿</th><th>頻譜誤差</th><th>秒</th></tr>
+<tr><td>1.5 kbps</td><td>2 本</td><td>7.80 dB</td><td>0.70</td></tr>
+<tr><td>3 kbps</td><td>4 本</td><td>7.18 dB</td><td>0.12</td></tr>
+<tr><td>6 kbps</td><td>8 本</td><td>6.78 dB</td><td>0.11</td></tr>
+<tr><td>12 kbps</td><td>16 本</td><td>6.49 dB</td><td>0.11</td></tr>
+<tr><td>24 kbps</td><td>32 本</td><td>6.33 dB</td><td>0.11</td></tr>
+</table>
+<img class="photo" src="/lab08-bits-vs-error.png" alt="自己的 VQ-VAE：K 等於 16、128、512 時每張圖的位元數與測試誤差；K 越大誤差越小，但 128 到 512 只降一點" style="height:125px;width:100%;object-fit:contain">
+<div class="shot-cap">目標：位元率表（Part A）＋ bits vs 誤差（Part B）。10 秒錄音，未壓縮 384 kbps；lab08 T4 實跑</div>
 
 </div>
 </div>
@@ -676,7 +685,7 @@ hostOnly: true
 <div class="src">個人資料保護法（法務部全國法規資料庫，S7，待確認條號）</div>
 
 <!--
-★ 風險（4 分）：D6-1 會再談聲音複製（voice cloning）需要當事人同意。
+★ 風險（4 分）：L21 會再談聲音複製（voice cloning）需要當事人同意。
 -->
 
 ---
@@ -688,10 +697,10 @@ hostOnly: true
 <table class="mt-2" style="font-size:18px">
 <thead><tr><th style="width:16%">單元</th><th style="width:22%">瓶頸變成</th><th>解決的需求單</th><th>關鍵一行</th></tr></thead>
 <tbody>
-<tr><td>D2-1 AE</td><td>窄的點</td><td>品保：沒看過的瑕疵</td><td><code>score ＝ 誤差最大 1%</code></td></tr>
-<tr><td>D2-2 U-Net</td><td>點＋跳接</td><td>維修站：在哪、多大</td><td><code>torch.cat(&#91;up, e&#93;, 1)</code></td></tr>
-<tr><td>D2-3 VAE</td><td>一團雲</td><td>行銷科技：512px 壓 48 倍</td><td><code>z ＝ μ ＋ σ·ε</code></td></tr>
-<tr><td>D2-4 VQ-VAE</td><td>編碼簿的編號</td><td>資訊部：低位元率</td><td><code>z ＋ (z_q − z).detach()</code></td></tr>
+<tr><td>L05 AE</td><td>窄的點</td><td>品保：沒看過的瑕疵</td><td><code>score ＝ 誤差最大 1%</code></td></tr>
+<tr><td>L06 U-Net</td><td>點＋跳接</td><td>維修站：在哪、多大</td><td><code>torch.cat(&#91;up, e&#93;, 1)</code></td></tr>
+<tr><td>L07 VAE</td><td>一團雲</td><td>行銷科技：512px 壓 48 倍</td><td><code>z ＝ μ ＋ σ·ε</code></td></tr>
+<tr><td>L08 VQ-VAE</td><td>編碼簿的編號</td><td>資訊部：低位元率</td><td><code>z ＋ (z_q − z).detach()</code></td></tr>
 </tbody>
 </table>
 
@@ -808,7 +817,7 @@ VQ-VAE 的直通估計器解決什麼問題？
 <div class="src">影像：VisA pcb2、capsules 類別（Zou et al., 2022，CC BY 4.0），講師裁切</div>
 
 <!--
-★ 作業（3 分）：第 3 點是 D2-1「拍攝方向」資料陷阱的延伸。下一次上課（D3-1）開場 5 分鐘回顧。
+★ 作業（3 分）：第 3 點是 L05「拍攝方向」資料陷阱的延伸。下一次上課（L09）開場 5 分鐘回顧。
 -->
 
 ---
@@ -817,7 +826,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D3-1：舊照片放大，偽造者與鑑定師
+# 下一堂 L09：舊照片放大，偽造者與鑑定師
 
 <div class="node node--primary mt-2">電商部有幾千張解析度太低的舊型錄照片。一般放大只會變糊；明天用 GAN：一個網路負責「偽造」細節、另一個負責「鑑定」真假，兩個一起進步。</div>
 

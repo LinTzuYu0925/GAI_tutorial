@@ -2,8 +2,8 @@
 theme: default
 title: 模型怎麼寫出一封回覆
 info: |
-  生成式AI原理 · D5-2
-  客服主管不信任黑盒子：把 D5-1 的注意力疊成 Transformer 區塊，訓練一個迷你字元 GPT，看懂 next-token、cross-entropy、溫度／top-k／top-p 與 KV cache。
+  生成式AI原理 · L18
+  客服主管不信任黑盒子：把 L17 的注意力疊成 Transformer 區塊，訓練一個迷你字元 GPT，看懂 next-token、cross-entropy、溫度／top-k／top-p 與 KV cache。
 colorSchema: light
 fonts:
   provider: none
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D5-2</div>
+<div class="eyebrow">生成式AI原理 · L18</div>
 
 # 模型怎麼寫出一封回覆
 
@@ -46,14 +46,14 @@ class: cover
 # 客服中心：把回覆交給模型寫之前，要先懂它怎麼「寫」
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D5-2】部門：客服中心<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L18】部門：客服中心<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>模型寫客服回覆時，到底在做什麼？哪些旋鈕能讓它保守一點？</dd>
     <dt>現況痛點</dt><dd>主管不信任黑盒子</dd>
     <dt>成功指標（KPI）</dt><dd>loss 曲線下降；一張「設定 → 樣本 → 照抄率」的樣本表</dd>
     <dt>可用資料</dt><dd>5,606 封合成繁中客服回覆（課程用模板產生）</dd>
     <dt>限制與法規</dt><dd>Colab T4；小模型</dd>
-    <dt>為何現有工具不夠</dt><dd>D5-1 只有一層注意力，還不會生成</dd>
+    <dt>為何現有工具不夠</dt><dd>L17 只有一層注意力，還不會生成</dd>
   </dl>
 </div>
 
@@ -73,15 +73,15 @@ class: cover
 4. **使用**溫度、top-k、top-p，說出各自怎麼改變樣本
 5. **說明** KV cache 為什麼讓生成變快
 
-<div class="takeaway mt-4">今天訓練的迷你 GPT 和 ChatGPT、Claude 是同一個家族：差在大小、資料和後續訓練（D5-4）。</div>
+<div class="takeaway mt-4">今天訓練的迷你 GPT 和 ChatGPT、Claude 是同一個家族：差在大小、資料和後續訓練（L20）。</div>
 
 <!--
-★ 目標（1 分）。不教：GQA／MQA 的實作（只認名字）、注意力複雜度的推導（附錄）、RoPE 的公式（只認名字）、預訓練以外的訓練階段（D5-4）。
+★ 目標（1 分）。不教：GQA／MQA 的實作（只認名字）、注意力複雜度的推導（附錄）、RoPE 的公式（只認名字）、預訓練以外的訓練階段（L20）。
 -->
 
 ---
 
-<div class="eyebrow">00 · Frame · 回到 D1-2</div>
+<div class="eyebrow">00 · Frame · 回到 L02</div>
 
 # 寫字 ＝ 預測下一個 token，一直重複
 
@@ -101,7 +101,7 @@ class: cover
 <div class="takeaway mt-3">一封回覆＝這個迴圈跑幾百次；每次只決定一個 token。</div>
 
 <!--
-★ Frame（4 分）：D1-2 已經看過「文字接龍」。今天要打開中間那個「模型」方塊，並且自己訓練一個。圖裡的機率是下一頁真實模型的輸出。
+★ Frame（4 分）：L02 已經看過「文字接龍」。今天要打開中間那個「模型」方塊，並且自己訓練一個。圖裡的機率是下一頁真實模型的輸出。
 -->
 
 ---
@@ -145,7 +145,7 @@ class: cover
 </div>
 <div style="font-size:18px">
 
-- 每個頭是一次 D5-1 的注意力，有自己的 W_Q、W_K、W_V
+- 每個頭是一次 L17 的注意力，有自己的 W_Q、W_K、W_V
 - 不同的頭可以學會看不同的關係，例如有的看前一個字、有的看產品名稱（示意）
 - 頭數 × 每頭維度 ＝ 原本維度（4 × 32 ＝ 128）
 
@@ -209,7 +209,7 @@ att = att.masked_fill(self.tril[:T, :T] == 0, float("-inf"))
 <div style="font-size:18px">
 
 - 注意力本身**不知道順序**：打亂字序，分數都一樣
-- 每個位置加上一條**獨特的條紋**：和 **D3-3 的時間嵌入**同一個公式，「第幾步」換成「第幾個字」
+- 每個位置加上一條**獨特的條紋**：和 **L11 的時間嵌入**同一個公式，「第幾步」換成「第幾個字」
 
 </div>
 <div>
@@ -236,7 +236,7 @@ x = self.tok(idx) + self.pos[:T]     # 查表得到「是哪個字」＋「在�
 <div class="takeaway mt-2">嵌入說「是哪個字」，位置說「在哪裡」：相加後，「先退款再寄回」和「先寄回再退款」才分得開。</div>
 
 <!--
-★ 位置編碼（5 分）：接回 D5-1 的詞袋問題：注意力如果沒有位置資訊，就和詞袋一樣分不出順序。指著虛線：第 5 個字在每一條波上各取一個值，組成它專屬的向量。D3-3 的時間嵌入用的是同一招，學員看過程式。新模型多用 RoPE（旋轉位置編碼），只認名字。
+★ 位置編碼（5 分）：接回 L17 的詞袋問題：注意力如果沒有位置資訊，就和詞袋一樣分不出順序。指著虛線：第 5 個字在每一條波上各取一個值，組成它專屬的向量。L11 的時間嵌入用的是同一招，學員看過程式。新模型多用 RoPE（旋轉位置編碼），只認名字。
 -->
 
 ---
@@ -350,8 +350,8 @@ hostOnly: true
 # Transformer 的三種用法：BERT、T5、GPT
 
 <div class="grid grid-cols-3 gap-4 mt-3" style="font-size:17px">
-<div class="node"><strong>只有編碼器：BERT</strong><small>沒有遮罩，每個字都能看前後 → 擅長「讀懂」：分類、找關鍵字、做搜尋用的向量（D6-2）</small></div>
-<div class="node node--secondary"><strong>編碼器－解碼器：T5</strong><small>一邊讀完整句、一邊寫：就是 D5-1 的 seq2seq，只是 RNN 換成 Transformer → 翻譯、摘要</small></div>
+<div class="node"><strong>只有編碼器：BERT</strong><small>沒有遮罩，每個字都能看前後 → 擅長「讀懂」：分類、找關鍵字、做搜尋用的向量（L22）</small></div>
+<div class="node node--secondary"><strong>編碼器－解碼器：T5</strong><small>一邊讀完整句、一邊寫：就是 L17 的 seq2seq，只是 RNN 換成 Transformer → 翻譯、摘要</small></div>
 <div class="node node--primary"><strong>只有解碼器：GPT</strong><small>有 causal mask，只看前面 → 擅長「接著寫」。今天的迷你 GPT、Qwen、Claude 都是這一種</small></div>
 </div>
 
@@ -465,7 +465,7 @@ hostOnly: true
 <div class="takeaway mt-2">因為有 causal mask，舊字的 K、V 不會因為新字而改變，所以可以存起來重用。</div>
 
 <!--
-★ KV cache（5 分）：為什麼可以存：舊的字看不到新的字（遮罩），所以它們的 K、V 永遠一樣。每一步只要算新字的 q、k、v。代價是記憶體：這也是 D5-3 算 VRAM 時，context 長度會影響的原因。
+★ KV cache（5 分）：為什麼可以存：舊的字看不到新的字（遮罩），所以它們的 K、V 永遠一樣。每一步只要算新字的 q、k、v。代價是記憶體：這也是 L19 算 VRAM 時，context 長度會影響的原因。
 -->
 
 ---
@@ -489,7 +489,7 @@ hostOnly: true
 
 <div class="mt-2" style="font-size:18px">
 
-- D4-2 的 Stable Diffusion 用 U-Net 去噪；DiT 把 U-Net 換成今天的 Transformer 區塊
+- L14 的 Stable Diffusion 用 U-Net 去噪；DiT 把 U-Net 換成今天的 Transformer 區塊
 - 圖片切成小方塊，**每一塊當一個 token**；注意力讓每一塊看其他塊（這裡不用 causal mask）
 - DiT 原論文用類別當條件；後來不少文字生圖模型也改用 Transformer 去噪（S9，待確認）
 
@@ -497,10 +497,10 @@ hostOnly: true
 
 <div class="takeaway mt-2">Transformer 不只會寫字：任何東西切成 token，它都能處理。</div>
 
-<div class="src">Peebles &amp; Xie, 2023（S6，待確認）；D4-4 只認過名字</div>
+<div class="src">Peebles &amp; Xie, 2023（S6，待確認）；L16 只認過名字</div>
 
 <!--
-★ DiT（4 分）：把第四天和第五天接起來：去噪的流程（D3-3）不變，只換了「誰來預測雜訊」。明天 D6-1 的 MusicGen 也是：聲音切成 token，交給 Transformer。
+★ DiT（4 分）：把第四天和第五天接起來：去噪的流程（L11）不變，只換了「誰來預測雜訊」。明天 L21 的 MusicGen 也是：聲音切成 token，交給 Transformer。
 -->
 
 ---
@@ -514,7 +514,7 @@ hostOnly: true
 <div class="node node--secondary"><strong>GQA／MQA（分組／多查詢注意力）</strong><small>讓好幾個頭共用同一組 K、V：快取變小、生成變快。Qwen2.5 就有用（看模型設定檔的 <code>num_key_value_heads</code>）</small></div>
 </div>
 
-<div class="takeaway mt-4">長 context 不是免費的：時間、VRAM、帳單（D5-1 的 token 成本）都會跟著漲。</div>
+<div class="takeaway mt-4">長 context 不是免費的：時間、VRAM、帳單（L17 的 token 成本）都會跟著漲。</div>
 
 <!--
 ○ 選修（2 分）：只認名字。學員之後讀模型卡看到 GQA，知道是「省 KV cache 的做法」就夠了。
@@ -705,10 +705,10 @@ hostOnly: true
 3. 預測：哪一個比較可能出現簡體字或不通順的句子？
 
 </div>
-<div class="node node--warm"><strong>D5-4 的伏筆</strong><small>D5-3 的 lab 裡，Qwen 已經在摘要寫出簡體字（講師本機實跑）；D5-4 用微調修</small></div>
+<div class="node node--warm"><strong>L20 的伏筆</strong><small>L19 的 lab 裡，Qwen 已經在摘要寫出簡體字（講師本機實跑）；L20 用微調修</small></div>
 </div>
 
-<div class="takeaway mt-3">迷你 GPT 和 Qwen 用的是同一組旋鈕：今天學的直接用在 D5-3 的分流助理。</div>
+<div class="takeaway mt-3">迷你 GPT 和 Qwen 用的是同一組旋鈕：今天學的直接用在 L19 的分流助理。</div>
 
 <!--
 ★ 延伸（3 分）：不給答案頁：結果依模型與 seed 而定，請學員把觀察寫進樣本表。講師可以現場用 T＝1.5 示範一次。
@@ -725,7 +725,7 @@ hostOnly: true
 <div class="node node--primary"><strong>幻覺（hallucination）：模型自己拼錯</strong><small>迷你 GPT 寫出「您好，行動電源容量 2000mAh，……」：訓練資料只有 20000mAh，這句是它把片段拼出來的，語氣通順、數字錯了（lab 第 4 部分，T＝1.3，講師本機實跑）</small></div>
 </div>
 
-<div class="takeaway mt-4">模型的目標是「像訓練資料」，不是「說真話」：資料錯它照抄，拼錯它也說得很順。上線前要量（D5-4）。</div>
+<div class="takeaway mt-4">模型的目標是「像訓練資料」，不是「說真話」：資料錯它照抄，拼錯它也說得很順。上線前要量（L20）。</div>
 
 <!--
 ★ 風險（3 分）：左邊是資料錯（我們的模板故意留下的），右邊才是幻覺：模型把「容量 20000mAh」拼成 2000mAh。請學員在 lab 列出的「訓練資料裡沒有的句子」中，對照規格表找一句錯的。真實的大模型也一樣：訓練資料裡的錯、過時資訊，都會被流暢地寫出來。
@@ -758,20 +758,59 @@ hostOnly: true
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['減少參數', '讓每個位置只能看自己和前面的 token', '加快下載', '讓輸出變成繁體字']"
+  :why="['mask 不減少參數。', '', '和下載無關。', '輸出用什麼字和 mask 無關。']"
+  explain="生成時還沒有後面的字，所以訓練時也要遮住後面的 token，位置 i 只能看到 1…i，訓練和生成才一致。">
+GPT 類模型在注意力加上 causal mask 的目的是？
+</Mcq>
 
-1. GPT 類模型在注意力加上 causal mask 的目的是？（　）<br><span class="opts"><span class="nw">A. 減少參數</span>　<span class="nw">B. 讓每個位置只能看自己和前面的 token</span>　<span class="nw">C. 加快下載</span>　<span class="nw">D. 讓輸出變成繁體字</span></span>
-2. 下列何者是「只有編碼器」的 Transformer？（　）<br><span class="opts"><span class="nw">A. GPT</span>　<span class="nw">B. T5</span>　<span class="nw">C. BERT</span>　<span class="nw">D. Qwen</span></span>
-3. 把溫度 T 從 1.0 調到 2.0，最可能的結果？（　）<br><span class="opts"><span class="nw">A. 輸出更保守、更常重複訓練資料</span>　<span class="nw">B. 機率分布變平，較常出現不通順的字</span>　<span class="nw">C. 生成速度變兩倍</span>　<span class="nw">D. 模型參數改變</span></span>
-4. KV cache 讓生成變快，是因為？（　）<br><span class="opts"><span class="nw">A. 前面 token 的 key、value 可重用，不必每步重算</span>　<span class="nw">B. 模型變小</span>　<span class="nw">C. 跳過 softmax</span>　<span class="nw">D. 改用 CPU</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['GPT', 'T5', 'BERT', 'Qwen']"
+  :why="['GPT 是只有解碼器（有 causal mask）。', 'T5 是編碼器－解碼器。', '', 'Qwen 和 GPT 一樣是解碼器。']"
+  explain="BERT 只有編碼器，每個位置能看整句（雙向），適合理解任務，不適合逐字生成。">
+下列何者是「只有編碼器」的 Transformer？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 B、2 C（T5 是編碼器－解碼器，GPT 和 Qwen 是解碼器）、3 B（A 是降溫的效果）、4 A（D 錯：KV cache 會多用一些記憶體，跟換 CPU 無關）。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：1 B、2 C。
 -->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="1"
+  :options="['輸出更保守、更常重複訓練資料', '機率分布變平，較常出現不通順的字', '生成速度變兩倍', '模型參數改變']"
+  :why="['這是降溫（T ＜ 1）的效果。', '', '溫度只改機率分布，不改運算量。', '溫度只在取樣時用，不改參數。']"
+  explain="T＝2 把 logits 除以 2，機率分布變平，低機率的字更常被抽中，輸出比較不通順。">
+把溫度 T 從 1.0 調到 2.0，最可能的結果？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['前面 token 的 key、value 可重用，不必每步重算', '模型變小', '跳過 softmax', '改用 CPU']"
+  :why="['', 'KV cache 不縮小模型，反而多用一些記憶體。', 'softmax 還是要算。', '和換 CPU 無關。']"
+  explain="前面 token 的 key、value 不會變，存起來重用，每一步只算新 token 那一個。">
+KV cache 讓生成變快，是因為？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：3 B、4 A。
+全部答案與理由：
+1 B：生成時還沒有後面的字，所以訓練時也要遮住後面的 token，位置 i 只能看到 1…i，訓練和生成才一致。
+2 C：BERT 只有編碼器，每個位置能看整句（雙向），適合理解任務，不適合逐字生成。
+3 B：T＝2 把 logits 除以 2，機率分布變平，低機率的字更常被抽中，輸出比較不通順。
+4 A：前面 token 的 key、value 不會變，存起來重用，每一步只算新 token 那一個。
+-->
+
 
 ---
 hostOnly: true
@@ -779,7 +818,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D5-3：雲端 API 還是自架模型？
+# 下一堂 L19：雲端 API 還是自架模型？
 
 <div style="font-size:19px" class="mt-4">
 

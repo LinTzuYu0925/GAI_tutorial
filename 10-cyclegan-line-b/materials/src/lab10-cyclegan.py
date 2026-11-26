@@ -41,13 +41,13 @@ EPOCHS_GAN = 20     # 沒有 GPU：改成 1
 # %%
 VISA_URL = "https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar"
 CATEGORY = "pcb1"
-DATA_DIR = f"visa/{CATEGORY}"   # 講師若放在雲端硬碟，改成那個資料夾
+DATA_DIR = f"data/download/visa/{CATEGORY}"   # 講師若放在雲端硬碟，改成那個資料夾
 
 if not os.path.isdir(DATA_DIR):
-    os.makedirs("visa", exist_ok=True)
-    if not os.path.exists("visa/VisA.tar"):
-        os.system(f"wget -q -O visa/VisA.tar {VISA_URL}")
-    os.system(f"tar -xf visa/VisA.tar -C visa --wildcards '{CATEGORY}/*'")
+    os.makedirs("data/download/visa", exist_ok=True)
+    if not os.path.exists("data/download/visa/VisA.tar"):
+        os.system(f"wget -q -O data/download/visa/VisA.tar {VISA_URL}")
+    os.system(f"tar -xf data/download/visa/VisA.tar -C data/download/visa --wildcards '{CATEGORY}/*'")
 normal = sorted(glob.glob(f"{DATA_DIR}/**/Normal/*.*", recursive=True))
 anomaly = sorted(p for p in glob.glob(f"{DATA_DIR}/**/Anomaly/*.*", recursive=True) if "/Masks/" not in p.replace("\\", "/"))
 random.shuffle(normal)

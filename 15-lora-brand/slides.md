@@ -2,7 +2,7 @@
 theme: default
 title: 我們的產品、我們的風格
 info: |
-  生成式AI原理 · D4-3
+  生成式AI原理 · L15
   品牌部要生成的圖必須是「我們的」產品：先用 IP-Adapter 當不訓練的基準，再用 DreamBooth ＋ LoRA 在 T4 上訓練，並檢查有沒有背下訓練照。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D4-3</div>
+<div class="eyebrow">生成式AI原理 · L15</div>
 
 # 我們的產品、我們的風格
 
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：D4-2 的 SD 會畫「一個背包」，但不會畫「我們的那個背包」。今天讓它認識我們的產品。
+★ 開場（2 分）：L14 的 SD 會畫「一個背包」，但不會畫「我們的那個背包」。今天讓它認識我們的產品。
 -->
 
 ---
@@ -45,7 +45,7 @@ class: cover
 # 品牌部：生成的圖必須是「我們的」產品
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D4-3】部門：品牌部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L15】部門：品牌部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>生成的圖必須是「我們的」產品、品牌一致的風格</dd>
     <dt>現況痛點</dt><dd>提示詞描述不出產品外觀，每次生成都不一樣</dd>
@@ -83,8 +83,8 @@ class: cover
 # 盡力描述，畫出來的還是「別人的背包」
 
 <div class="grid grid-cols-2 gap-4 mt-1">
-<div class="placeholder" style="height:150px;min-height:0;padding:10px 16px">6 張訓練照（我們的背包）<small>講師 T4 實跑後替換（lab15 <code>train_photos.png</code>）</small></div>
-<div class="placeholder" style="height:150px;min-height:0;padding:10px 16px">只用提示詞生成的 4 張（seed 0–3）<small>講師 T4 實跑後替換（lab15 <code>prompt_only.png</code>）</small></div>
+<div><img class="photo" src="/lab15-train-photos.png" alt="6 張訓練照：同一個桃紅色背包，不同的場景和角度" style="width:100%"><div class="shot-cap">6 張訓練照（我們的背包）</div></div>
+<div><img class="photo" src="/lab15-prompt-only.png" alt="只用提示詞生成的 4 張背包：每張的款式、口袋、貼紙都不一樣" style="width:100%"><div class="shot-cap">只用提示詞生成的 4 張（seed 0–3）：都不是我們的背包</div></div>
 </div>
 
 <div style="font-size:17px" class="mt-2">
@@ -107,10 +107,10 @@ class: cover
 
 # IP-Adapter：給一張參考照，不用訓練
 
-<div class="placeholder" style="height:200px;padding:16px 24px">參考照 → IP-Adapter scale 0.3、0.6、0.9 生成的「公園長椅上的背包」<small>講師 T4 實跑後替換（lab15 <code>ip_adapter.png</code>，seed 0）</small></div>
+<img class="photo" src="/lab15-ip-adapter.png" alt="參考照與 IP-Adapter scale 0.3、0.6、0.9 的生成結果" style="height:165px;margin:0 auto;object-fit:contain"><div class="shot-cap" style="text-align:center">參考照 → IP-Adapter scale 0.3、0.6、0.9（seed 0；lab15，T4 實跑）</div>
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:17px">
-<div class="node"><strong>怎麼做到的</strong><small>參考照經 CLIP 的<b>影像</b>編碼器變成向量，用另一組交叉注意力接進 U-Net（D4-2 文字那一組不動）</small></div>
+<div class="node"><strong>怎麼做到的</strong><small>參考照經 CLIP 的<b>影像</b>編碼器變成向量，用另一組交叉注意力接進 U-Net（L14 文字那一組不動）</small></div>
 <div class="node node--warm"><strong>scale 的取捨</strong><small>小：場景聽文字、產品不太像；大：產品像了，但姿勢、背景也被照抄</small></div>
 </div>
 
@@ -119,7 +119,7 @@ class: cover
 <div class="src">Ye et al., IP-Adapter, 2023（S4，待確認）；權重 <code>h94/IP-Adapter</code> 的 <code>ip-adapter_sd15.bin</code></div>
 
 <!--
-★ 示範（5 分）：先做不訓練的方法當基準，和 D3-2「先試顏色正規化」同一個習慣：貴的方法要贏過便宜的才值得。
+★ 示範（5 分）：先做不訓練的方法當基準，和 L10「先試顏色正規化」同一個習慣：貴的方法要贏過便宜的才值得。
 -->
 
 ---
@@ -259,7 +259,7 @@ hostOnly: true
 
 - 訓練：6 張照片，提示詞都是同一句
 - 使用：<code>a photo of sks backpack on a snowy mountain</code> → 我們的背包，新的場景
-- 迴圈就是 D3-3 的預測雜訊；只更新 LoRA
+- 迴圈就是 L11 的預測雜訊；只更新 LoRA
 
 </div>
 </div>
@@ -282,9 +282,9 @@ hostOnly: true
 <thead><tr><th style="width:24%">設定</th><th>做什麼</th><th style="width:34%">代價</th></tr></thead>
 <tbody>
 <tr><td>512px、一次一張</td><td>SD1.5 原本的大小；batch＝1</td><td>每步只看一張，loss 跳動大</td></tr>
-<tr><td>fp16 混合精度</td><td>U-Net 用 fp16 算，只有 LoRA 參數用 fp32 更新（D1-2、D1-4 學過 fp16）</td><td>幾乎沒有</td></tr>
+<tr><td>fp16 混合精度</td><td>U-Net 用 fp16 算，只有 LoRA 參數用 fp32 更新（L02、L04 學過 fp16）</td><td>幾乎沒有</td></tr>
 <tr><td>梯度檢查點（gradient checkpointing）</td><td>反向傳播時才重算中間結果，不全部存</td><td>慢一些</td></tr>
-<tr><td>先把照片編碼成潛在</td><td>VAE 編碼器只跑一次（D2-3），訓練時不再用</td><td>不能做隨機裁切等增強（只做左右翻轉）</td></tr>
+<tr><td>先把照片編碼成潛在</td><td>VAE 編碼器只跑一次（L07），訓練時不再用</td><td>不能做隨機裁切等增強（只做左右翻轉）</td></tr>
 </tbody>
 </table>
 
@@ -305,7 +305,7 @@ hostOnly: true
 <div class="grid grid-cols-[1.25fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:260px;padding:16px 24px">前後對照：同一個 seed，LoRA 關／開；三個場景（公園、雪山、辦公室）<small>講師 T4 實跑後替換（lab15 <code>lora_before_after.png</code>）</small></div>
+<img class="photo" src="/lab15-lora-before-after.png" alt="上排 LoRA 關、下排 LoRA 開；三個場景：公園長椅、雪山、辦公室" style="height:270px;margin:0 auto;object-fit:contain"><div class="shot-cap" style="text-align:center">同一個 seed：LoRA 關（上）／開（下）（lab15，T4 實跑）</div>
 
 </div>
 <div style="font-size:17px">
@@ -332,7 +332,7 @@ hostOnly: true
 
 <div style="font-size:19px" class="mt-4">
 
-- 模型完全不動，只學一個新字（例如 <code>&lt;our-bag&gt;</code>）的嵌入向量（D4-1 的嵌入）
+- 模型完全不動，只學一個新字（例如 <code>&lt;our-bag&gt;</code>）的嵌入向量（L13 的嵌入）
 - 檔案很小（只有一個向量）；但能學到的細節比 LoRA 少
 
 </div>
@@ -384,7 +384,15 @@ hostOnly: true
 </div>
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">目標：IP-Adapter 三個 scale、LoRA 前後對照、相似度表<small>講師 T4 實跑後換成真實輸出（含訓練時間與 VRAM 峰值）</small></div>
+<table class="compact" style="font-size:13px;line-height:1.2;margin:0">
+<tr><th>做法</th><th>結果（seed 固定）</th><th>和最像的訓練照</th></tr>
+<tr><td>只用提示詞</td><td><img src="/lab15-prompt-row.png" alt="只用提示詞生成的 4 張背包" style="height:38px;width:auto;display:block"></td><td>0.839</td></tr>
+<tr><td>IP-Adapter<br>scale 0.3／0.6／0.9</td><td><img src="/lab15-ip-row.png" alt="IP-Adapter scale 0.3、0.6、0.9 的生成結果" style="height:38px;width:auto;display:block"></td><td>—（未量）</td></tr>
+<tr><td>LoRA 關</td><td><img src="/lab15-lora-off-row.png" alt="LoRA 關：公園、雪山、辦公室三個場景" style="height:38px;width:auto;display:block"></td><td>0.785</td></tr>
+<tr><td>LoRA 開</td><td><img src="/lab15-lora-on-row.png" alt="LoRA 開：同樣三個場景" style="height:38px;width:auto;display:block"></td><td>0.857</td></tr>
+<tr><td colspan="2">參考線：訓練照彼此之間最像的那張</td><td>0.954</td></tr>
+</table>
+<div class="shot-cap" style="font-size:13px">CLIP 影像相似度，越接近參考線越像在背訓練照。LoRA r＝4、400 步 174 秒、VRAM 峰值 6.98 GB、檔案 3.2 MB（lab15 T4 實跑）</div>
 
 </div>
 </div>
@@ -410,10 +418,10 @@ hostOnly: true
   <div><span class="num">5</span><strong>驗收</strong>：<code>disable_adapters</code>／<code>enable_adapters</code> 前後對照；和最像的訓練照的相似度</div>
 </div>
 
-<div class="takeaway mt-3">一個 TODO：LoRA 設定（r、alpha、加在哪幾層）。訓練迴圈和 D3-3 一樣。</div>
+<div class="takeaway mt-3">一個 TODO：LoRA 設定（r、alpha、加在哪幾層）。訓練迴圈和 L11 一樣。</div>
 
 <!--
-★ 拆塊（3 分）：第 4 部分的迴圈請學員和 D3-3 對照：只多了「潛在」和「文字向量」兩個輸入。
+★ 拆塊（3 分）：第 4 部分的迴圈請學員和 L11 對照：只多了「潛在」和「文字向量」兩個輸入。
 -->
 
 ---
@@ -505,7 +513,7 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 <tbody>
 <tr><td>Agent 的 LoRA 真的加上了嗎？</td><td>看「要訓練幾個參數」</td><td>大於 0，且 &lt; U-Net 的 1%</td></tr>
 <tr><td>原本的 U-Net 有沒有被改？</td><td>看「LoRA 關掉後 vs 加 LoRA 前」的最大像素差</td><td>0 或很小</td></tr>
-<tr><td>訓練的是預測雜訊嗎？</td><td>看 <code>mse_loss(pred, noise)</code></td><td>和 D3-3 一樣，比的是雜訊</td></tr>
+<tr><td>訓練的是預測雜訊嗎？</td><td>看 <code>mse_loss(pred, noise)</code></td><td>和 L11 一樣，比的是雜訊</td></tr>
 <tr><td>有沒有背下來？</td><td>看相似度表</td><td>LoRA 開的相似度不高於參考線</td></tr>
 <tr><td>照片能用嗎？</td><td>看授權檔</td><td>每張有出處，或是自己拍的</td></tr>
 </tbody>
@@ -557,7 +565,7 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 <div class="src">今天的背包照：Unsplash 授權（S1、S6，待確認）。法律問題以公司法務意見為準</div>
 
 <!--
-★ 風險（5 分）：用真人的臉訓練 LoRA（換臉）也是同一個技術，和 D3-2 的 deepfake 風險連起來。
+★ 風險（5 分）：用真人的臉訓練 LoRA（換臉）也是同一個技術，和 L10 的 deepfake 風險連起來。
 -->
 
 ---
@@ -585,20 +593,59 @@ target_modules 只放注意力的 to_q、to_k、to_v、to_out.0。不要改其�
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['全部更新', '凍結不動，只訓練 B 和 A', '刪掉', '換成 8 位元']"
+  :why="['全部更新是完整微調，不是 LoRA，T4 也放不下。', '', '刪掉原權重，模型就沒有東西可用了。', '換成 8 位元是量化，另一種省記憶體的方法，不是 LoRA 的做法。']"
+  explain="LoRA 凍結 W，只訓練很細的 B 和 A，用的時候加上 BA；所以參數少、檔案小。">
+LoRA 訓練時，原本的權重 W？
+</Mcq>
 
-1. LoRA 訓練時，原本的權重 W？（　）<br><span class="opts"><span class="nw">A. 全部更新</span>　<span class="nw">B. 凍結不動，只訓練 B 和 A</span>　<span class="nw">C. 刪掉</span>　<span class="nw">D. 換成 8 位元</span></span>
-2. 768 × 768 的層加 r＝8 的 LoRA，要訓練幾個參數？（　）<br><span class="opts"><span class="nw">A. 589,824</span>　<span class="nw">B. 6,144</span>　<span class="nw">C. 12,288</span>　<span class="nw">D. 64</span></span>
-3. DreamBooth 提示詞「a photo of sks backpack」中，sks 的作用？（　）<br><span class="opts"><span class="nw">A. 描述背包的顏色</span>　<span class="nw">B. 一個罕見的字，學成「這一個產品」</span>　<span class="nw">C. 負面提示</span>　<span class="nw">D. 排程器的名字</span></span>
-4. 生成的「雪山上的背包」背景和訓練照一模一樣，最可能是？（　）<br><span class="opts"><span class="nw">A. 過度擬合，背下了訓練照</span>　<span class="nw">B. r 太小</span>　<span class="nw">C. 指導強度太低</span>　<span class="nw">D. VAE 壞了</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['589,824', '6,144', '12,288', '64']"
+  :why="['589,824 ＝ 768 × 768，是整層的參數，完整微調才要訓練這麼多。', '6,144 是 r＝4 的結果（2 × 768 × 4），這題 r＝8。', '', '64 是 r × r，不是矩陣大小。']"
+  explain="B 是 768 × 8，A 是 8 × 768，合計 2 × 768 × 8 ＝ 12,288，約為原層的 2%。">
+768 × 768 的層加 r＝8 的 LoRA，要訓練幾個參數？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 B、2 C（B 是 r＝4）、3 B、4 A。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：1 B、2 C。
 -->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="1"
+  :options="['描述背包的顏色', '一個罕見的字，學成「這一個產品」', '負面提示', '排程器的名字']"
+  :why="['sks 不是顏色詞，顏色要另外寫在提示詞裡。', '', '負面提示詞是另一個欄位，不是寫在 sks 的位置。', '排程器是程式設定，不會寫進提示詞。']"
+  explain="sks 是本來沒有意義的罕見字，訓練時被綁定到「我們這一個背包」，之後提示詞用它就能叫出那個產品。">
+DreamBooth 提示詞「a photo of sks backpack」中，sks 的作用？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['過度擬合，背下了訓練照', 'r 太小', '指導強度太低', 'VAE 壞了']"
+  :why="['', 'r 太小是學不夠像產品，不是把背景背下來。', '指導強度低是圖不聽提示詞，不是背景一模一樣。', 'VAE 壞了會色偏或破碎，不是背景相同。']"
+  explain="訓練太久或訓練照的背景太單一，LoRA 連背景都背下來，這叫過度擬合；換背景提示詞也沒用。">
+生成的「雪山上的背包」背景和訓練照一模一樣，最可能是？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：3 B、4 A。
+全部答案與理由：
+1 B：LoRA 凍結 W，只訓練很細的 B 和 A，用的時候加上 BA；所以參數少、檔案小。
+2 C：B 是 768 × 8，A 是 8 × 768，合計 2 × 768 × 8 ＝ 12,288，約為原層的 2%。
+3 B：sks 是本來沒有意義的罕見字，訓練時被綁定到「我們這一個背包」，之後提示詞用它就能叫出那個產品。
+4 A：訓練太久或訓練照的背景太單一，LoRA 連背景都背下來，這叫過度擬合；換背景提示詞也沒用。
+-->
+
 
 ---
 hostOnly: true
@@ -606,7 +653,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D4-4：GAN 還是擴散？公司標準選哪個？
+# 下一堂 L16：GAN 還是擴散？公司標準選哪個？
 
 <div style="font-size:19px" class="mt-4">
 

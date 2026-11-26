@@ -10,7 +10,7 @@
 # | 部分 | 做什麼 | 輸出 |
 # |---|---|---|
 # | 0 | 資料、提示詞、JSON 驗證（`json.loads` ＋ 重試） | `parse_reply()` |
-# | 1 | 雲端：Claude API（沒有金鑰就跳過） | usage、每 1,000 張成本 |
+# | 1 | 雲端：Gemini API 免費額度（沒有金鑰就跳過） | usage、每 1,000 張成本（付費單價換算） |
 # | 2 | 自架：Qwen2.5-1.5B-Instruct，fp16 | 延遲、VRAM |
 # | 3 | 自架：同一個模型，4-bit（bitsandbytes） | 延遲、VRAM |
 # | 4 | 比較表 → 決策表 | 有效 JSON 比例、正確率、秒數、成本 |
@@ -20,7 +20,7 @@
 
 # %%
 # 第 1 格：環境
-%pip install -q anthropic bitsandbytes gradio
+%pip install -q google-genai python-dotenv bitsandbytes gradio
 import json, os, re, time, platform, urllib.request, gc
 import torch, transformers
 print("torch", torch.__version__, "| transformers", transformers.__version__, "| python", platform.python_version())
@@ -106,41 +106,53 @@ def evaluate(name, generate_fn, n=N):
 RESULTS = []
 
 # %% [markdown]
-# ## 1. 雲端：Claude API
-# 金鑰放在 Colab 左邊的「🔑 密鑰」，名稱 `ANTHROPIC_API_KEY`，打開「筆記本存取權」。**不要**把金鑰寫在程式裡。
+# ## 1. 雲端：Gemini API（免費額度）
+# 到 Google AI Studio 申請免費金鑰。
+# 金鑰**不寫在程式裡**。兩種放法，下面這格都會試：
+# 1. **Colab 網頁版**：左側 🔑「密鑰（Secrets）」→ 新增 `GEMINI_API_KEY` → 打開「筆記本存取權」。
+# 2. **`.env` 檔**（VS Code 連 Colab）：檔案內容一行 `GEMINI_API_KEY=你的金鑰`；在 VS Code 檔案總管對 `.env` 按右鍵 →「Upload to Colab」。VS Code 連 Colab **不支援**方法 1。
+# 注意：免費額度的輸入可能被 Google 拿去改進產品，所以今天只送**合成**客服單。免費額度有每分鐘／每天的請求上限，下面的程式遇到就等一下再試。
 # 沒有金鑰：這一部分會自動跳過，其他部分照常。
 
 # %%
-try:
+try:                                              # 方法 1：Colab 網頁版的密鑰
     from google.colab import userdata
-    os.environ.setdefault("ANTHROPIC_API_KEY", userdata.get("ANTHROPIC_API_KEY") or "")
+    if userdata.get("GEMINI_API_KEY"):
+        os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")
 except Exception:
     pass
-HAS_KEY = bool(os.environ.get("ANTHROPIC_API_KEY"))
-MODEL = "claude-opus-5-5"          # 想更便宜：改成 "claude-haiku-5-5"
-PRICE = {"claude-opus-5-5": (4.00, 20.00), "claude-haiku-5-5": (0.10, 0.50)}   # 美元／百萬 token（輸入, 輸出），2026-11 價格表，用前請再查；換 MODEL 時會自動用對應的單價
+from dotenv import load_dotenv                    # 方法 2：.env 檔（VS Code 連 Colab 時上傳）
+load_dotenv()
+HAS_KEY = bool(os.environ.get("GEMINI_API_KEY"))
+MODEL = "gemini-3.5-flash-lite"    # 免費額度可用；想換別的模型，到 AI Studio 的價格頁確認
+PRICE = {"gemini-3.5-flash-lite": (0.30, 2.50)}   # 美元／百萬 token（輸入, 輸出），付費層單價（2026-11 價格頁，用前請再查）；免費額度本身不收費，這裡換算的是「若改用付費層」的成本
 print("有金鑰" if HAS_KEY else "沒有金鑰：跳過第 1 部分")
 
 if HAS_KEY:
-    import anthropic
-    client = anthropic.Anthropic()
+    from google import genai
+    client = genai.Client()                       # 自動讀 GEMINI_API_KEY
     USAGE = []
-    def claude_generate(ticket_text):
-        resp = client.messages.create(
-            model=MODEL,
-            max_tokens=1024,                      # 回覆（含模型內部思考）最多幾個 token
-            system=SYSTEM,                        # 系統提示詞：角色與格式
-            output_config={"effort": "low"},      # 分類是簡單任務：少想一點、省 token
-            messages=[{"role": "user", "content": ticket_text}],
-        )
-        USAGE.append((resp.usage.input_tokens, resp.usage.output_tokens))
-        return "".join(b.text for b in resp.content if b.type == "text")   # 只取文字區塊
+    def cloud_generate(ticket_text):
+        for wait in (0, 15, 45):                  # 免費額度被限流時，等一下再試
+            time.sleep(wait)
+            try:
+                it = client.interactions.create(
+                    model=MODEL,
+                    system_instruction=SYSTEM,                    # 系統提示詞：角色與格式
+                    input=ticket_text,                            # 這張客服單
+                    generation_config={"max_output_tokens": 1024},   # 回覆最多幾個 token
+                )
+                break
+            except Exception as e:
+                print("API 錯誤（可能是限流）：", str(e)[:80])
+        else:
+            return ""
+        u = it.usage                              # 這次用了多少 token
+        USAGE.append((u.total_input_tokens, u.total_output_tokens))
+        return it.output_text
 
-    one = claude_generate(tickets[2]["zh"])
-    print("客服單：", tickets[2]["zh"]); print("模型回覆：", one); print("usage：", USAGE[-1])
-    print("這次 API 的 token 計數（同一個系統提示詞＋客服單）：",
-          client.messages.count_tokens(model=MODEL, system=SYSTEM,
-                                       messages=[{"role": "user", "content": tickets[2]["zh"]}]).input_tokens)
+    one = cloud_generate(tickets[2]["zh"])
+    print("客服單：", tickets[2]["zh"]); print("模型回覆：", one); print("usage：", USAGE[-1] if USAGE else "（無）")
 
 # %%
 def cost_per_1000(in_tok, out_tok, price_in, price_out):
@@ -151,7 +163,7 @@ def cost_per_1000(in_tok, out_tok, price_in, price_out):
 
 if HAS_KEY:
     USAGE.clear()
-    res, rows_api = evaluate(f"雲端 {MODEL}", claude_generate)
+    res, rows_api = evaluate(f"雲端 {MODEL}", cloud_generate)
     ins = sum(u[0] for u in USAGE) / len(USAGE); outs = sum(u[1] for u in USAGE) / len(USAGE)
     res["每千張美元"] = cost_per_1000(ins, outs, *PRICE[MODEL]); res["VRAM GB"] = 0.0
     print(f"平均每次：輸入 {ins:.0f}、輸出 {outs:.0f} token（含重試）→ 每 1,000 張 {res['每千張美元']:.2f} 美元")

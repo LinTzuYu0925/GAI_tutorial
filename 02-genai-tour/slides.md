@@ -2,7 +2,7 @@
 theme: default
 title: 今晚就要文案和產品圖
 info: |
-  生成式AI原理 · D1-2
+  生成式AI原理 · L02
   在 Colab T4 跑文字模型與影像模型，弄懂「為什麼每次輸出都不一樣」，並能重現與查授權。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D1-2</div>
+<div class="eyebrow">生成式AI原理 · L02</div>
 
 # 今晚就要文案和產品圖
 
@@ -46,7 +46,7 @@ class: cover
 # 行銷部今晚就要東西
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D1-2】部門：行銷部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L02】部門：行銷部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>新款藍牙耳機今晚上架預告，需要三版文案與一張產品情境圖</dd>
     <dt>現況痛點</dt><dd>外包文案三天、攝影一週，趕不上檔期</dd>
@@ -193,7 +193,7 @@ torch.cuda.get_device_name(0)  # 'Tesla T4'
 <!--
 ★ Hugging Face（3 分）：打開 huggingface.co/Qwen/Qwen2.5-0.5B-Instruct 給學員看一眼：上方是名字、右邊有下載次數、Files 分頁是權重檔、Model card 是說明與授權。
 說法：「等一下寫的 model="Qwen/…"，就是這一頁的名字。程式第一次執行會從這裡下載權重，之後在 T4 上跑，資料不會送出去。」
-有些模型（例如 Llama）要先登入、同意授權才能下載，叫 gated model；今天用的都不需要。上傳自己的模型在 D1-4（把自己的模型傳上 Hub）。
+有些模型（例如 Llama）要先登入、同意授權才能下載，叫 gated model；今天用的都不需要。上傳自己的模型在 L04（把自己的模型傳上 Hub）。
 -->
 
 ---
@@ -237,7 +237,7 @@ out = gen(messages, max_new_tokens=120,
 
 <!--
 ★ 文字（6 分）：學員跟著執行 Part A。強調 0.5B 是「小」模型：能在免費 T4 跑，但會寫錯規格——正好用來練習驗收。
-dtype=torch.float16 讀作「每個參數用 16 位元存」，D1-4 會算記憶體。
+dtype=torch.float16 讀作「每個參數用 16 位元存」，L04 會算記憶體。
 -->
 
 ---
@@ -273,11 +273,11 @@ img = pipe(PROMPT, num_inference_steps=4,
 
 <div class="takeaway mt-3">LCM-LoRA 是一個「加速外掛」：原本要幾十步的模型，4 步就出圖。</div>
 
-<div class="src">S3、S4；為什麼能變快在 D4-4 說明，今天只會用</div>
+<div class="src">S3、S4；為什麼能變快在 L16 說明，今天只會用</div>
 
 <!--
 ★ 影像（6 分）：第一次下載 SD1.5＋LCM-LoRA 要等幾分鐘，請學員一進這頁就先執行 Part B 的格子，邊等邊聽。只解釋三個參數：num_inference_steps（幾步）、guidance_scale（LCM 用 1.0）、generator（seed）。
-LoRA 是什麼在 D4-3；擴散模型怎麼運作在 D3-3。今天的重點是「能跑、能重現」。
+LoRA 是什麼在 L15；擴散模型怎麼運作在 L11。今天的重點是「能跑、能重現」。
 -->
 
 ---
@@ -316,7 +316,7 @@ LoRA 是什麼在 D4-3；擴散模型怎麼運作在 D3-3。今天的重點是�
 <div class="takeaway mt-3">自己跑：模型和資料都在你的 GPU；API：模型在廠商那邊，你送出提示詞、拿回結果。</div>
 
 <!--
-★ 兩種跑法（3 分）：連回 D1-1 的「買 API，還是自己跑開放權重？」。
+★ 兩種跑法（3 分）：連回 L01 的「買 API，還是自己跑開放權重？」。
 指左邊：模型權重下載到我們租的 T4 上，計算也在 T4，所以客戶資料不會送出去。
 指右邊：我們的程式裡根本沒有模型，只是把提示詞透過網路送到 Google，由 Google 的伺服器算完再傳回來；金鑰就是「證明你是誰」的通行證，用量也照它計算。
 -->
@@ -447,7 +447,7 @@ print("用量：輸入", u.prompt_token_count, …)
 
 <!--
 ★ 呼叫（3 分）：和 Part A 比較：Part A 用 pipeline 在自己的 T4 跑 Qwen；這裡用 google-genai 把同一段 SYSTEM、TASK 送到 Google。
-usage_metadata 會印出輸入、輸出 token 數，這就是 API 的計費單位（D5-3 再算成本）。
+usage_metadata 會印出輸入、輸出 token 數，這就是 API 的計費單位（L19 再算成本）。
 和 Part A 比較（講師實跑）：Qwen 0.5B 三版 123–171 字、混簡體字、寫出「一秒充到 100%」；Gemini 77 字、全繁體、數字都對，但多寫了「單耳」——大模型也要人工核對。另一次本機呼叫得到 85 字的版本（research/lab-runs.md），說明雲端模型每次回答也不同。
 備案：沒有金鑰的學員直接跳過，不影響後面。
 -->
@@ -513,7 +513,7 @@ logits 讀作「還沒變成機率的分數」，softmax 把分數變成加起�
 <div class="takeaway mt-3">「每次不一樣」不是壞掉，是因為每一步都在抽籤。</div>
 
 <!--
-★ 抽樣（4 分）：對照 D1-1 的「從 p_θ 抽樣」：文字模型一次抽一個 token，接起來就是一段文字。
+★ 抽樣（4 分）：對照 L01 的「從 p_θ 抽樣」：文字模型一次抽一個 token，接起來就是一段文字。
 greedy 讀作「貪婪法」：每一步都拿最大的，所以沒有隨機性。
 -->
 
@@ -722,14 +722,14 @@ messages = [
 img = pipe(PROMPT, negative_prompt="logo, text, watermark, brand name", ...)
 ```
 
-<div class="node node--warm mt-3" style="font-size:18px"><strong>注意：今天的設定它沒有作用</strong><small>guidance＝讓圖更貼近提示詞、遠離負面提示的加強。diffusers 在 guidance_scale ≤ 1 時不做 guidance，負面提示會被忽略；LCM 用 1.0，所以驗收第 2 項靠「看圖＋換 seed」。D4-2 用 guidance 大於 1 的設定時才有效</small></div>
+<div class="node node--warm mt-3" style="font-size:18px"><strong>注意：今天的設定它沒有作用</strong><small>guidance＝讓圖更貼近提示詞、遠離負面提示的加強。diffusers 在 guidance_scale ≤ 1 時不做 guidance，負面提示會被忽略；LCM 用 1.0，所以驗收第 2 項靠「看圖＋換 seed」。L14 用 guidance 大於 1 的設定時才有效</small></div>
 
 <div class="takeaway mt-3">負面提示要搭配 guidance 才有用；不管有沒有用，最後都要人工看圖。</div>
 
-<div class="src">diffusers 0.43.0 原始碼：<code>do_classifier_free_guidance = guidance_scale &gt; 1 …</code>（research/sources.md S12）；D4-2 解釋 guidance</div>
+<div class="src">diffusers 0.43.0 原始碼：<code>do_classifier_free_guidance = guidance_scale &gt; 1 …</code>（research/sources.md S12）；L14 解釋 guidance</div>
 
 <!--
-○ 負面提示（2 分）：LCM 搭配 guidance_scale=1.0 時，diffusers 根本不做 guidance，負面提示完全被忽略（已讀 diffusers 0.43.0 原始碼確認）。D4-2 用 guidance 大於 1 的一般取樣再比較。
+○ 負面提示（2 分）：LCM 搭配 guidance_scale=1.0 時，diffusers 根本不做 guidance，負面提示完全被忽略（已讀 diffusers 0.43.0 原始碼確認）。L14 用 guidance 大於 1 的一般取樣再比較。
 -->
 
 ---
@@ -793,7 +793,7 @@ img = pipe(PROMPT, negative_prompt="logo, text, watermark, brand name", ...)
 <div class="takeaway mt-4">一行 <code>pipeline</code> 背後是好幾個模型接力；名稱和筆記本裡的物件一樣。</div>
 
 <!--
-★ 拆塊（3 分）：文字那一列是今天的重點，下一頁要填每一塊的輸入輸出。影像那一列只是預告：U-Net 在 D2-2、VAE 在 D2-3、擴散在 D3-3。
+★ 拆塊（3 分）：文字那一列是今天的重點，下一頁要填每一塊的輸入輸出。影像那一列只是預告：U-Net 在 L06、VAE 在 L07、擴散在 L11。
 -->
 
 ---
@@ -917,7 +917,7 @@ hostOnly: true
 <div class="src">Gemini 免費方案：Pricing 頁「Used to improve our products：Yes」（S10）；著作權部分見 S7（待確認，以官方文字為準）</div>
 
 <!--
-★ 風險（3 分）：不要給法律意見，只給工程師的行為規則：不放個資、讀條款、留紀錄。D6-3 的上市檢查會再完整處理。
+★ 風險（3 分）：不要給法律意見，只給工程師的行為規則：不放個資、讀條款、留紀錄。L23 的上市檢查會再完整處理。
 -->
 
 ---
@@ -1027,7 +1027,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D1-3：從 Keras 到 PyTorch
+# 下一堂 L03：從 Keras 到 PyTorch
 
 <div class="node node--primary mt-2">今天用的 transformers、diffusers 都是 PyTorch。下一堂把你在 DL 課跑過的 CIFAR-10 CNN 從 Keras 搬到 PyTorch，自己寫訓練迴圈。</div>
 

@@ -2,7 +2,7 @@
 theme: default
 title: 產品情境照工作室
 info: |
-  生成式AI原理 · D4-2
+  生成式AI原理 · L14
   行銷部要依企劃文字生成產品情境照、替產品照換背景：CLIP 把文字變成條件，Stable Diffusion 1.5 在潛在空間生成；img2img、inpainting、CLIP 分數與偏差稽核。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D4-2</div>
+<div class="eyebrow">生成式AI原理 · L14</div>
 
 # 產品情境照工作室
 
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：D4-1 的條件是一個類別編號；今天的條件是一段文字。D1-2 第一次用 SD1.5 時是黑盒子，今天每一個零件都是前幾天學過的東西。
+★ 開場（2 分）：L13 的條件是一個類別編號；今天的條件是一段文字。L02 第一次用 SD1.5 時是黑盒子，今天每一個零件都是前幾天學過的東西。
 -->
 
 ---
@@ -45,19 +45,19 @@ class: cover
 # 行銷部：依企劃文字生成情境照，還要換背景
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D4-2】部門：行銷部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L14】部門：行銷部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>依企劃文字生成產品情境照，並替現有產品照換背景</dd>
     <dt>現況痛點</dt><dd>每次活動都要外拍：場地、模特兒、攝影師</dd>
     <dt>成功指標（KPI）</dt><dd>CLIP 分數（貼不貼題）；行銷部可用率；有人物的提示詞通過偏差檢查</dd>
     <dt>可用資料</dt><dd>企劃文字；自有產品照（今天用筆記本生成的白底產品照代替）</dd>
     <dt>限制與法規</dt><dd>Colab T4（512px、fp16）；著作權與風格模仿</dd>
-    <dt>為何現有工具不夠</dt><dd>D4-1 只能用類別當條件，不能用一段文字</dd>
+    <dt>為何現有工具不夠</dt><dd>L13 只能用類別當條件，不能用一段文字</dd>
   </dl>
 </div>
 
 <!--
-★ 需求單（3 分）：D2-3 時行銷科技組問過「一張 T4 跑得動 512px 嗎？」今天兌現。「可用率」：行銷部看過、願意拿去用的比例，要人工判斷。
+★ 需求單（3 分）：L07 時行銷科技組問過「一張 T4 跑得動 512px 嗎？」今天兌現。「可用率」：行銷部看過、願意拿去用的比例，要人工判斷。
 -->
 
 ---
@@ -73,33 +73,33 @@ class: cover
 5. **量測** CLIP 分數隨 w 的變化，並對有人物的提示詞做偏差稽核
 
 <!--
-★ 目標（1 分）。不教：cross-attention 的公式（D5-1 才教注意力）、排程器數學（附錄只認名字）、ControlNet 實作（講師示範）、SDXL。
+★ 目標（1 分）。不教：cross-attention 的公式（L17 才教注意力）、排程器數學（附錄只認名字）、ControlNet 實作（講師示範）、SDXL。
 -->
 
 ---
 
-<div class="eyebrow">00 · Frame · 回到 D2-3</div>
+<div class="eyebrow">00 · Frame · 回到 L07</div>
 
 # 512px 在 T4 上跑得動，是因為不在像素上去噪
 
 <div class="grid grid-cols-3 gap-4 mt-4" style="font-size:18px">
 <div class="node"><strong>像素</strong><small>512×512×3 ＝ 786,432</small></div>
-<div class="node node--primary"><strong>SD 的潛在空間</strong><small>4×64×64 ＝ 16,384（小 48 倍，D2-3）</small></div>
-<div class="node node--warm"><strong>條件</strong><small>D4-1 類別編號 → 今天一段文字</small></div>
+<div class="node node--primary"><strong>SD 的潛在空間</strong><small>4×64×64 ＝ 16,384（小 48 倍，L07）</small></div>
+<div class="node node--warm"><strong>條件</strong><small>L13 類別編號 → 今天一段文字</small></div>
 </div>
 
 <div style="font-size:19px" class="mt-4">
 
-- D3-3、D4-1 的去噪 U-Net，搬到 4 × 64 × 64 的潛在空間裡做
-- 最後才用 D2-3 的 VAE 解碼器還原成 512 × 512 的照片
+- L11、L13 的去噪 U-Net，搬到 4 × 64 × 64 的潛在空間裡做
+- 最後才用 L07 的 VAE 解碼器還原成 512 × 512 的照片
 - 唯一的新零件：把文字變成向量的**文字編碼器**（CLIP）
 
 </div>
 
-<div class="takeaway mt-3">Stable Diffusion ＝ 在小 48 倍的空間裡做 D4-1 的條件去噪，條件換成文字。</div>
+<div class="takeaway mt-3">Stable Diffusion ＝ 在小 48 倍的空間裡做 L13 的條件去噪，條件換成文字。</div>
 
 <!--
-★ Frame（4 分）：數字全部來自 D2-3 的投影片（786,432、16,384、48 倍），不重講 VAE。
+★ Frame（4 分）：數字全部來自 L07 的投影片（786,432、16,384、48 倍），不重講 VAE。
 -->
 
 ---
@@ -136,34 +136,62 @@ class: cover
 
 # CLIP：一個空間裡，同時放文字和圖
 
-<div class="grid grid-cols-[1fr_1fr] gap-6 mt-2 items-center">
+<div class="grid grid-cols-[1.15fr_1fr] gap-5 mt-1 items-center">
 <div>
 
-<table class="vlines" style="font-size:16px;text-align:center">
-<thead><tr><th></th><th>文字 1<br><small>耳機</small></th><th>文字 2<br><small>背包</small></th><th>文字 3<br><small>檯燈</small></th></tr></thead>
-<tbody>
-<tr><td><b>圖 1</b> 耳機</td><td style="background:var(--soft-blue)"><b>拉近</b></td><td>推遠</td><td>推遠</td></tr>
-<tr><td><b>圖 2</b> 背包</td><td>推遠</td><td style="background:var(--soft-blue)"><b>拉近</b></td><td>推遠</td></tr>
-<tr><td><b>圖 3</b> 檯燈</td><td>推遠</td><td>推遠</td><td style="background:var(--soft-blue)"><b>拉近</b></td></tr>
-</tbody>
-</table>
+<svg viewBox="0 0 470 330" style="width:100%;max-height:300px" role="img" aria-label="三維座標軸的示意圖。從原點射出三對同色箭頭：藍色一對指向右上，終點是耳機照片和 headphones 這個詞；橘色一對指向左上，終點是背包照片和 backpack；綠色一對指向右下，終點是馬克杯照片和 mug。同一對的兩支箭頭方向幾乎一樣，不同對的方向差很多。">
+  <defs>
+    <marker id="c3-b" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+    <marker id="c3-o" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--warm-accent)"/></marker>
+    <marker id="c3-g" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--secondary)"/></marker>
+    <marker id="c3-ax" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9aa5b4"/></marker>
+  </defs>
+  <!-- 座標軸 -->
+  <line x1="200" y1="200" x2="455" y2="200" stroke="#9aa5b4" stroke-width="1.5" marker-end="url(#c3-ax)"/>
+  <line x1="200" y1="200" x2="200" y2="14" stroke="#9aa5b4" stroke-width="1.5" marker-end="url(#c3-ax)"/>
+  <line x1="200" y1="200" x2="90" y2="300" stroke="#9aa5b4" stroke-width="1.5" marker-end="url(#c3-ax)"/>
+  <text x="418" y="220" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--muted-text)">維度 1</text>
+  <text x="208" y="24" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--muted-text)">維度 2</text>
+  <text x="40" y="318" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--muted-text)">維度 3</text>
+  <!-- 耳機：右上 -->
+  <line x1="200" y1="200" x2="345" y2="78" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#c3-b)"/>
+  <line x1="200" y1="200" x2="368" y2="108" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#c3-b)"/>
+  <image href="/clip-headphones.jpg" x="320" y="10" width="62" height="62"/>
+  <rect x="320" y="10" width="62" height="62" fill="none" stroke="var(--primary)" stroke-width="2"/>
+  <text x="374" y="122" style="font-size:16px;font-family:monospace" fill="var(--primary)">"headphones"</text>
+  <!-- 背包：左上 -->
+  <line x1="200" y1="200" x2="92" y2="84" stroke="var(--warm-accent)" stroke-width="2.5" marker-end="url(#c3-o)"/>
+  <line x1="200" y1="200" x2="128" y2="70" stroke="var(--warm-accent)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#c3-o)"/>
+  <image href="/clip-backpack.jpg" x="30" y="30" width="62" height="62"/>
+  <rect x="30" y="30" width="62" height="62" fill="none" stroke="var(--warm-accent)" stroke-width="2"/>
+  <text x="96" y="58" style="font-size:16px;font-family:monospace" fill="var(--warm-accent)">"backpack"</text>
+  <!-- 馬克杯：右下 -->
+  <line x1="200" y1="200" x2="322" y2="268" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#c3-g)"/>
+  <line x1="200" y1="200" x2="286" y2="290" stroke="var(--secondary)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#c3-g)"/>
+  <image href="/clip-mug.jpg" x="326" y="240" width="62" height="62"/>
+  <rect x="326" y="240" width="62" height="62" fill="none" stroke="var(--secondary)" stroke-width="2"/>
+  <text x="218" y="318" style="font-size:16px;font-family:monospace" fill="var(--secondary)">"mug"</text>
+  <circle cx="200" cy="200" r="4" fill="var(--text)"/>
+</svg>
 
 </div>
 <div style="font-size:18px">
 
-- 兩個編碼器：圖 → 512 個數字、文字 → 512 個數字
-- 訓練：網路上的「圖＋說明文字」配對，配對的（對角線）拉近，其他推遠
+- 兩個編碼器：圖 → 512 個數字、文字 → 512 個數字，放進**同一個空間**
+- 實線箭頭＝圖，虛線箭頭＝文字；**同色＝同一對**
+- 訓練：網路上的「圖＋說明文字」配對，同一對拉到同一個方向，不同對推開
 - 這叫**對比式學習**（contrastive learning）
 
 </div>
 </div>
 
-<div class="takeaway mt-3">訓練完，「耳機的照片」和「耳機」這個詞，會落在空間裡差不多的位置。</div>
+<div class="takeaway mt-2">訓練完，「耳機的照片」和 "headphones" 這個詞，會指向差不多的方向。</div>
 
-<div class="src">Radford et al., CLIP, 2021（S2，待確認）；SD1.5 用的是 CLIP 的文字編碼器</div>
+<div class="src">示意：真正是 512 維，這裡只畫 3 維，位置不是實測。照片：L22 用 SD1.5 生成的虛構商品照。Radford et al., CLIP, 2021（S2，待確認）；SD1.5 用的是 CLIP 的文字編碼器</div>
 
 <!--
-★ CLIP 1（5 分）：contrastive（對比式）。CLIP 不會生成圖，它只會「比對」。SD 借用它的文字編碼器，把提示詞變成向量。CLIP 用英文網路資料訓練：中文提示詞的向量不可靠（「練習：同一張耳機圖，哪一句最配？」會量）。
+★ CLIP 1（5 分）：先指同一個顏色：藍色的照片和藍色的 "headphones" 幾乎同方向；再指不同顏色：耳機和馬克杯差很遠。訓練時，一批 N 對圖文做成 N × N 的表，對角線（同一對）拉近、其他格推遠；圖上每一種顏色就是對角線上的一格。文字用英文，是因為 CLIP 用英文網路資料訓練。
+contrastive（對比式）。CLIP 不會生成圖，它只會「比對」。SD 借用它的文字編碼器，把提示詞變成向量。CLIP 用英文網路資料訓練：中文提示詞的向量不可靠（「練習：同一張耳機圖，哪一句最配？」會量）。
 -->
 
 ---
@@ -172,8 +200,57 @@ class: cover
 
 # 餘弦相似度（cosine similarity）：先變單位向量，再內積
 
-<div class="node mt-2" style="font-size:17px"><strong>照著算（2 維）</strong><small>圖 (3, 4) → 除以長度 5 → (0.6, 0.8)；文字 (4, 3) → (0.8, 0.6)；內積 0.6×0.8 ＋ 0.8×0.6 ＝ <b>0.96</b>，方向很接近（方向一樣 → 1，垂直 → 0）</small></div>
-<div class="mt-2">
+<div class="grid grid-cols-2 gap-6 mt-1">
+<div>
+
+<svg viewBox="0 0 330 215" style="width:100%;max-height:205px" role="img" aria-label="二維座標上的單位圓。圖的向量 (3, 4) 除以長度 5 變成 (0.6, 0.8)，文字的向量 (4, 3) 變成 (0.8, 0.6)，兩支箭頭都落在半徑 1 的圓上，中間夾角 θ 很小，cos θ 等於 0.96。">
+  <defs>
+    <marker id="cs-b" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+    <marker id="cs-ax" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9aa5b4"/></marker>
+  </defs>
+  <line x1="30" y1="195" x2="215" y2="195" stroke="#9aa5b4" stroke-width="1.5" marker-end="url(#cs-ax)"/>
+  <line x1="30" y1="195" x2="30" y2="12" stroke="#9aa5b4" stroke-width="1.5" marker-end="url(#cs-ax)"/>
+  <path d="M30,45 A150,150 0 0 1 180,195" fill="none" stroke="#9aa5b4" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="150" y="58" style="font-size:13px;font-family:'Noto Sans TC'" fill="var(--muted-text)">長度＝1 的圓</text>
+  <line x1="30" y1="195" x2="120" y2="75" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#cs-b)"/>
+  <line x1="30" y1="195" x2="150" y2="105" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#cs-b)"/>
+  <path d="M62,153 A52,52 0 0 1 72,164" fill="none" stroke="var(--text)" stroke-width="1.5"/>
+  <text x="74" y="152" style="font-size:15px" fill="var(--text)">θ</text>
+  <text x="40" y="28" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--primary)">圖 (3,4)÷5＝(0.6, 0.8)</text>
+  <text x="166" y="108" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--primary)">文字 (4,3)÷5</text>
+  <text x="166" y="126" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--primary)">＝(0.8, 0.6)</text>
+  <text x="186" y="170" style="font-size:15px;font-family:'Noto Sans TC'" fill="var(--text)">cos θ ＝ 0.6×0.8</text>
+  <text x="192" y="190" style="font-size:15px;font-family:'Noto Sans TC'" fill="var(--text)">＋0.8×0.6 ＝ <tspan font-weight="bold">0.96</tspan></text>
+</svg>
+<div class="shot-cap" style="margin-top:0">① 照著算：先除以長度（變成長度 1），再內積</div>
+
+</div>
+<div>
+
+<svg viewBox="0 0 330 215" style="width:100%;max-height:205px" role="img" aria-label="二維空間示意。耳機照片的向量從原點指向右上方；headphones 這個詞的向量方向幾乎一樣，夾角小，cos 大；mug 這個詞的向量指向右下方，夾角大，cos 小。">
+  <defs>
+    <marker id="cs-b2" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+    <marker id="cs-g2" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--secondary)"/></marker>
+  </defs>
+  <circle cx="60" cy="120" r="4" fill="var(--text)"/>
+  <line x1="60" y1="120" x2="190" y2="50" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#cs-b2)"/>
+  <image href="/clip-headphones.jpg" x="194" y="10" width="54" height="54"/>
+  <rect x="194" y="10" width="54" height="54" fill="none" stroke="var(--primary)" stroke-width="2"/>
+  <line x1="60" y1="120" x2="200" y2="80" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#cs-b2)"/>
+  <text x="206" y="88" style="font-size:15px;font-family:monospace" fill="var(--primary)">"headphones"</text>
+  <line x1="60" y1="120" x2="185" y2="190" stroke="var(--secondary)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#cs-g2)"/>
+  <text x="192" y="200" style="font-size:15px;font-family:monospace" fill="var(--secondary)">"mug"</text>
+  <path d="M110,93 A57,57 0 0 1 114,105" fill="none" stroke="var(--primary)" stroke-width="2"/>
+  <text x="210" y="116" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--primary)">夾角小 → cos 大</text>
+  <path d="M110,93 A57,57 0 0 1 110,148" fill="none" stroke="var(--secondary)" stroke-width="2"/>
+  <text x="210" y="160" style="font-size:14px;font-family:'Noto Sans TC'" fill="var(--secondary)">夾角大 → cos 小</text>
+</svg>
+<div class="shot-cap" style="margin-top:0">② 同一張耳機照：方向一樣分數高，方向不同分數低（示意）</div>
+
+</div>
+</div>
+
+<div class="mt-1">
 <div>
 
 ```python
@@ -185,14 +262,12 @@ S = im @ tx.T          # [圖數, 文字數]
 </div>
 </div>
 
-<div class="muted mt-2" style="font-size:16px">讀作：「每個向量除以自己的長度（變成長度 1），再兩兩做內積」。ML 課學過內積和距離；這裡只看方向、不看長度。</div>
+<div class="takeaway mt-1">CLIP 的分數不是「好不好看」，而是「圖和這句話的方向有多接近」。</div>
 
-<div class="takeaway mt-2">CLIP 的分數不是「好不好看」，而是「圖和這句話的方向有多接近」。</div>
-
-<div class="src">S3：<code>clip-vit-base-patch32</code> 的向量是 512 維（以筆記本輸出為準）</div>
+<div class="src">圖 ② 是示意，不是實測分數；S3：<code>clip-vit-base-patch32</code> 的向量是 512 維（以筆記本輸出為準）</div>
 
 <!--
-★ CLIP 2（5 分）：在白板上畫兩個箭頭。實際的分數範圍看第 2 部分的輸出；比相對大小，不看絕對值。
+★ CLIP 2（5 分）：先看圖 ①：(3, 4) 和 (4, 3) 長度都是 5，除以 5 之後落在長度＝1 的圓上，內積 0.96，就是夾角 θ 的 cos。方向一樣 → 1，垂直 → 0，相反 → −1。再看圖 ②：同一張耳機照，"headphones" 的箭頭幾乎同方向（分數高），"mug" 的箭頭方向差很多（分數低）。程式讀作：「每個向量除以自己的長度（變成長度 1），再兩兩做內積」。ML 課學過內積和距離；這裡只看方向、不看長度。實際的分數範圍看第 2 部分的輸出；比相對大小，不看絕對值。
 -->
 
 ---
@@ -259,14 +334,14 @@ hostOnly: true
   <div class="arrow text-center" style="font-size:15px">↓ 交叉注意力</div>
   <div></div><div></div><div></div><div></div>
   <div class="node">純雜訊<small>&#91;1, 4, 64, 64&#93;</small></div><span class="arrow text-center">→</span>
-  <div class="node node--primary"><strong>U-Net × N 步</strong><small>D3-3 的去噪 ＋ D4-1 的 CFG</small></div><span class="arrow text-center">⇄</span>
+  <div class="node node--primary"><strong>U-Net × N 步</strong><small>L11 的去噪 ＋ L13 的 CFG</small></div><span class="arrow text-center">⇄</span>
   <div class="node node--secondary"><strong>排程器</strong><small>決定每步減多少雜訊、走幾步</small></div><span class="arrow text-center">→</span>
-  <div class="node"><strong>VAE 解碼器</strong><small>D2-3 → &#91;1, 3, 512, 512&#93;</small></div>
+  <div class="node"><strong>VAE 解碼器</strong><small>L07 → &#91;1, 3, 512, 512&#93;</small></div>
 </div>
 
 <div class="muted mt-2" style="font-size:15px">77＝提示詞最多 77 個 token（太長會截斷）。SD 用每個 token 的向量（77 × 768）；第 2 部分量分數用的是小一號 CLIP 的整句向量（512）。shape 在 lab14 第 1 部分印出。</div>
 
-<div class="takeaway mt-3">每一塊都學過：VAE（D2-3）、U-Net（D2-2、D3-3）、CFG（D4-1）；只有文字編碼器是新的。</div>
+<div class="takeaway mt-3">每一塊都學過：VAE（L07）、U-Net（L06、L11）、CFG（L13）；只有文字編碼器是新的。</div>
 
 <div class="src">Rombach et al., Latent Diffusion, 2022（S4，待確認）；shape 與參數量以 lab14 第 1 部分的輸出為準</div>
 
@@ -312,10 +387,10 @@ hostOnly: true
 
 <div class="takeaway mt-3">文字不是只在開頭加一次：U-Net 的很多層、每一步，都讓每一塊圖去查一次文字。</div>
 
-<div class="src">注意力（attention）的計算方式在 D5-1 教；今天只要這張圖</div>
+<div class="src">注意力（attention）的計算方式在 L17 教；今天只要這張圖</div>
 
 <!--
-★ 交叉注意力（4 分）：cross-attention（交叉注意力）。這張圖是示意，線的粗細不是實際數值。和 D4-1 對照：類別向量是「整張圖加同一個向量」；文字是「每一塊各自決定要聽哪個字」。
+★ 交叉注意力（4 分）：cross-attention（交叉注意力）。這張圖是示意，線的粗細不是實際數值。和 L13 對照：類別向量是「整張圖加同一個向量」；文字是「每一塊各自決定要聽哪個字」。
 -->
 
 ---
@@ -334,8 +409,8 @@ hostOnly: true
 <div style="font-size:17px">
 
 - **步數**：25 步約 4 秒、50 步約 7.6 秒（實跑）；畫面在 25 步後變化不大
-- **w**（<code>guidance_scale</code>）：D4-1 的那一行；w＝1 一整行都糊（沒有 CFG），也最快（不用算兩次）
-- **seed**：同 seed ＋ 同設定 → 同一張圖（D1-2）
+- **w**（<code>guidance_scale</code>）：L13 的那一行；w＝1 一整行都糊（沒有 CFG），也最快（不用算兩次）
+- **seed**：同 seed ＋ 同設定 → 同一張圖（L02）
 - **負面提示詞**：下一頁
 
 </div>
@@ -363,7 +438,7 @@ hostOnly: true
 
 - ε_neg：給「負面提示詞」時模型預測的雜訊
 - 讀作：「從負面提示詞出發，朝正面提示走 w 倍」＝ 離開不要的東西
-- w＝1：ε＝ε_cond，ε_neg 完全不參與 → 沒有作用（D1-2 的觀察）
+- w＝1：ε＝ε_cond，ε_neg 完全不參與 → 沒有作用（L02 的觀察）
 
 </div>
 </div>
@@ -373,7 +448,7 @@ hostOnly: true
 <div class="src">S6：diffusers 在 w ≤ 1 時不做 CFG（待確認）</div>
 
 <!--
-★ 負面提示詞（3 分）：D1-2 留下的問題在這裡解答。把 D4-1 的 CFG 那一行寫在白板上，劃掉 ε_uncond、換成 ε_neg。
+★ 負面提示詞（3 分）：L02 留下的問題在這裡解答。把 L13 的 CFG 那一行寫在白板上，劃掉 ε_uncond、換成 ε_neg。
 -->
 
 ---
@@ -391,10 +466,10 @@ hostOnly: true
 <div class="node node--warm"><strong>strength 大（0.9）</strong><small>幾乎變回純雜訊：構圖也換了</small></div>
 </div>
 
-<div class="takeaway mt-3">和 D3-4 一樣：部分加噪再去噪。實際走的步數 ≈ strength × 步數；「改夠多」和「保留原圖」之間沒有免費的設定。</div>
+<div class="takeaway mt-3">和 L12 一樣：部分加噪再去噪。實際走的步數 ≈ strength × 步數；「改夠多」和「保留原圖」之間沒有免費的設定。</div>
 
 <!--
-★ img2img（4 分）：常見誤解：strength 是「風格強度」。它是「從第幾步開始去噪」：strength 0.3、25 步 → 只走最後約 7 步。D3-4 用同樣的想法把瑕疵「修掉」，今天用來換風格。
+★ img2img（4 分）：常見誤解：strength 是「風格強度」。它是「從第幾步開始去噪」：strength 0.3、25 步 → 只走最後約 7 步。L12 用同樣的想法把瑕疵「修掉」，今天用來換風格。
 -->
 
 ---
@@ -413,7 +488,7 @@ hostOnly: true
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
 <div>
 
-- 「接起來」（concatenate）：D2-2 的 U-Net 跳接學過
+- 「接起來」（concatenate）：L06 的 U-Net 跳接學過
 - U-Net 隨時看得到：哪裡要畫、旁邊原本長什麼樣
 - 所以畫出來的背景會和產品的邊緣接得上
 
@@ -426,7 +501,7 @@ hostOnly: true
 <div class="src">S5：<code>stable-diffusion-inpainting</code> 的 U-Net <code>in_channels</code> ＝ 9（lab14 第 5 部分會印出）</div>
 
 <!--
-★ inpainting（5 分）：inpainting（局部重繪）。三種條件方式對照：D4-1 類別 → 加到嵌入；文字 → 交叉注意力；遮罩與原圖 → 接在輸入通道。
+★ inpainting（5 分）：inpainting（局部重繪）。三種條件方式對照：L13 類別 → 加到嵌入；文字 → 交叉注意力；遮罩與原圖 → 接在輸入通道。
 -->
 
 ---
@@ -460,7 +535,7 @@ hostOnly: true
 <div class="src">S7：CLIPScore（Hessel et al., 2021，待確認）；本 lab 用 100 × cos</div>
 
 <!--
-★ CLIP 分數（3 分）：和 D4-1 的忠實度是同一件事：「有沒有聽話」。差距只有 1–3 分、seed 只有 4 個：只說趨勢。
+★ CLIP 分數（3 分）：和 L13 的忠實度是同一件事：「有沒有聽話」。差距只有 1–3 分、seed 只有 4 個：只說趨勢。
 -->
 
 ---
@@ -496,23 +571,21 @@ hostOnly: true
 
 # ControlNet：用線稿、姿勢控制構圖（只示範）
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-3">
-<div class="placeholder" style="height:240px;padding:16px 24px">產品線稿 → 依線稿生成的情境照<small>講師示範（課前跑好、標明 seed 與步數）；未跑前不放圖</small></div>
-<div style="font-size:18px">
+<img class="photo mt-2" src="/lab14-controlnet-demo.png" alt="左：第 5 部分的產品照（手機與無線耳機）；中：Canny 邊緣線稿；右：依線稿生成的圖，耳機和手機的位置、角度不變，背景換成木紋桌面" style="height:230px;margin:0 auto;object-fit:contain">
+<div class="shot-cap" style="text-align:center">產品照 → Canny 線稿（控制條件）→ 依線稿生成（seed 0、25 步；6.6 秒，VRAM 峰值 4.18 GB；講師 T4 實跑）</div>
 
-- 多加一個條件：邊緣圖、人體姿勢、深度圖
-- 原本的 SD 不動，旁邊加一個「控制」網路
-- 適合：產品位置、角度要固定的版面
-
-</div>
+<div class="grid grid-cols-3 gap-3 mt-2" style="font-size:17px">
+<div class="node"><strong>多一個條件</strong><small>邊緣圖、人體姿勢、深度圖</small></div>
+<div class="node"><strong>SD 本身不動</strong><small>旁邊加一個「控制」網路</small></div>
+<div class="node"><strong>適合</strong><small>產品位置、角度要固定的版面</small></div>
 </div>
 
 <div class="takeaway mt-3">提示詞管「畫什麼」，ControlNet 管「畫在哪裡、什麼角度」。</div>
 
-<div class="src">Zhang et al., ControlNet, 2023（S9，待確認）</div>
+<div class="src">Zhang et al., ControlNet, 2023（S9，待確認）；權重 <code>lllyasviel/sd-controlnet-canny</code></div>
 
 <!--
-○ 示範（2 分）：時間不夠就跳過。示範用的筆記本不發給學員。
+○ 示範（2 分）：時間不夠就跳過。示範用的是解答筆記本最後的附錄格，不發給學員。T4 實跑：6.6 秒、VRAM 峰值 4.18 GB。請學員看：耳機和手機的位置、角度和原圖一樣，只有材質和背景（木紋桌）是新生成的；這就是「提示詞管畫什麼、ControlNet 管畫在哪裡」。
 -->
 
 ---
@@ -529,12 +602,12 @@ hostOnly: true
 
 </div>
 
-<div class="takeaway mt-4">和 D4-1 的風險一樣：合成瑕疵只進訓練集，驗收一定用真實不良品。</div>
+<div class="takeaway mt-4">和 L13 的風險一樣：合成瑕疵只進訓練集，驗收一定用真實不良品。</div>
 
-<div class="src">YOLOv8：DL 課 pp.56–62；D2-2 也用過程式合成的瑕疵</div>
+<div class="src">YOLOv8：DL 課 pp.56–62；L06 也用過程式合成的瑕疵</div>
 
 <!--
-○ 選修（2 分）：SD1.5 沒看過 PCB 瑕疵，生成的刮痕可能不像真的；要先讓品保看過。和 D2-2 程式合成瑕疵的做法比較。
+○ 選修（2 分）：SD1.5 沒看過 PCB 瑕疵，生成的刮痕可能不像真的；要先讓品保看過。和 L06 程式合成瑕疵的做法比較。
 -->
 
 ---
@@ -545,8 +618,8 @@ hostOnly: true
 
 <div style="font-size:19px" class="mt-4">
 
-- DDPM：D3-3 的做法，每步加一點新雜訊，要很多步
-- DDIM：D3-4 用過，不加新雜訊，可以跳步
+- DDPM：L11 的做法，每步加一點新雜訊，要很多步
+- DDIM：L12 用過，不加新雜訊，可以跳步
 - DPM-Solver（今天的 lab）：把去噪看成解微分方程，25 步就夠清楚
 
 </div>
@@ -554,7 +627,7 @@ hostOnly: true
 <div class="takeaway mt-4">換排程器不用重新訓練：U-Net 一樣，只換「每一步怎麼走」。</div>
 
 <!--
-△ 備用（1 分）：學員問「為什麼 D3-3 要 1000 步、今天 25 步就好」時再講。
+△ 備用（1 分）：學員問「為什麼 L11 要 1000 步、今天 25 步就好」時再講。
 -->
 
 ---
@@ -576,7 +649,7 @@ hostOnly: true
 </div>
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">目標：情境照、換背景前後、CLIP 分數曲線、Gradio 工作室<small>講師 T4 實跑後換成真實輸出（含 VRAM 峰值與總時間）</small></div>
+<img class="photo" src="/lab14-lab-target.png" alt="目標：左上依企劃文字生成的情境照（seed 0、25 步、w 7.5）；右上 CLIP 分數對指導強度的曲線，w 7.5 最高；下排產品照、遮罩、換背景後" style="height:270px;width:100%;object-fit:contain"><div class="shot-cap">目標：情境照、CLIP 分數 vs w、換背景前後（lab14 T4 實跑）。Gradio 工作室見 Ship 頁</div>
 
 </div>
 </div>
@@ -710,7 +783,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）；bg_co
 
 # Lab 7／7：換背景前後
 
-<div class="placeholder" style="height:260px;padding:16px 24px">白底產品照 → 遮罩 → 換背景後（咖啡廳桌面）<small>講師 T4 實跑後替換（lab14 <code>inpaint_swap.png</code>，附產品區／背景區的平均改變）</small></div>
+<img class="photo" src="/lab14-inpaint-swap.png" alt="左：現有產品照；中：遮罩，白色是要重畫的區域；右：換背景後，右上角多了一塊木桌" style="height:260px;margin:0 auto;object-fit:contain"><div class="shot-cap" style="text-align:center">現有產品照 → 遮罩（白＝重畫）→ 換背景後（inpainting 5.0 秒，VRAM 峰值 3.41 GB；lab14，T4 實跑）</div>
 
 <div class="node mt-3" style="font-size:17px"><strong>延伸（選做）</strong><small>把遮罩反過來（產品白、背景黑），提示詞寫「black wireless earbuds」：變成「換產品顏色、背景不動」。先預測：產品的形狀會保留嗎？</small></div>
 
@@ -726,23 +799,17 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）；bg_co
 
 # Ship：行銷部可以自己點的工作室
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2">
-<div>
+<div class="mt-4" style="font-size:20px">
 
-<div class="placeholder" style="height:260px;padding:16px 24px">Gradio 工作室截圖：「文字生成」、「換風格（img2img）」兩個分頁<small>講師 T4 實跑後替換（lab14 第 7 部分）</small></div>
-
-</div>
-<div style="font-size:17px">
-
-- <code>gr.Blocks</code> ＋ <code>gr.Tab</code>：一個網頁、兩個工具（D1-4 是單一的 <code>Interface</code>）
+- 兩個分頁：「文字生成」、「換風格（img2img）」（lab14 第 7 部分）
+- <code>gr.Blocks</code> ＋ <code>gr.Tab</code>：一個網頁、兩個工具（L04 是單一的 <code>Interface</code>）
 - 兩個分頁共用同一組權重：<code>StableDiffusionImg2ImgPipeline(**pipe.components)</code>
 - 標題寫明「AI 生成，使用前請人工審核」
-- <code>share=True</code>：暫時的公開網址（期限看執行時的輸出，D1-4）
+- <code>share=True</code>：暫時的公開網址（期限看執行時的輸出，L04）
 
 </div>
-</div>
 
-<div class="takeaway mt-3">交付的不只是圖，而是「行銷部自己能用、而且知道要審核」的工具。</div>
+<div class="takeaway mt-4">交付的不只是圖，而是「行銷部自己能用、而且知道要審核」的工具。</div>
 
 <!--
 ★ Ship（4 分）：這是 Day 4 的交付物。share=True 的網址任何人都能用，課堂結束記得關掉 Colab。
@@ -764,7 +831,7 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）；bg_co
 </tbody>
 </table>
 
-<div class="takeaway mt-3">商品圖不能誇大產品：換背景可以，改產品外觀不行（D3-1 的假細節是同一件事）。</div>
+<div class="takeaway mt-3">商品圖不能誇大產品：換背景可以，改產品外觀不行（L09 的假細節是同一件事）。</div>
 
 <div class="src">SD1.5 授權 CreativeML OpenRAIL-M（S1，模型卡另寫「僅供研究」）；C2PA（S8，待確認）。法律問題以公司法務意見為準</div>
 
@@ -790,27 +857,66 @@ product 是白底產品照；arr 是它的 numpy 陣列（512, 512, 3）；bg_co
 <div class="takeaway mt-6">SD 的每一塊都學過；今天學會的是「控制」：參數、起點（img2img）、範圍（遮罩），以及量測。</div>
 
 <!--
-★ 總整理（2 分）：請學員說出三種把條件交給 U-Net 的方式：嵌入相加（D4-1）、交叉注意力（文字）、接成輸入通道（inpainting）。和學習評量的關係：文字、遮罩都是「條件」；D4-4 的備忘錄會用到今天的 CLIP 分數。
+★ 總整理（2 分）：請學員說出三種把條件交給 U-Net 的方式：嵌入相加（L13）、交叉注意力（文字）、接成輸入通道（inpainting）。和學習評量的關係：文字、遮罩都是「條件」；L16 的備忘錄會用到今天的 CLIP 分數。
 -->
 
 ---
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['3 × 512 × 512 的像素', '4 × 64 × 64 的潛在', '77 × 768 的文字向量', '1 × 28 × 28']"
+  :why="['SD 不在像素上去噪，運算量會大很多。', '', '77 × 768 是文字編碼器輸出的向量，是條件，不是被去噪的東西。', '1 × 28 × 28 是 Fashion-MNIST 灰階圖的大小，不是 SD。']"
+  explain="VAE 先把 512 × 512 的圖壓成 4 × 64 × 64 的潛在，U-Net 在潛在上去噪，所以快（L07 的 VAE）。">
+Stable Diffusion 1.5 的 U-Net 在什麼大小上去噪？
+</Mcq>
 
-1. Stable Diffusion 1.5 的 U-Net 在什麼大小上去噪？（　）<br><span class="opts"><span class="nw">A. 3 × 512 × 512 的像素</span>　<span class="nw">B. 4 × 64 × 64 的潛在</span>　<span class="nw">C. 77 × 768 的文字向量</span>　<span class="nw">D. 1 × 28 × 28</span></span>
-2. 為什麼 guidance_scale＝1 時負面提示詞沒有作用？（　）<br><span class="opts"><span class="nw">A. 負面提示詞只支援英文</span>　<span class="nw">B. 步數太少</span>　<span class="nw">C. 負面提示詞取代 ε_uncond，而 w＝1 時 ε＝ε_cond</span>　<span class="nw">D. seed 固定了</span></span>
-3. img2img 的 strength 從 0.3 調到 0.9，最可能？（　）<br><span class="opts"><span class="nw">A. 圖更像原圖</span>　<span class="nw">B. 加更多雜訊，和原圖差更多</span>　<span class="nw">C. 生成更快</span>　<span class="nw">D. 解析度變高</span></span>
-4. CLIP 分數高代表？（　）<br><span class="opts"><span class="nw">A. 圖和提示詞的方向接近</span>　<span class="nw">B. 圖很好看</span>　<span class="nw">C. 圖沒有偏差</span>　<span class="nw">D. 圖沒有侵權</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['負面提示詞只支援英文', '步數太少', '負面提示詞取代 ε_uncond，而 w＝1 時 ε＝ε_cond', 'seed 固定了']"
+  :why="['和語言無關：負面提示詞和其他提示詞一樣被文字編碼器處理。', '步數不影響這個結果，問題出在公式。', '', 'seed 只決定起始雜訊，和 guidance 的公式無關。']"
+  explain="負面提示詞被放在 ε_uncond 的位置；w＝1 時 ε＝ε_cond，ε_uncond 不出現，負面提示詞就沒有作用。">
+為什麼 guidance_scale＝1 時負面提示詞沒有作用？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 B、2 C、3 B（實際走的步數也變多，所以 C 錯）、4 A（B 是常見誤解）。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：1 B、2 C。
 -->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="1"
+  :options="['圖更像原圖', '加更多雜訊，和原圖差更多', '生成更快', '解析度變高']"
+  :why="['strength 低才更像原圖。', '', 'strength 大時實際走的步數也變多，反而更慢。', '輸出大小和 strength 無關。']"
+  explain="strength 決定先加多少雜訊再去噪：越大雜訊越多，和原圖差越多、改動越大。">
+img2img 的 strength 從 0.3 調到 0.9，最可能？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['圖和提示詞的方向接近', '圖很好看', '圖沒有偏差', '圖沒有侵權']"
+  :why="['', '常見誤解：CLIP 分數衡量圖文對不對得上，不是美感。', '分數看不出偏差（例如刻板印象）。', '分數和著作權、侵權完全無關。']"
+  explain="CLIP 分數是圖和提示詞在 CLIP 空間的相似度（方向接近），只回答「圖文對不對得上」。">
+CLIP 分數高代表？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：3 B、4 A。
+全部答案與理由：
+1 B：VAE 先把 512 × 512 的圖壓成 4 × 64 × 64 的潛在，U-Net 在潛在上去噪，所以快（L07 的 VAE）。
+2 C：負面提示詞被放在 ε_uncond 的位置；w＝1 時 ε＝ε_cond，ε_uncond 不出現，負面提示詞就沒有作用。
+3 B：strength 決定先加多少雜訊再去噪：越大雜訊越多，和原圖差越多、改動越大。
+4 A：CLIP 分數是圖和提示詞在 CLIP 空間的相似度（方向接近），只回答「圖文對不對得上」。
+-->
+
 
 ---
 hostOnly: true
@@ -818,7 +924,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D4-3：生成的圖必須是「我們的」產品
+# 下一堂 L15：生成的圖必須是「我們的」產品
 
 <div style="font-size:19px" class="mt-4">
 

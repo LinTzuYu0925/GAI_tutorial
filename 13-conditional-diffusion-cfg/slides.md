@@ -2,8 +2,8 @@
 theme: default
 title: 指定生成第 k 類
 info: |
-  生成式AI原理 · D4-1
-  數據組要補少數類別的資料：在 D3-3 的 DDPM 加上類別嵌入、label dropout 和 classifier-free guidance，指定生成第 k 類，並量忠實度、多樣性與 FID／KID。
+  生成式AI原理 · L13
+  數據組要補少數類別的資料：在 L11 的 DDPM 加上類別嵌入、label dropout 和 classifier-free guidance，指定生成第 k 類，並量忠實度、多樣性與 FID／KID。
 colorSchema: light
 fonts:
   provider: none
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D4-1</div>
+<div class="eyebrow">生成式AI原理 · L13</div>
 
 # 指定生成第 k 類
 
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：D3-3 的 DDPM 從雜訊畫出衣服、鞋子，但畫哪一種是隨機的。今天讓它「聽話」。這一堂的筆記本就是學習評量（b）「實作條件生成」的作業。
+★ 開場（2 分）：L11 的 DDPM 從雜訊畫出衣服、鞋子，但畫哪一種是隨機的。今天讓它「聽話」。這一堂的筆記本就是學習評量（b）「實作條件生成」的作業。
 -->
 
 ---
@@ -45,14 +45,14 @@ class: cover
 # 數據組：少數類別只有幾十張，能不能指定生成？
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D4-1】部門：數據組<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L13】部門：數據組<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>網店商品分類器對少數類別很弱，能不能「指定」生成第 k 類的圖來補資料？</dd>
     <dt>現況痛點</dt><dd>少數類別只有幾十張，分類器常認錯</dd>
     <dt>成功指標（KPI）</dt><dd>生成圖被分類器認對的比例（忠實度）；同類樣本夠不夠多樣；FID／KID（生成圖與真實圖的距離，今天會教）</dd>
-    <dt>可用資料</dt><dd>Fashion-MNIST（10 類）；D3-3 的 DDPM 做法</dd>
+    <dt>可用資料</dt><dd>Fashion-MNIST（10 類）；L11 的 DDPM 做法</dd>
     <dt>限制與法規</dt><dd>Colab T4；合成資料可能放大偏差，要用真實資料驗收</dd>
-    <dt>為何現有工具不夠</dt><dd>D3-3 的 DDPM 只能「隨機」生成，不能指定類別</dd>
+    <dt>為何現有工具不夠</dt><dd>L11 的 DDPM 只能「隨機」生成，不能指定類別</dd>
   </dl>
 </div>
 
@@ -75,14 +75,14 @@ class: cover
 <div class="takeaway mt-4">學習評量（b）「實作條件生成」：交今天跑完的筆記本，加上第 3 點的口頭說明。</div>
 
 <!--
-★ 目標（1 分）。不教：classifier guidance 的實作（只看圖）、Bayes 推導（附錄）、Inception 版 FID 的細節、文字當條件（下一堂 D4-2）。
+★ 目標（1 分）。不教：classifier guidance 的實作（只看圖）、Bayes 推導（附錄）、Inception 版 FID 的細節、文字當條件（下一堂 L14）。
 -->
 
 ---
 
-<div class="eyebrow">00 · Frame · 回到 D1-1</div>
+<div class="eyebrow">00 · Frame · 回到 L01</div>
 
-# 條件 p(x｜y)：D1-1 的那張圖，今天寫成程式
+# 條件 p(x｜y)：L01 的那張圖，今天寫成程式
 
 <div class="grid grid-cols-[1fr_1.1fr] gap-6 mt-2 items-center">
 <div>
@@ -98,10 +98,10 @@ class: cover
 </div>
 <div style="font-size:19px">
 
-- **D3-3**：p(x)：從雜訊抽出「任何一件」衣物
+- **L11**：p(x)：從雜訊抽出「任何一件」衣物
 - **今天**：p(x｜y)：先指定 y（10 類之一），再抽 x
-- 讀作：「在條件 y 之下，x 出現的機率」（D1-1 學過）
-- 你們在 D1-2 的提示詞也是 y；今天先用最簡單的 y：**一個類別編號**
+- 讀作：「在條件 y 之下，x 出現的機率」（L01 學過）
+- 你們在 L02 的提示詞也是 y；今天先用最簡單的 y：**一個類別編號**
 
 </div>
 </div>
@@ -109,7 +109,7 @@ class: cover
 <div class="takeaway mt-3">條件生成＝把 y 也交給去噪的 U-Net：它要學「在 y 之下，雜訊長什麼樣」。</div>
 
 <!--
-★ Frame（4 分）：指著兩個橢圓：同一個模型，換條件 y，就從不同的範圍抽樣。D1-1 第一次出現這個符號時只是概念，今天要讓 U-Net 真的收到 y。
+★ Frame（4 分）：指著兩個橢圓：同一個模型，換條件 y，就從不同的範圍抽樣。L01 第一次出現這個符號時只是概念，今天要讓 U-Net 真的收到 y。
 -->
 
 ---
@@ -121,10 +121,43 @@ class: cover
 <img class="photo" src="/lab13-run-sneakers.png" alt="指定第 7 類運動鞋，模型畫出的 8 張運動鞋，每張角度和花紋略有不同" style="width:100%">
 <div class="shot-cap">lab13 解答筆記本，Colab T4 實跑：8 張「運動鞋」、1000 步、7.0 秒（w＝3、seed 0；模型訓練 10 個 epoch、369 秒）</div>
 
-<div class="takeaway mt-3">先猜：同一個模型，只換類別編號就能換商品；那「多聽話」又是誰決定的？（答案：w，第 9 頁）</div>
+<div class="takeaway mt-3">先猜：同一個模型，只換類別編號就能換商品；那「多聽話」又是誰決定的？（答案：w，第 11 頁）</div>
 
 <!--
 ★ 示範（4 分）：用 lab13 解答筆記本在 T4 跑好的輸出。強調：這個模型只訓練了一次，10 個類別都是同一個模型畫的；差別只在餵進去的 y。
+-->
+
+---
+
+<div class="eyebrow">02 · Open（打開黑盒子）· 回顧 L11</div>
+
+# 回顧 L11 時間嵌入：讓 U-Net 知道「現在有多髒」
+
+<div class="grid gap-6 mt-2" style="grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)">
+<div>
+
+<img class="photo" src="/lab11-run-time_embedding.png" alt="L11 的時間嵌入熱圖：橫軸 t 從 0 到 999，縱軸 64 個維度；每一半的上方幾維紅藍快速交替，下方幾維幾乎不變" style="width:100%;max-height:190px;object-fit:contain">
+<div class="shot-cap">L11 lab：每一直行＝一個 t 的向量；上方幾維變得快、下方幾維變得慢</div>
+
+```python
+h = h + self.e(e)[:, :, None, None]
+```
+
+</div>
+<div style="font-size:18px">
+
+- t＝50 只擦一點、t＝900 幾乎重畫：同一個 U-Net 要**知道 t**
+- t → 不同頻率的 sin、cos → MLP → 一條向量 e
+- e 送進**每一個**區塊，加到特徵圖上
+- 今天的 lab 一樣，只是向量從 64 維變 128 維
+
+</div>
+</div>
+
+<div class="takeaway mt-3">U-Net 已經有一條「說明書」的路。條件 y 不用另開一條路：把它也變成向量，加在 e 上（下一頁）。</div>
+
+<!--
+★ 回顧（3 分）：L11 的圖直接拿來用（同一張 T4 輸出）。請學員回想：「為什麼 t 不能直接當一個數字丟進去？」（答：相近的 t 要得到相近的向量，sin／cos 做得到）。[:, :, None, None] 讀作「多兩個長度 1 的維度，好加到每個像素上」。今天 lab13 的 time_embedding 是 128 維，其他完全一樣。
 -->
 
 ---
@@ -135,8 +168,8 @@ class: cover
 
 <div class="grid items-center mt-3" style="font-size:17px;grid-template-columns:22% 5% 28% 5% 40%;row-gap:10px">
   <div class="node">t（第幾步）<small>&#91;B&#93;</small></div><span class="arrow text-center">→</span>
-  <div class="node">正弦嵌入 ＋ MLP（兩層全連接）<small>D3-3 的時間嵌入 → &#91;B, 128&#93;</small></div><span class="arrow text-center">↘</span>
-  <div class="node node--primary" style="grid-row:span 2"><strong>e ＝ 時間向量 ＋ 類別向量</strong><small>&#91;B, 128&#93;，送進 U-Net 的每一個殘差區塊（和 D3-3 時間嵌入同一條路）</small></div>
+  <div class="node">正弦嵌入 ＋ MLP（兩層全連接）<small>L11 的時間嵌入 → &#91;B, 128&#93;</small></div><span class="arrow text-center">↘</span>
+  <div class="node node--primary" style="grid-row:span 2"><strong>e ＝ 時間向量 ＋ 類別向量</strong><small>&#91;B, 128&#93;，送進 U-Net 的每一個殘差區塊（和 L11 時間嵌入同一條路）</small></div>
   <div class="node node--warm">y（類別 0～9，或 10＝沒有標籤）<small>&#91;B&#93;</small></div><span class="arrow text-center">→</span>
   <div class="node node--warm"><strong>y_emb</strong><small>nn.Embedding(11, 128)：每一類一列可訓練的向量</small></div><span class="arrow text-center">↗</span>
 </div>
@@ -145,12 +178,12 @@ class: cover
 e = self.t_mlp(time_embedding(t)) + self.y_emb(y)   # 時間向量 ＋ 類別向量，[B, 128]
 ```
 
-<div class="muted mt-1" style="font-size:16px">讀作：「先把 t 變成向量、把 y 查表變成向量，兩個相加，當作這張圖的『說明書』交給 U-Net」。U-Net 的輸入圖 x_t 和輸出 ε̂ 都還是 &#91;B, 1, 32, 32&#93;，和 D3-3 一樣。</div>
+<div class="muted mt-1" style="font-size:16px">讀作：「先把 t 變成向量、把 y 查表變成向量，兩個相加，當作這張圖的『說明書』交給 U-Net」。U-Net 的輸入圖 x_t 和輸出 ε̂ 都還是 &#91;B, 1, 32, 32&#93;，和 L11 一樣。</div>
 
 <div class="takeaway mt-2">不把類別直接當一個數字丟進去：查表讓每一類有自己的向量，「7 號比 6 號大」這種假關係就不存在。</div>
 
 <!--
-★ 類別嵌入（6 分）：embedding（嵌入）讀作「把一個編號換成一列可學的數字」。第 11 格（編號 10）是「沒有標籤」，下下頁會用到。
+★ 類別嵌入（6 分）：embedding（嵌入）讀作「把一個編號換成一列可學的數字」。第 11 格（編號 10）是「沒有標籤」，label dropout 那一頁會用到。
 常見誤解：把 y 當成 0～9 的一個數字直接加進去 → 模型會以為「褲子（1）和套頭衫（2）很接近」。nn.Embedding 等於 one-hot 再乘一個矩陣（DL 學過 one-hot）。
 -->
 
@@ -186,12 +219,76 @@ e = self.t_mlp(time_embedding(t)) + self.y_emb(y)   # 時間向量 ＋ 類別向
 </div>
 </div>
 
-<div class="takeaway mt-3">想法很好：去噪時「推向指定類別」。但能不能不要外部分類器？下一頁。</div>
+<div class="takeaway mt-3">想法很好：去噪時「推向指定類別」。下一頁拆開看這個「推」是怎麼算出來的。</div>
 
 <div class="src">Dhariwal &amp; Nichol, 2021（S1，待確認）</div>
 
 <!--
-○ 選修（3 分）：只看圖、不寫程式。分類器要能看「很吵的 x_t」，所以不能直接用 D1-3 訓練的分類器。這是今天主角 classifier-free 名字的由來：不需要分類器。
+○ 選修（3 分）：只看圖、不寫程式。分類器要能看「很吵的 x_t」，所以不能直接用 L03 訓練的分類器。這是今天主角 classifier-free 名字的由來：不需要分類器。
+-->
+
+---
+
+<div class="eyebrow">02 · Open · 先看另一種做法（拆開）</div>
+
+# Classifier guidance 拆開看：分類器的梯度怎麼推去噪
+
+<svg viewBox="0 0 900 262" style="width:100%;max-height:300px" class="mt-1" role="img" aria-label="流程圖。左邊是雜訊圖 x_t，分成兩路。上路：x_t 進去噪 U-Net，得到猜的雜訊 ε̂。下路：x_t 進凍結的分類器，得到 p(運動鞋｜x_t)，再和目標 y＝7 運動鞋算 CE loss；CE loss 反向傳播，對 x_t 求梯度，往上送到「推一下」的方塊，把 ε̂ 修成 ε̂′，再照 L11 的取樣扣掉。">
+  <defs>
+    <marker id="cgd-k" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--text)"/></marker>
+    <marker id="cgd-g" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="var(--secondary)"/></marker>
+  </defs>
+  <g style="font-family:'Noto Sans TC'">
+  <!-- x_t -->
+  <rect x="6" y="95" width="112" height="72" rx="8" fill="#f5f7fa" stroke="#9aa5b4" stroke-width="2"/>
+  <text x="62" y="126" text-anchor="middle" style="font-size:20px;font-weight:bold" fill="var(--text)">x_t</text>
+  <text x="62" y="150" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">還很吵的圖</text>
+  <path d="M118,120 H146 V50 H176" fill="none" stroke="var(--text)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <path d="M118,142 H146 V212 H176" fill="none" stroke="var(--text)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <!-- 上路 -->
+  <rect x="180" y="14" width="170" height="72" rx="8" fill="var(--soft-blue)" stroke="var(--primary)" stroke-width="2"/>
+  <text x="265" y="45" text-anchor="middle" style="font-size:18px;font-weight:bold" fill="var(--primary)">去噪 U-Net</text>
+  <text x="265" y="68" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">沒有條件（L11 那種）</text>
+  <line x1="350" y1="50" x2="394" y2="50" stroke="var(--text)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <rect x="398" y="14" width="110" height="72" rx="8" fill="var(--soft-blue)" stroke="var(--primary)" stroke-width="2"/>
+  <text x="453" y="45" text-anchor="middle" style="font-size:20px;font-weight:bold" fill="var(--primary)">ε̂</text>
+  <text x="453" y="68" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">猜的雜訊</text>
+  <line x1="508" y1="50" x2="552" y2="50" stroke="var(--text)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <rect x="556" y="8" width="338" height="84" rx="8" fill="#fff" stroke="var(--text)" stroke-width="2.5"/>
+  <text x="725" y="34" text-anchor="middle" style="font-size:15px" fill="var(--muted-text)">推一下：修正猜的雜訊</text>
+  <text x="725" y="62" text-anchor="middle" style="font-size:16px;font-weight:bold" fill="var(--text)">ε̂′ ＝ ε̂ ＋ s · √(1−ᾱ_t) · ∂CE／∂x_t</text>
+  <text x="725" y="83" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">再照 L11 的取樣扣掉 ε̂′ → x_(t−1)</text>
+  <!-- 下路 -->
+  <rect x="180" y="176" width="170" height="72" rx="8" fill="var(--soft-teal)" stroke="var(--secondary)" stroke-width="2"/>
+  <text x="265" y="207" text-anchor="middle" style="font-size:18px;font-weight:bold" fill="var(--secondary)">分類器（凍結）</text>
+  <text x="265" y="230" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">看雜訊圖也能分類</text>
+  <line x1="350" y1="212" x2="394" y2="212" stroke="var(--text)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <rect x="398" y="176" width="150" height="72" rx="8" fill="#fff" stroke="var(--secondary)" stroke-width="2"/>
+  <text x="473" y="207" text-anchor="middle" style="font-size:16px;font-weight:bold" fill="var(--secondary)">p(運動鞋｜x_t)</text>
+  <text x="473" y="230" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">softmax 的一格</text>
+  <line x1="548" y1="212" x2="592" y2="212" stroke="var(--text)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <rect x="596" y="176" width="150" height="72" rx="8" fill="var(--soft-teal)" stroke="var(--secondary)" stroke-width="2"/>
+  <text x="671" y="207" text-anchor="middle" style="font-size:18px;font-weight:bold" fill="var(--secondary)">CE loss</text>
+  <text x="671" y="230" text-anchor="middle" style="font-size:14px" fill="var(--muted-text)">−log p(運動鞋｜x_t)</text>
+  <rect x="790" y="182" width="104" height="60" rx="8" fill="var(--soft-amber)" stroke="var(--warm-accent)" stroke-width="2"/>
+  <text x="842" y="207" text-anchor="middle" style="font-size:15px;font-weight:bold" fill="var(--warm-accent)">目標</text>
+  <text x="842" y="229" text-anchor="middle" style="font-size:14px" fill="var(--warm-accent)">y＝7 運動鞋</text>
+  <line x1="790" y1="212" x2="750" y2="212" stroke="var(--warm-accent)" stroke-width="2" marker-end="url(#cgd-k)"/>
+  <!-- 梯度往上 -->
+  <line x1="671" y1="176" x2="671" y2="96" stroke="var(--secondary)" stroke-width="3.5" marker-end="url(#cgd-g)"/>
+  <text x="682" y="128" style="font-size:15px;font-weight:bold" fill="var(--secondary)">反向傳播：</text>
+  <text x="682" y="150" style="font-size:15px;font-weight:bold" fill="var(--secondary)">對 x_t（不是權重）求梯度</text>
+  </g>
+</svg>
+
+<div class="takeaway mt-2">和 DL 課的反向傳播同一招，只是梯度不拿去改權重，而是拿去改「這一步的圖往哪走」：CE 變小的方向＝更像運動鞋。</div>
+
+<div class="src">Dhariwal &amp; Nichol, 2021, Algorithm 2（S1，待確認）；s＝引導強度</div>
+
+<!--
+○ 選修（4 分）：照箭頭講一遍。1) 同一張 x_t 走兩路：上路照 L11 猜雜訊；下路丟給一個凍結的分類器，得到「這張像運動鞋的機率」。2) 和目標 y＝7 算 CE loss（DL 課學過：正確類別的機率越小，loss 越大）。3) loss.backward() 時，分類器的權重不動，梯度算到輸入 x_t 身上：∂CE／∂x_t 告訴我們「圖的每個像素往哪改，CE 會變大」。4) 把它加到 ε̂ 上：取樣時要扣掉 ε̂′，等於往「CE 變小」的方向多走一點，所以越來越像運動鞋。s 越大推得越用力。
+符號：論文寫成 ε̂ − √(1−ᾱ_t) · s · ∇log p(y｜x_t)；因為 CE ＝ −log p，兩種寫法一樣。√(1−ᾱ_t) 只是把梯度換算成雜訊的尺度，不用背。
+缺點回到上一頁：這個分類器要另外訓練，而且要在各種雜訊程度下都分得準。下一頁 label dropout 就是為了不要它。
 -->
 
 ---
@@ -214,7 +311,7 @@ e = self.t_mlp(time_embedding(t)) + self.y_emb(y)   # 時間向量 ＋ 類別向
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
 <div class="node node--primary"><strong>有標籤的 90%</strong><small>學「在 y 之下」的雜訊預測：ε_cond（有條件）</small></div>
-<div class="node node--dashed"><strong>NULL 的 10%</strong><small>學「什麼都不知道」時的雜訊預測：ε_uncond（沒條件），就是 D3-3 的模型</small></div>
+<div class="node node--dashed"><strong>NULL 的 10%</strong><small>學「什麼都不知道」時的雜訊預測：ε_uncond（沒條件），就是 L11 的模型</small></div>
 </div>
 
 ```python
@@ -267,11 +364,11 @@ y_in = torch.where(drop, torch.full_like(y, NULL), y)      # 藏的換成 NULL�
 
 <div class="takeaway mt-2">讀作：「從沒條件的猜測出發，朝『知道類別多出來的方向』走 w 倍」。</div>
 
-<div class="src">Ho &amp; Salimans, 2022（S2，待確認）：論文的 w 比本課的小 1；diffusers 的 <code>guidance_scale</code> 用本課寫法。算出的 ε 進入 D3-3 的取樣迴圈</div>
+<div class="src">Ho &amp; Salimans, 2022（S2，待確認）：論文的 w 比本課的小 1；diffusers 的 <code>guidance_scale</code> 用本課寫法。算出的 ε 進入 L11 的取樣迴圈</div>
 
 <!--
 ★ CFG（7 分）：這一行就是學習評量口試要講的。請學員跟著念一次：「從沒條件出發，朝有條件多出來的方向走 w 倍」。
-D1-2 的 guidance_scale＝1.0 就是這裡的 w＝1：只用有條件的預測，所以負面提示沒作用（D4-2 會說明負面提示其實是換掉 ε_uncond）。
+L02 的 guidance_scale＝1.0 就是這裡的 w＝1：只用有條件的預測，所以負面提示沒作用（L14 會說明負面提示其實是換掉 ε_uncond）。
 每一步要算兩次 U-Net（有 y、NULL 各一次），lab 把兩批接成一批一起算。
 -->
 
@@ -318,7 +415,7 @@ hostOnly: true
 <table class="vlines" style="font-size:18px">
 <thead><tr><th style="width:12%">w</th><th style="width:28%">ε</th><th>意思</th></tr></thead>
 <tbody>
-<tr><td>0</td><td>0.1 ＋ 0 × 0.3 ＝ 0.1</td><td>等於 ε_uncond：完全不看類別，畫出隨機一類（就是 D3-3）</td></tr>
+<tr><td>0</td><td>0.1 ＋ 0 × 0.3 ＝ 0.1</td><td>等於 ε_uncond：完全不看類別，畫出隨機一類（就是 L11）</td></tr>
 <tr><td>1</td><td>0.1 ＋ 1 × 0.3 ＝ 0.4</td><td>等於 ε_cond：一般的條件模型</td></tr>
 <tr><td>7</td><td>0.1 ＋ 7 × 0.3 ＝ 2.2</td><td>遠超過 ε_cond：非常像指定類別，但每張都很像（多樣性下降）</td></tr>
 </tbody>
@@ -411,7 +508,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 </tbody>
 </table>
 
-<div class="muted mt-2" style="font-size:16px">Colab T4 實跑（seed 0）：每個 w 生成 10 類 × 50 張；分類器是 lab 裡訓練 2 個 epoch 的小 CNN（D1-3 的寫法）；多樣性用 D3-1 量 mode collapse 的同一把尺；FID／KID 用分類器的 77 維特徵。</div>
+<div class="muted mt-2" style="font-size:16px">Colab T4 實跑（seed 0）：每個 w 生成 10 類 × 50 張；分類器是 lab 裡訓練 2 個 epoch 的小 CNN（L03 的寫法）；多樣性用 L09 量 mode collapse 的同一把尺；FID／KID 用分類器的 77 維特徵。</div>
 
 <div class="takeaway mt-2">忠實度只量「有沒有聽話」：認對 100% 但每張一樣，對補資料沒有用。要和多樣性一起看。</div>
 
@@ -436,10 +533,10 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 <div class="takeaway mt-3">CFG 沒有拿掉分類器，而是讓同一個模型「自己當分類器」：有條件減沒條件，就是分類器的推力。</div>
 
-<div class="src">Ho &amp; Salimans, 2022（S2）；σ_t ＝ √(1−ᾱ_t)，即 D3-3 一步加噪公式裡雜訊前面的係數</div>
+<div class="src">Ho &amp; Salimans, 2022（S2）；σ_t ＝ √(1−ᾱ_t)，即 L11 一步加噪公式裡雜訊前面的係數</div>
 
 <!--
-△ 附錄（2 分）：學員問「為什麼相減就有用」時再講。∝ 讀作「正比於」；∇ 讀作「往哪個方向改會變大」。第 3 行是 score matching 的結論（D3-3 附錄），不推導。
+△ 附錄（2 分）：學員問「為什麼相減就有用」時再講。∝ 讀作「正比於」；∇ 讀作「往哪個方向改會變大」。第 3 行是 score matching 的結論（L11 附錄），不推導。
 -->
 
 ---
@@ -480,8 +577,8 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 # Lab 2／7：筆記本拆成哪幾塊？
 
 <div class="steps mt-2" style="font-size:18px">
-  <div><span class="num">1</span><strong>資料與排程</strong>：Fashion-MNIST 補成 32 × 32、值域 −1～1；T＝1000、β 從 0.0001 到 0.02；<code>add_noise</code>（D3-3）</div>
-  <div><span class="num">2</span><strong>CondUNet</strong>：D3-3 的小 U-Net ＋ <code>y_emb</code>；訓練迴圈加一行 label dropout；存 <code>cfg_unet.pt</code></div>
+  <div><span class="num">1</span><strong>資料與排程</strong>：Fashion-MNIST 補成 32 × 32、值域 −1～1；T＝1000、β 從 0.0001 到 0.02；<code>add_noise</code>（L11）</div>
+  <div><span class="num">2</span><strong>CondUNet</strong>：L11 的小 U-Net ＋ <code>y_emb</code>；訓練迴圈加一行 label dropout；存 <code>cfg_unet.pt</code></div>
   <div><span class="num">3</span><strong>sample(labels, w)</strong>：每一步算 ε_cond、ε_uncond，套 CFG 那一行；四個 w 的網格</div>
   <div><span class="num">4</span><strong>量測</strong>：小分類器 <code>Clf</code>；忠實度、<code>mean_pairwise</code>、<code>fid</code>、<code>kid</code></div>
 </div>
@@ -489,7 +586,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="takeaway mt-4">兩個 TODO，各一兩行：label dropout（第 2 部分）、CFG 那一行（第 3 部分）。</div>
 
 <!--
-★ 拆塊（3 分）：第 1、2 部分大多是 D3-3 的程式，只多了 y。時間留給第 3、4 部分。
+★ 拆塊（3 分）：第 1、2 部分大多是 L11 的程式，只多了 y。時間留給第 3、4 部分。
 -->
 
 ---
@@ -564,7 +661,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="takeaway mt-4">「像不像」用眼睛看，「多像、多單調」用數字量：下一頁的表。</div>
 
 <!--
-★ 對照（6 分）：第 1 題是 w＝0 的直接證據：模型完全不看 y，就是 D3-3 的無條件模型。
+★ 對照（6 分）：第 1 題是 w＝0 的直接證據：模型完全不看 y，就是 L11 的無條件模型。
 -->
 
 ---
@@ -612,7 +709,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="takeaway mt-3">沒有「最好的 w」：FID／KID 同時看品質和多樣性，可以當主要依據；要更多樣就往小的 w 退一步。</div>
 
 <!--
-★ Ship（4 分）：講師的例子（不要先給學員看）：w＝3，FID 4.51、KID 0.030 都是四個裡最好；但同類距離 14.19 和 w＝7 差不多，若更在乎多樣性可退到 w＝1（距離 15.94、忠實度 80.8%）。注意：今天的模型用完整、平衡的 Fashion-MNIST 訓練，「少數類別」的情況是延伸題 2。下一堂 D4-2 的 guidance_scale 預設 7.5，就是同一個旋鈕。
+★ Ship（4 分）：講師的例子（不要先給學員看）：w＝3，FID 4.51、KID 0.030 都是四個裡最好；但同類距離 14.19 和 w＝7 差不多，若更在乎多樣性可退到 w＝1（距離 15.94、忠實度 80.8%）。注意：今天的模型用完整、平衡的 Fashion-MNIST 訓練，「少數類別」的情況是延伸題 2。下一堂 L14 的 guidance_scale 預設 7.5，就是同一個旋鈕。
 -->
 
 ---
@@ -626,7 +723,7 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 <div class="node node--warm"><strong>口頭說明（不用 AI）</strong><small>講師指著你的 CFG 那一行，你要說出：ε_uncond、ε_cond、w 各是什麼；w＝0、1、大於 1 各會怎樣；label dropout 為什麼必要</small></div>
 </div>
 
-<div class="muted mt-3" style="font-size:17px">另一半（a）「說明 Diffusion vs GAN」是 D4-4 的備忘錄，會用到 D3 的生成三難表和今天的數字。</div>
+<div class="muted mt-3" style="font-size:17px">另一半（a）「說明 Diffusion vs GAN」是 L16 的備忘錄，會用到 D3 的生成三難表和今天的數字。</div>
 
 <div class="takeaway mt-3">能用自己的話講清楚那一行，才算「實作」：程式可以請 Agent 幫忙，說明不行。</div>
 
@@ -678,20 +775,59 @@ fid(f_real, f_gen); kid(f_real, f_gen)
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="2"
+  :options="['把 y 寫在圖片角落', '把 y 當成第 2 個輸入通道的像素值', '查表成向量，和時間向量相加', '只在最後一層加上 y']"
+  :why="['類別不是畫在圖上，網路看不到這種標記。', '有些模型是這樣做（接成輸入通道），但本課 lab 不是；本課用嵌入向量。', '', '類別向量和時間向量相加後，會影響整個 U-Net，不是只加在最後一層。']"
+  explain="類別編號查表成向量（類別嵌入），和時間向量相加，U-Net 就知道這一步要往哪一類去噪。">
+本課的 lab 中，類別 y 是怎麼交給 U-Net 的？
+</Mcq>
 
-1. 本課的 lab 中，類別 y 是怎麼交給 U-Net 的？（　）<br><span class="opts"><span class="nw">A. 把 y 寫在圖片角落</span>　<span class="nw">B. 把 y 當成第 2 個輸入通道的像素值</span>　<span class="nw">C. 查表成向量，和時間向量相加</span>　<span class="nw">D. 只在最後一層加上 y</span></span>
-2. 訓練時把 10% 的標籤換成「沒有標籤」，目的是？（　）<br><span class="opts"><span class="nw">A. 防止過度擬合</span>　<span class="nw">B. 讓同一個模型也學會沒條件的預測</span>　<span class="nw">C. 加快訓練</span>　<span class="nw">D. 減少 VRAM</span></span>
-3. ε ＝ ε_uncond ＋ w·(ε_cond − ε_uncond) 中，w＝1 時等於？（　）<br><span class="opts"><span class="nw">A. ε_uncond</span>　<span class="nw">B. 0</span>　<span class="nw">C. 兩者平均</span>　<span class="nw">D. ε_cond</span></span>
-4. 把 w 從 1 調到 7，最可能的結果？（　）<br><span class="opts"><span class="nw">A. 更像指定類別，但同類更單調</span>　<span class="nw">B. 更多樣，但類別更亂</span>　<span class="nw">C. 取樣變快 7 倍</span>　<span class="nw">D. FID 一定變小</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="1"
+  :options="['防止過度擬合', '讓同一個模型也學會沒條件的預測', '加快訓練', '減少 VRAM']"
+  :why="['防止過度擬合是 DL 課 dropout 的目的；label dropout 名字像，目的不同。', '', '每一步的計算量不變，不會加快訓練。', '模型大小不變，VRAM 也不變。']"
+  explain="有時不給標籤，同一個網路就同時學會有條件和沒條件的預測，CFG 才有 ε_uncond 可以用。">
+訓練時把 10% 的標籤換成「沒有標籤」，目的是？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 C（B 在別的模型裡也有人用，但本課 lab 不是這樣做）、2 B（A 是 DL 的 dropout，名字像但目的不同）、3 D、4 A（D 錯：太單調時 FID 反而可能變大）。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：1 C、2 B。
 -->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="3"
+  :options="['ε_uncond', '0', '兩者平均', 'ε_cond']"
+  :why="['w＝0 才等於 ε_uncond。', '0 不是雜訊預測；w＝1 時式子化簡後是 ε_cond。', '兩者平均要 w＝0.5。', '']"
+  explain="代入 w＝1：ε_uncond ＋ ε_cond − ε_uncond ＝ ε_cond，也就是不額外加引導。">
+ε ＝ ε_uncond ＋ w·(ε_cond − ε_uncond) 中，w＝1 時等於？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="0"
+  :options="['更像指定類別，但同類更單調', '更多樣，但類別更亂', '取樣變快 7 倍', 'FID 一定變小']"
+  :why="['', 'w 大是更聽話、類別更不亂，多樣性反而下降。', 'w 只改混合比例，不改步數與每步計算量。', '太單調時 FID 反而可能變大，不是一定變小。']"
+  explain="w 越大越用力往指定類別推，更像該類，但同類的樣子更單調（多樣性下降）。">
+把 w 從 1 調到 7，最可能的結果？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：3 D、4 A。
+全部答案與理由：
+1 C：類別編號查表成向量（類別嵌入），和時間向量相加，U-Net 就知道這一步要往哪一類去噪。
+2 B：有時不給標籤，同一個網路就同時學會有條件和沒條件的預測，CFG 才有 ε_uncond 可以用。
+3 D：代入 w＝1：ε_uncond ＋ ε_cond − ε_uncond ＝ ε_cond，也就是不額外加引導。
+4 A：w 越大越用力往指定類別推，更像該類，但同類的樣子更單調（多樣性下降）。
+-->
+
 
 ---
 hostOnly: true
@@ -699,13 +835,13 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D4-2：依企劃文字生成產品情境照
+# 下一堂 L14：依企劃文字生成產品情境照
 
 <div style="font-size:19px" class="mt-4">
 
 - 行銷部：每次活動都要外拍，能不能用一段企劃文字直接生成？
 - 條件從「類別編號」換成「一段文字」：CLIP 把文字變成向量
-- Stable Diffusion = D2-3 的 VAE ＋ 今天的條件 U-Net ＋ 文字編碼器 ＋ 排程器
+- Stable Diffusion = L07 的 VAE ＋ 今天的條件 U-Net ＋ 文字編碼器 ＋ 排程器
 
 </div>
 

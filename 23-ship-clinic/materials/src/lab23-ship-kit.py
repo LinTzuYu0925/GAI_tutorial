@@ -18,7 +18,7 @@
 
 # %%
 # 第 1 格：環境
-%pip install -q gradio huggingface_hub
+%pip install -q gradio huggingface_hub python-dotenv
 import os, time, json, platform, datetime
 import gradio as gr
 print("gradio", gr.__version__, "| python", platform.python_version())
@@ -141,15 +141,21 @@ print(card[:800])
 
 # %% [markdown]
 # ## 5. 推上去
-# **Hugging Face Hub**：在 Colab 左邊「🔑 密鑰」加 `HF_TOKEN`（write 權限）。沒有 token 就跳過。
+# **Hugging Face Hub**：需要 `HF_TOKEN`（write 權限）。沒有 token 就跳過。
+# 金鑰**不寫在程式裡**。兩種放法，下面這格都會試：
+# 1. **Colab 網頁版**：左側 🔑「密鑰（Secrets）」→ 新增 `HF_TOKEN` → 打開「筆記本存取權」。
+# 2. **`.env` 檔**（VS Code 連 Colab）：檔案內容一行 `HF_TOKEN=你的金鑰`；在 VS Code 檔案總管對 `.env` 按右鍵 →「Upload to Colab」。VS Code 連 Colab **不支援**方法 1。
 # **GitHub**：建議在自己的電腦用 Vibe Coding 學過的 git（02、07a 單元）；下面印出要打的指令。
 
 # %%
-try:
+try:                                              # 方法 1：Colab 網頁版的密鑰
     from google.colab import userdata
-    os.environ.setdefault("HF_TOKEN", userdata.get("HF_TOKEN") or "")
+    if userdata.get("HF_TOKEN"):
+        os.environ["HF_TOKEN"] = userdata.get("HF_TOKEN")
 except Exception:
     pass
+from dotenv import load_dotenv                    # 方法 2：.env 檔（VS Code 連 Colab 時上傳）
+load_dotenv()
 if os.environ.get("HF_TOKEN"):
     from huggingface_hub import HfApi
     api = HfApi()

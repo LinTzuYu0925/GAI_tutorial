@@ -68,8 +68,8 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
 tf = transforms.ToTensor()
-train_ds = datasets.CIFAR10("data", train=True, download=True, transform=tf)
-test_ds = datasets.CIFAR10("data", train=False, download=True, transform=tf)
+train_ds = datasets.CIFAR10("data/download", train=True, download=True, transform=tf)
+test_ds = datasets.CIFAR10("data/download", train=False, download=True, transform=tf)
 
 # >>> TODO: 建立 train_loader（shuffle=True）與 test_loader（shuffle=False），batch_size=BATCH
 train_loader = DataLoader(train_ds, batch_size=BATCH, shuffle=True, num_workers=2)

@@ -293,3 +293,13 @@
 /* Tensor shape inside a node: keep on one line */
 .node small.nw { white-space: nowrap; font-size: 15px; }
 .nw { white-space: nowrap; }
+
+/* 10×10 pixel grids (loss slide): green = correct, red = wrong, amber = defect in the answer */
+.pxg { display: inline-grid; grid-template-columns: repeat(10, 14px); grid-auto-rows: 14px; gap: 2px; justify-content: start; }
+.pxg .px { display: block; box-sizing: border-box; width: 14px; height: 14px; border-radius: 2px; background: #eef1f5; border: 1px solid var(--border); }
+.pxg .px-d { background: var(--warm-accent); border-color: var(--warm-accent); }
+.pxg .px-ok { background: #cdebd9; border-color: #16847a; }
+.pxg .px-bad { background: #f5c6c0; border-color: #c0392b; }
+
+/* Compact code block (slide with a screenshot below) */
+.slidev-layout .smallcode pre, .slidev-layout .smallcode .slidev-code, .slidev-layout .smallcode code { font-size: 14px !important; line-height: 1.35 !important; }

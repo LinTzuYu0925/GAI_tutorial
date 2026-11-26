@@ -2,8 +2,8 @@
 theme: default
 title: AE 熱圖太模糊？用擴散模型修好板子再比對
 info: |
-  生成式AI原理 · D3-4
-  D2-1 的 AE 重建太模糊，細紋路一直過殺。把板子加噪到第 t 步、再用擴散模型去噪回來，得到「這片板子的正常版」；和 AE 比 AUROC、過殺與每片幾毫秒。第三天總整理、iPAS 小考與作業。
+  生成式AI原理 · L12
+  L05 的 AE 重建太模糊，細紋路一直過殺。把板子加噪到第 t 步、再用擴散模型去噪回來，得到「這片板子的正常版」；和 AE 比 AUROC、過殺與每片幾毫秒。第三天總整理、iPAS 小考與作業。
 colorSchema: light
 fonts:
   provider: none
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D3-4</div>
+<div class="eyebrow">生成式AI原理 · L12</div>
 
 # AE 熱圖太模糊？用擴散模型修好板子再比對
 
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：第三天最後一堂。D2-1 的品保部回來了：昨天（D3-3）學會的「加噪、去噪」原封不動拿來做檢測，只是起點不是純雜訊。
+★ 開場（2 分）：第三天最後一堂。L05 的品保部回來了：昨天（L11）學會的「加噪、去噪」原封不動拿來做檢測，只是起點不是純雜訊。
 -->
 
 ---
@@ -45,19 +45,19 @@ class: cover
 # 品保部 A 線回來了：AE 熱圖太模糊，細紋路一直過殺
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D3-4】部門：製造品保部（A 線）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L12】部門：製造品保部（A 線）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
-    <dt>問題</dt><dd>D2-1 的 AE 重建偏模糊，板子上的細紋路、文字誤差大，被判成瑕疵（過殺）</dd>
+    <dt>問題</dt><dd>L05 的 AE 重建偏模糊，板子上的細紋路、文字誤差大，被判成瑕疵（過殺）</dd>
     <dt>現況痛點</dt><dd>過殺的板子要人工複判，複判人力沒有減少</dd>
     <dt>成功指標（KPI）</dt><dd>漏檢 ≤ 5% 時，過殺比 AE 低；每片處理時間趕得上產線節拍時間</dd>
-    <dt>可用資料</dt><dd>D2-1 的 VisA PCB1 切分（同一批訓練、驗證、測試板子）</dd>
+    <dt>可用資料</dt><dd>L05 的 VisA PCB1 切分（同一批訓練、驗證、測試板子）</dd>
     <dt>限制與法規</dt><dd>Colab T4；講師在良品上訓練好的擴散模型檢查點；64 × 64</dd>
     <dt>為何現有工具不夠</dt><dd>AE 的重建一定要擠過瓶頸，細節回不來 → 細節處誤差大</dd>
   </dl>
 </div>
 
 <!--
-★ 需求單（2 分）：過殺／漏檢是 D2-1 的工廠用語（過殺＝FP、漏檢＝FN）。今天多一個指標：時間。產線每隔幾秒就送來一片板子（節拍時間），檢測太慢就會塞車。
+★ 需求單（2 分）：過殺／漏檢是 L05 的工廠用語（過殺＝FP、漏檢＝FN）。今天多一個指標：時間。產線每隔幾秒就送來一片板子（節拍時間），檢測太慢就會塞車。
 -->
 
 ---
@@ -73,7 +73,7 @@ class: cover
 5. **整理**第三天的生成三難表格，當成學習評量備忘錄的證據
 
 <!--
-★ 目標（1 分）。不教：simplex 雜訊的實作（○ 點名）、DDAD（△ 點名）、PatchCore／EfficientAD 的實作（D2-1 點名過）。
+★ 目標（1 分）。不教：simplex 雜訊的實作（○ 點名）、DDAD（△ 點名）、PatchCore／EfficientAD 的實作（L05 點名過）。
 -->
 
 ---
@@ -85,7 +85,7 @@ class: cover
 <table class="mt-2" style="font-size:18px">
 <thead><tr><th style="width:30%">指標</th><th>怎麼量</th><th style="width:28%">今天的門檻</th></tr></thead>
 <tbody>
-<tr><td>AUROC</td><td>不挑門檻，看良品和不良品的分數排得開不開（D2-1）</td><td>比 AE 高</td></tr>
+<tr><td>AUROC</td><td>不挑門檻，看良品和不良品的分數排得開不開（L05）</td><td>比 AE 高</td></tr>
 <tr><td>過殺（漏檢 ≤ 5% 時）</td><td>門檻在驗證集上選，讓不良品最多漏 5%；再到測試集算一次</td><td>比 AE 低</td></tr>
 <tr><td>每片幾毫秒</td><td>64 片一批，總時間 ÷ 64</td><td>≤ 節拍時間</td></tr>
 </tbody>
@@ -118,7 +118,7 @@ class: cover
 2. 擴散「修好」的版本
 3. 擴散的誤差圖
 4. 真正的瑕疵遮罩
-5. D2-1 AE 的誤差圖
+5. L05 AE 的誤差圖
 
 <div class="shot-cap mt-2">講師 T4 實跑（lab12，t＝100、DDIM 5 步）</div>
 
@@ -141,14 +141,14 @@ class: cover
 
 <div class="flex items-center justify-center gap-2 mt-4" style="font-size:17px">
   <div class="node" style="width:17%">x₀<small>有瑕疵的板子</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:19%"><strong>加噪到第 t 步</strong><small>一行 q_sample（D3-3）</small></div><span class="arrow">→</span>
+  <div class="node node--warm" style="width:19%"><strong>加噪到第 t 步</strong><small>一行 q_sample（L11）</small></div><span class="arrow">→</span>
   <div class="node" style="width:15%">x_t<small>瑕疵被雜訊蓋住</small></div><span class="arrow">→</span>
   <div class="node node--primary" style="width:19%"><strong>擴散模型去噪</strong><small>只看過良品</small></div><span class="arrow">→</span>
   <div class="node" style="width:17%">x̂₀<small>「正常版」的板子</small></div>
 </div>
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
-<div class="node"><strong>D3-3 的取樣</strong><small>從 t＝999 的純雜訊開始 → 畫出「任何一件」衣服</small></div>
+<div class="node"><strong>L11 的取樣</strong><small>從 t＝999 的純雜訊開始 → 畫出「任何一件」衣服</small></div>
 <div class="node node--primary"><strong>今天</strong><small>從 t＝100 左右開始 → 板子的大結構還在，模型只補細節；瑕疵被當成雜訊擦掉</small></div>
 </div>
 
@@ -157,14 +157,14 @@ class: cover
 <div class="src">部分加噪（partial diffusion）：AnoDDPM，Wyatt et al., CVPR Workshops 2022（S1）</div>
 
 <!--
-★ 部分加噪（6 分）：partial diffusion（部分加噪）。和 D3-3 第 13 頁的練習連起來：t＝250 時短靴還看得出來，代表大結構還在。t＝100 是講師在驗證集上掃出來的（第 10 頁）。
+★ 部分加噪（6 分）：partial diffusion（部分加噪）。和 L11 第 13 頁的練習連起來：t＝250 時短靴還看得出來，代表大結構還在。t＝100 是講師在驗證集上掃出來的（第 10 頁）。
 -->
 
 ---
 
 <div class="eyebrow">02 · Open · 誤差圖</div>
 
-# 誤差圖和 D2-1 一樣算，只換掉「重建」這一步
+# 誤差圖和 L05 一樣算，只換掉「重建」這一步
 
 <div class="grid grid-cols-[1.3fr_1fr] gap-6 mt-2">
 <div>
@@ -177,7 +177,7 @@ class: cover
 
 ```python
 emap  = ((x - r) ** 2).mean(1)     # 每個像素的平方誤差
-score = 誤差最大 1% 的平均            # D2-1 同一個分數
+score = 誤差最大 1% 的平均            # L05 同一個分數
 ```
 
 - 希望：擴散重建保留細節 → 誤差集中在瑕疵
@@ -212,7 +212,7 @@ score = 誤差最大 1% 的平均            # D2-1 同一個分數
 <div class="src">AnoDDPM：太小的雜訊抓不到大的異常（S1）</div>
 
 <!--
-★ 選 t（4 分）：和 D3-3 練習的結論連起來：t＝500 時短靴已經認不出來，板子也一樣：t＝500 的版本整片被重畫，位置和外框偏掉、針腳變淡，誤差沿著圓環和外框發亮。t＝25 的誤差圖滿是細碎雜點：雜訊太少，模型幾乎沒改東西，瑕疵也沒被擦掉。
+★ 選 t（4 分）：和 L11 練習的結論連起來：t＝500 時短靴已經認不出來，板子也一樣：t＝500 的版本整片被重畫，位置和外框偏掉、針腳變淡，誤差沿著圓環和外框發亮。t＝25 的誤差圖滿是細碎雜點：雜訊太少，模型幾乎沒改東西，瑕疵也沒被擦掉。
 -->
 
 ---
@@ -226,7 +226,7 @@ score = 誤差最大 1% 的平均            # D2-1 同一個分數
 <table class="fill tight vlines mt-1">
 <thead><tr><th style="width:28%">做法</th><th style="width:36%">驗證集 AUROC</th><th>一句話：為什麼？</th></tr></thead>
 <tbody>
-<tr><td>AE（D2-1）</td><td>0.912（講師 T4）</td><td>對照組</td></tr>
+<tr><td>AE（L05）</td><td>0.912（講師 T4）</td><td>對照組</td></tr>
 <tr><td>先猜：最好的 t ＝</td><td class="blank"><FillIn id="tsel.guess" hint="例：t＝……" /></td><td class="blank"><FillIn id="tsel.why" /></td></tr>
 <tr><td>擴散 t＝25</td><td class="blank"><FillIn id="tsel.a25" /></td><td class="blank"><FillIn id="tsel.w25" /></td></tr>
 <tr><td>擴散 t＝150</td><td class="blank"><FillIn id="tsel.a150" /></td><td class="blank"><FillIn id="tsel.w150" /></td></tr>
@@ -300,10 +300,10 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 <div class="takeaway mt-2">每步都走＝網路跑 100 次；DDIM 5 步＝跑 5 次：快 20 倍，這次準度沒有掉。</div>
 
-<div class="src">Song et al., DDIM, ICLR 2021（S2）；D3-3 第 17 頁</div>
+<div class="src">Song et al., DDIM, ICLR 2021（S2）；L11 第 17 頁</div>
 
 <!--
-★ DDIM（5 分）：D3-3 用的是 diffusers 的 DDIMScheduler；今天把同一件事寫成四行，好看清楚每一步在做什麼。第 3 行就是 D3-3 一行公式反過來解 x₀。講師實跑：步數越少，驗證集 AUROC 反而略高（0.908 → 0.926）。不要過度解讀：驗證集只有 50 片不良，差 0.02 可能只是幾片的排序不同。所以 lab 選 DDIM 5 步。
+★ DDIM（5 分）：L11 用的是 diffusers 的 DDIMScheduler；今天把同一件事寫成四行，好看清楚每一步在做什麼。第 3 行就是 L11 一行公式反過來解 x₀。講師實跑：步數越少，驗證集 AUROC 反而略高（0.908 → 0.926）。不要過度解讀：驗證集只有 50 片不良，差 0.02 可能只是幾片的排序不同。所以 lab 選 DDIM 5 步。
 -->
 
 ---
@@ -327,7 +327,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <table style="font-size:17px">
 <thead><tr><th>實測（T4，64 片一批）</th><th>每片 ms</th><th>每秒片數</th></tr></thead>
 <tbody>
-<tr><td>AE（D2-1）</td><td>0.16</td><td>6,072</td></tr>
+<tr><td>AE（L05）</td><td>0.16</td><td>6,072</td></tr>
 <tr><td>擴散，每步都走</td><td>42.86</td><td>23</td></tr>
 <tr><td>擴散，DDIM 5 步</td><td>2.14</td><td>468</td></tr>
 </tbody>
@@ -352,7 +352,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <table class="mt-2" style="font-size:18px">
 <thead><tr><th style="width:30%">做法</th><th>AUROC</th><th>過殺（漏檢 ≤ 5% 的門檻）</th><th>漏檢</th><th>每片 ms</th><th>趕得上 1 秒節拍？</th></tr></thead>
 <tbody>
-<tr><td>AE（D2-1）</td><td><strong>0.944</strong></td><td><strong>16.6%</strong></td><td>6.0%</td><td>0.16</td><td>✓</td></tr>
+<tr><td>AE（L05）</td><td><strong>0.944</strong></td><td><strong>16.6%</strong></td><td>6.0%</td><td>0.16</td><td>✓</td></tr>
 <tr><td>擴散 t＝100，每步都走</td><td>0.922</td><td>43.0%</td><td>6.0%</td><td>42.86</td><td>✓</td></tr>
 <tr><td>擴散 t＝100，DDIM 5 步</td><td>0.930</td><td>36.4%</td><td>6.0%</td><td>2.14</td><td>✓</td></tr>
 </tbody>
@@ -363,7 +363,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div class="takeaway mt-2">講師 T4 的答案：趕得上節拍，但過殺<strong>沒有</strong>比 AE 低（36.4% vs 16.6%）。這次 AE 贏。</div>
 
 <!--
-★ 對照表（5 分）：這是今天交給品保部的核心數字（Lab 7／7 會抄一次），全部來自講師 T4 第一次實跑（research/lab-runs.md）。誠實說：需求單的 KPI 沒有達成。可能的原因（推測，沒有另外實驗）：64 × 64 下 AE 的重建其實沒有很糊；擴散修好的版本在邊緣會偏一點點，良品也在邊緣留下誤差，分數變高 → 過殺。漏檢 6.0%：門檻在驗證集上選到 ≤ 5%，測試集多漏 1 片就超過，這是小樣本的正常現象。值得帶走的結論：花俏的方法不一定贏，要在同一個測試集上比過才知道；這也是第 15 頁 PatchCore 等基準存在的原因。測試集張數來自 D2-1 的切分（良品 1004 的 15%、不良品 100 的一半）。
+★ 對照表（5 分）：這是今天交給品保部的核心數字（Lab 7／7 會抄一次），全部來自講師 T4 第一次實跑（research/lab-runs.md）。誠實說：需求單的 KPI 沒有達成。可能的原因（推測，沒有另外實驗）：64 × 64 下 AE 的重建其實沒有很糊；擴散修好的版本在邊緣會偏一點點，良品也在邊緣留下誤差，分數變高 → 過殺。漏檢 6.0%：門檻在驗證集上選到 ≤ 5%，測試集多漏 1 片就超過，這是小樣本的正常現象。值得帶走的結論：花俏的方法不一定贏，要在同一個測試集上比過才知道；這也是第 15 頁 PatchCore 等基準存在的原因。測試集張數來自 L05 的切分（良品 1004 的 15%、不良品 100 的一半）。
 -->
 
 ---
@@ -391,7 +391,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div class="takeaway mt-3">判定和解釋可以分開：用準的模型判定，用看得懂的圖說明。</div>
 
 <!--
-★ 作業員畫面（3 分）：explainability（可解釋性）。這頁接 D2-1 的 Gradio 檢測站：把「修好的版本」也放進去，就是三欄畫面。判定用 AE、說明用擴散，代價是每片多 2 ms：這是一個可以提給品保部討論的選項，不是講師的結論。
+★ 作業員畫面（3 分）：explainability（可解釋性）。這頁接 L05 的 Gradio 檢測站：把「修好的版本」也放進去，就是三欄畫面。判定用 AE、說明用擴散，代價是每片多 2 ms：這是一個可以提給品保部討論的選項，不是講師的結論。
 -->
 
 ---
@@ -403,7 +403,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <table class="mt-2" style="font-size:17px">
 <thead><tr><th style="width:24%">方法</th><th>做什麼</th><th style="width:28%">和今天比</th></tr></thead>
 <tbody>
-<tr><td>PatchCore</td><td>記住良品的小區塊特徵，比對最近的距離（D2-1 點名過）</td><td>不用生成，通常很快</td></tr>
+<tr><td>PatchCore</td><td>記住良品的小區塊特徵，比對最近的距離（L05 點名過）</td><td>不用生成，通常很快</td></tr>
 <tr><td>EfficientAD</td><td>小網路學老師網路的特徵，毫秒級</td><td>為速度設計</td></tr>
 <tr><td>simplex 雜訊</td><td>AnoDDPM 把高斯雜訊換成一塊一塊的 simplex 雜訊，蓋得住比較大的瑕疵</td><td>今天的改良版</td></tr>
 </tbody>
@@ -469,7 +469,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div class="takeaway mt-3">交給品保部：一張「AUROC、過殺、每片毫秒」對照表，加上一句建議。</div>
 
 <!--
-★ Lab 開始（3 分）：先執行第 1 格和資料那一格（下載 VisA）。D2-1 下載過的，把 DATA_DIR 改成雲端硬碟資料夾。擴散模型預設下載講師的檢查點（TRAIN_DDPM＝False），可省下約 7 分鐘；下載不到會自動改成自己訓練（講師第一次實跑時檢查點還沒上 GitHub，就是自己訓練的 439 秒）。沒有 GPU → EPOCHS_AE＝3、EVAL_N＝20、STEPS_DDPM＝200。
+★ Lab 開始（3 分）：先執行第 1 格和資料那一格（下載 VisA）。L05 下載過的，把 DATA_DIR 改成雲端硬碟資料夾。擴散模型預設下載講師的檢查點（TRAIN_DDPM＝False），可省下約 7 分鐘；下載不到會自動改成自己訓練（講師第一次實跑時檢查點還沒上 GitHub，就是自己訓練的 439 秒）。沒有 GPU → EPOCHS_AE＝3、EVAL_N＝20、STEPS_DDPM＝200。
 -->
 
 ---
@@ -479,18 +479,18 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 # Lab 2／7：筆記本拆成哪幾塊？
 
 <div class="steps mt-2" style="font-size:17px">
-  <div><span class="num">1</span><strong>資料</strong>：和 D2-1 同一個切分；訓練良品加 180° 旋轉；驗證、測試各有良品和不良品</div>
-  <div><span class="num">2</span><strong>對照組</strong>：D2-1 的 AE；<code>evaluate</code> 回傳重建、誤差圖、分數、每片毫秒</div>
-  <div><span class="num">3</span><strong>擴散模型</strong>：D3-3 的 <code>TinyUNet</code>（3 通道、64 × 64）；載入講師檢查點</div>
+  <div><span class="num">1</span><strong>資料</strong>：和 L05 同一個切分；訓練良品加 180° 旋轉；驗證、測試各有良品和不良品</div>
+  <div><span class="num">2</span><strong>對照組</strong>：L05 的 AE；<code>evaluate</code> 回傳重建、誤差圖、分數、每片毫秒</div>
+  <div><span class="num">3</span><strong>擴散模型</strong>：L11 的 <code>TinyUNet</code>（3 通道、64 × 64）；載入講師檢查點</div>
   <div><span class="num">4</span><strong><code>diffusion_repair</code></strong>：加噪到 t（TODO ①）、DDIM 走回 0；驗證集 t 掃描</div>
   <div><span class="num">5</span><strong>DDIM 步數</strong>：驗證集上比 100／20／10／5 步</div>
   <div><span class="num">6</span><strong>測試集</strong>：<code>report</code>（TODO ②：過殺、漏檢、AUROC）；對照表；作業員畫面</div>
 </div>
 
-<div class="takeaway mt-3">兩個 TODO：加噪那一行（D3-3 學過），和過殺、漏檢、AUROC（D2-1 學過）。</div>
+<div class="takeaway mt-3">兩個 TODO：加噪那一行（L11 學過），和過殺、漏檢、AUROC（L05 學過）。</div>
 
 <!--
-★ 拆塊（3 分）：今天沒有新的網路，全部是 D2-1 和 D3-3 的零件重組。
+★ 拆塊（3 分）：今天沒有新的網路，全部是 L05 和 L11 的零件重組。
 -->
 
 ---
@@ -501,7 +501,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 <div style="font-size:18px" class="mt-2">
 
-<strong>【目標】</strong>用「加噪到第 t 步、再去噪」做 PCB1 的瑕疵檢測，和 D2-1 的 AE 比準度與速度<br>
+<strong>【目標】</strong>用「加噪到第 t 步、再去噪」做 PCB1 的瑕疵檢測，和 L05 的 AE 比準度與速度<br>
 <strong>【輸入與輸出】</strong>板子 <code>&#91;B,3,64,64&#93;</code>（0～1）→ 修好的板子 <code>&#91;B,3,64,64&#93;</code> → 誤差圖 <code>&#91;B,64,64&#93;</code> → 分數 <code>&#91;B&#93;</code><br>
 <strong>【限制】</strong>t 和步數只能在**驗證集**上選；門檻也在驗證集上選；測試集只算一次；Colab T4<br>
 <span class="muted" style="font-size:16px">為什麼：在測試集上挑 t，等於偷看考題，數字會好看得不真實</span><br>
@@ -528,7 +528,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 
 <div class="steps mt-2" style="font-size:17px">
   <div><span class="num">1</span>講師 T4：VisA 下載約 6 分鐘、AE 訓練 11 秒；等待下載時做「練習：t 該選多少？」的先猜</div>
-  <div><span class="num">2</span>沒有 Agent 額度：照「部分加噪」頁和 D2-1 的過殺／漏檢填；卡住開 <code>-solution.ipynb</code></div>
+  <div><span class="num">2</span>沒有 Agent 額度：照「部分加噪」頁和 L05 的過殺／漏檢填；卡住開 <code>-solution.ipynb</code></div>
   <div><span class="num">3</span>預期輸出：第 4 部分 <code>t= 25  驗證集 AUROC …  每張 … ms</code> 共 6 行；第 6 部分對照表三列，每列有 AUROC、過殺、漏檢</div>
 </div>
 
@@ -630,7 +630,7 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <div class="src">詐欺犯罪危害防制條例第 31 條第 1 項第 4 款、第 4 項（深度偽造定義）、第 40 條（罰鍰），全國法規資料庫（S6）</div>
 
 <!--
-★ 風險（4 分）：揭露義務在「網路廣告平臺業者」（而且是達一定規模者，第 27 條），不是直接規定廣告主；但廣告主要提供資訊給平臺。未揭露的罰鍰 20 萬到 500 萬元（第 40 條）。D3-2 已經提過 deepfake 與同意，今天補上法條。條號與引文來自 S6，上課前請在全國法規資料庫再確認一次。當事人同意（肖像權、個資法）是另一層問題，本頁沒有引用來源，口頭提到即可。
+★ 風險（4 分）：揭露義務在「網路廣告平臺業者」（而且是達一定規模者，第 27 條），不是直接規定廣告主；但廣告主要提供資訊給平臺。未揭露的罰鍰 20 萬到 500 萬元（第 40 條）。L10 已經提過 deepfake 與同意，今天補上法條。條號與引文來自 S6，上課前請在全國法規資料庫再確認一次。當事人同意（肖像權、個資法）是另一層問題，本頁沒有引用來源，口頭提到即可。
 -->
 
 ---
@@ -642,17 +642,17 @@ for t, t_prev in zip(ts[:-1], ts[1:]):         # 例：100 → 80 → … → 0
 <table class="mt-2" style="font-size:17px">
 <thead><tr><th style="width:18%">單元</th><th style="width:22%">模型</th><th>品質</th><th>多樣性</th><th>速度</th><th style="width:24%">你的證據</th></tr></thead>
 <tbody>
-<tr><td>D3-1</td><td>DCGAN、Real-ESRGAN</td><td>✓</td><td>沒保證</td><td>✓ 1 次</td><td>網格、兩兩距離</td></tr>
-<tr><td>D3-2</td><td>CycleGAN</td><td>✓</td><td>—（轉換）</td><td>✓ 1 次</td><td>過殺、瑕疵存活</td></tr>
-<tr><td>D3-3</td><td>DDPM、DDIM</td><td>✓</td><td>△ 10 類都有，距離較低</td><td>✗ 1000 次</td><td>兩兩距離、類別數、秒數</td></tr>
-<tr><td>D3-4</td><td>部分加噪＋DDIM</td><td>修得像，過殺比 AE 高</td><td>—（重建）</td><td>DDIM 5 步 2 ms</td><td>AUROC、過殺、每片 ms</td></tr>
+<tr><td>L09</td><td>DCGAN、Real-ESRGAN</td><td>✓</td><td>沒保證</td><td>✓ 1 次</td><td>網格、兩兩距離</td></tr>
+<tr><td>L10</td><td>CycleGAN</td><td>✓</td><td>—（轉換）</td><td>✓ 1 次</td><td>過殺、瑕疵存活</td></tr>
+<tr><td>L11</td><td>DDPM、DDIM</td><td>✓</td><td>△ 10 類都有，距離較低</td><td>✗ 1000 次</td><td>兩兩距離、類別數、秒數</td></tr>
+<tr><td>L12</td><td>部分加噪＋DDIM</td><td>修得像，過殺比 AE 高</td><td>—（重建）</td><td>DDIM 5 步 2 ms</td><td>AUROC、過殺、每片 ms</td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-3">GAN 一次畫完但可能崩塌；擴散好訓練但要走很多步，而且不是每個任務都贏：學習評量要你用自己的數字解釋這個取捨。</div>
 
 <!--
-★ 第三天總整理（4 分）：請學員把每一列換成自己 lab 的數字。D4-1 會開始做「條件式生成」（學習評量的第二部分）。
+★ 第三天總整理（4 分）：請學員把每一列換成自己 lab 的數字。L13 會開始做「條件式生成」（學習評量的第二部分）。
 -->
 
 ---
@@ -731,7 +731,7 @@ DDIM 的主要好處？
 
 <!--
 ★ 檢核 3／3（1 分）。答案：5 B、6 C。
-全部答案與理由：1 B、2 C、3 A（B 是常見錯誤）、4 C（A 是 D3-3 的常見誤解）、5 B（A 是 t 太小）、6 C（A 錯：網路還是要訓練，只是不用「重新」訓練）。
+全部答案與理由：1 B、2 C、3 A（B 是常見錯誤）、4 C（A 是 L11 的常見誤解）、5 B（A 是 t 太小）、6 C（A 錯：網路還是要訓練，只是不用「重新」訓練）。
 -->
 
 ---
@@ -742,9 +742,9 @@ DDIM 的主要好處？
 
 <div style="font-size:18px" class="mt-2">
 
-1. 把「第三天的生成三難表格」每一列換成你自己 lab 的數字（D3-1 的兩兩距離、D3-3 的秒數、D3-4 的每片 ms）
+1. 把「第三天的生成三難表格」每一列換成你自己 lab 的數字（L09 的兩兩距離、L11 的秒數、L12 的每片 ms）
 2. 用半頁回答：行銷部的縮圖、品保部的檢測，各該用 GAN 還是擴散？代價是什麼？
-3. （選做）D3-2：找一片被 CycleGAN「抹淡」瑕疵的板子，寫三句話說明為什麼會這樣
+3. （選做）L10：找一片被 CycleGAN「抹淡」瑕疵的板子，寫三句話說明為什麼會這樣
 
 </div>
 
@@ -753,7 +753,7 @@ DDIM 的主要好處？
 <div class="takeaway mt-3">作業的重點是第 2 點：每一個「比較好」都要配上一個你量到的數字。</div>
 
 <!--
-★ 作業（3 分）：下一次上課（D4-1）開場 5 分鐘回顧。選做第 3 點用 D3-2 lab10 的 defect_survival.png。
+★ 作業（3 分）：下一次上課（L13）開場 5 分鐘回顧。選做第 3 點用 L10 lab10 的 defect_survival.png。
 -->
 
 ---
@@ -762,10 +762,10 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D4-1：指定要畫哪一類，條件式生成
+# 下一堂 L13：指定要畫哪一類，條件式生成
 
-<div class="node node--primary mt-2">今天的擴散模型只會「畫一片正常的板子」或「畫任何一件衣服」。D4-1：把類別標籤也交給去噪網路，指定要畫什麼——這是學習評量的第二部分「實作條件式生成」。</div>
+<div class="node node--primary mt-2">今天的擴散模型只會「畫一片正常的板子」或「畫任何一件衣服」。L13：把類別標籤也交給去噪網路，指定要畫什麼——這是學習評量的第二部分「實作條件式生成」。</div>
 
 <!--
-★ 下一步（1 分）：只給講師的託管版看。預告 D4-1：classifier-free guidance。
+★ 下一步（1 分）：只給講師的託管版看。預告 L13：classifier-free guidance。
 -->

@@ -11,3 +11,5 @@
 | S5 | 線性排程太快破壞資訊、後段幾乎是雜訊 → cosine 排程 | Nichol & Dhariwal, *Improved Denoising Diffusion Probabilistic Models*, ICML 2021, arXiv:2102.09672 §3.2 | 已確認（arXiv HTML 逐字） | 2026-11-25 |
 | S6 | `DDIMScheduler(num_train_timesteps, beta_start, beta_end, beta_schedule="linear")`、`set_timesteps`、`step(...).prev_sample` | diffusers 0.43.0（本機煙霧測試實際呼叫成功） | 已確認（程式可執行） | 2026-11-25 |
 | S7 | Fashion-MNIST：60,000 訓練、10,000 測試、28 × 28 | torchvision `FashionMNIST`（本機載入計數） | 已確認 | 2026-11-25 |
+| S11 | 去噪方塊示意圖（remove-one-noise.png：髒圖＋步數 → Noise Predicter → 減去 → 較乾淨圖） | 教學網站轉載（raw.githubusercontent.com/Emisaber/pic_obsidian，Pasted image 20240709152625.png）；授權未確認，僅課堂教學引用 | 待確認授權（講師指定使用） | 2026-11-26 |
+| S12 | 倒序圖 lab11-forward_strip-reversed.png | 由 lab11-run-forward_strip.png 七格重新排列（講師 T4 實跑輸出） | 已確認 | 2026-11-26 |

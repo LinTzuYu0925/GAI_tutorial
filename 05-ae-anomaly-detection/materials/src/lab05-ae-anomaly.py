@@ -39,13 +39,13 @@ EPOCHS = 30         # 沒有 GPU：改成 3
 # %%
 VISA_URL = "https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar"  # 約 1.9 GB（2026-11-24 確認）
 CATEGORY = "pcb1"        # 回家作業：換成 VisA 的其他類別，例如 "pcb2"、"capsules"
-PCB1_DIR = f"visa/{CATEGORY}"   # 或講師提供的路徑，例如 /content/drive/MyDrive/GAI/visa/pcb1
+PCB1_DIR = f"data/download/visa/{CATEGORY}"   # 或講師提供的路徑，例如 /content/drive/MyDrive/GAI/visa/pcb1
 
 if not os.path.isdir(PCB1_DIR):
-    os.makedirs("visa", exist_ok=True)
-    if not os.path.exists("visa/VisA.tar"):
-        os.system(f"wget -q -O visa/VisA.tar {VISA_URL}")
-    os.system(f"tar -xf visa/VisA.tar -C visa --wildcards '{CATEGORY}/*'")
+    os.makedirs("data/download/visa", exist_ok=True)
+    if not os.path.exists("data/download/visa/VisA.tar"):
+        os.system(f"wget -q -O data/download/visa/VisA.tar {VISA_URL}")
+    os.system(f"tar -xf data/download/visa/VisA.tar -C data/download/visa --wildcards '{CATEGORY}/*'")
 normal = sorted(glob.glob(f"{PCB1_DIR}/**/Normal/*.*", recursive=True))
 anomaly = sorted(glob.glob(f"{PCB1_DIR}/**/Anomaly/*.*", recursive=True))
 anomaly = [p for p in anomaly if "/Masks/" not in p.replace("\\", "/")]

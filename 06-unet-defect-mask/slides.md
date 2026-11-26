@@ -2,8 +2,8 @@
 theme: default
 title: 告訴我瑕疵在哪、有多大
 info: |
-  生成式AI原理 · D2-2
-  在自編碼器上加跳接，變成 U-Net；沒有瑕疵遮罩，就自己合成瑕疵來訓練，再用真實遮罩量 IoU、Dice 與面積。
+  生成式AI原理 · L06
+  在自編碼器上加跳接，變成 U-Net；用合成瑕疵加上少量真實遮罩訓練，再用沒看過的真實遮罩量 IoU、Dice 與面積。
 colorSchema: light
 fonts:
   provider: none
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D2-2</div>
+<div class="eyebrow">生成式AI原理 · L06</div>
 
 # 告訴我瑕疵在哪、有多大
 
@@ -28,7 +28,7 @@ class: cover
 <div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">AE 熱力圖太模糊</span><span class="arrow">→</span>
   <span class="chip">加跳接＝U-Net</span><span class="arrow">→</span>
-  <span class="chip">合成瑕疵</span><span class="arrow">→</span>
+  <span class="chip">合成＋少量真實遮罩</span><span class="arrow">→</span>
   <span class="chip">BCE＋Dice</span><span class="arrow">→</span>
   <span class="chip">IoU／面積</span><span class="arrow">→</span>
   <span class="chip">維修站工具</span>
@@ -45,14 +45,14 @@ class: cover
 # 維修站：不只要「有問題」，還要「在哪、多大」
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D2-2】部門：製造品保部（維修站）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L06】部門：製造品保部（維修站）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>維修站要知道每個瑕疵的位置與面積，不只是「這片有問題」</dd>
     <dt>現況痛點</dt><dd>技術員拿放大鏡找瑕疵，一片要好幾分鐘</dd>
-    <dt>成功指標（KPI）</dt><dd>在真實瑕疵遮罩上的 IoU、Dice（重疊程度，第 13 頁）；面積誤差（mm²）</dd>
-    <dt>可用資料</dt><dd>大量良品；幾乎沒有瑕疵遮罩（用 VisA PCB1；真實遮罩只拿來測試）</dd>
+    <dt>成功指標（KPI）</dt><dd>在真實瑕疵遮罩上的 IoU、Dice（重疊程度，第 16 頁）；面積誤差（mm²）</dd>
+    <dt>可用資料</dt><dd>大量良品；技術員一個下午能標約 50 張瑕疵遮罩（用 VisA PCB1：50 張拿來訓練，另外 50 張只拿來測試）</dd>
     <dt>限制與法規</dt><dd>Colab T4；不能用來路不明的紋理資料集</dd>
-    <dt>為何現有工具不夠</dt><dd>D2-1 的自編碼器只給一張模糊的誤差圖，沒有清楚的邊界</dd>
+    <dt>為何現有工具不夠</dt><dd>L05 的自編碼器只給一張模糊的誤差圖，沒有清楚的邊界</dd>
   </dl>
 </div>
 
@@ -66,13 +66,13 @@ class: cover
 
 # 今天結束時，你能夠……
 
-1. **說明**為什麼跳接適合「切割」，卻會讓 D2-1 的重建式偵測失效
+1. **說明**為什麼跳接適合「切割」，卻會讓 L05 的重建式偵測失效
 2. **建立** U-Net，對每個像素輸出瑕疵機率，並**預測**每一層的 shape
-3. **合成**瑕疵（自帶遮罩），在沒有標註的情況下訓練
+3. **合成**瑕疵（自帶遮罩），並說明為什麼還需要**少量真實遮罩**
 4. **計算** IoU、Dice 與面積（mm²），並在**真實遮罩**上驗收
 
 <!--
-★ 目標（1 分）。不教：DRAEM 的完整雙網路（第 17 頁點名）、其他切割架構（DeepLab 等）。
+★ 目標（1 分）。不教：DRAEM 的完整雙網路（第 20 頁點名）、其他切割架構（DeepLab 等）。
 -->
 
 ---
@@ -91,38 +91,73 @@ class: cover
   <div class="shot-cap">放大：刮痕只佔原圖的 0.15%</div>
 </div>
 <div>
-  <div class="placeholder" style="height:205px">D2-1 AE 的誤差熱力圖<small>講師實跑後替換</small></div>
-  <div class="shot-cap">上一堂的輸出：只有亮暗，沒有邊界</div>
+  <img class="photo" src="/lab05-bent-error.png" alt="L05 自編碼器的誤差熱力圖：黑底上零星的亮點，散在零件邊緣與彎針附近" style="width:100%">
+  <div class="shot-cap">上一堂 L05 的誤差熱力圖（另一片彎針板）：只有零星亮點，沒有邊界</div>
 </div>
 </div>
 
 <div class="takeaway mt-4">維修站要的是綠線那樣「清楚的邊界」：有邊界，才量得出面積。</div>
 
-<div class="src">影像與遮罩：VisA PCB1 第 087 張（Zou et al., 2022，CC BY 4.0，S1）；0.15% 為講師本機從遮罩計算</div>
+<div class="src">影像與遮罩：VisA PCB1 第 087 張（Zou et al., 2022，CC BY 4.0，S1）；0.15% 為講師本機從遮罩計算；熱力圖：lab05 解答筆記本「熱力圖」格，Colab T4 實跑（L05 research/lab-runs.md）</div>
 
 <!--
 ★ Frame（4 分）：先讓學員找刮痕——不放大幾乎看不到。這片板子是 HC-SR04 超音波模組（VisA PCB1 全部都是這個型號）。
-熱力圖的位置要等講師用 D2-1 的檢查點在 T4 跑出來再放；如果熱力圖剛好很準，也照實說，重點是「沒有邊界、量不出面積」。
+右邊的熱力圖來自 L05 的 T4 實跑（測試集第 2 張不良品，針腳彎掉）。它確實在彎針附近最亮，但亮點零零星星、零件邊緣也在亮：沒有一條可以拿來量面積的邊界。
+-->
+
+---
+
+<div class="eyebrow">00 · Frame · 今天的新工具</div>
+
+# U-Net：同時記得「這是什麼」和「邊界在哪」
+
+<div class="grid grid-cols-[1.35fr_1fr] gap-5 mt-0 items-center">
+<div>
+  <img class="photo" src="/unet-commons.png" alt="U-Net 架構圖：左邊往下經過 max pool，右邊往上經過 up sample，同一層之間有橫向箭頭連到 concat" style="width:100%;border:none">
+</div>
+<div style="font-size:16.5px">
+  <div class="node node--primary" style="padding:6px 12px"><strong>左邊往下（Down conv ＋ max pool）</strong><small>每次高寬減半，一格看到的範圍越來越大 → 懂「這是針腳、那是探頭」（<strong>整體的意思</strong>），但精確的邊緣位置一路流失</small></div>
+  <div class="node node--secondary mt-2" style="padding:6px 12px"><strong>右邊往上（up sample）</strong><small>放大回原尺寸，每個像素都要給答案</small></div>
+  <div class="node node--warm mt-2" style="padding:6px 12px"><strong>橫向箭頭 → concat（跳接）</strong><small>往下同一層、還保有<strong>細節</strong>的特徵圖，直接接過來</small></div>
+</div>
+</div>
+
+<div class="takeaway mt-2">往下的路負責「看懂」，橫向的跳接負責「畫準」：兩種資訊在 concat 會合，才畫得出清楚的邊界。</div>
+
+<div class="src">圖：Mehrdad Yazdani, Example architecture of U-Net…, Wikimedia Commons, CC BY-SA 4.0（S7）；原始論文：Ronneberger et al., U-Net, 2015（S2）；回顧 DL pp.72–79</div>
+
+<!--
+★ 介紹 U-Net（5 分）：先接回上一頁的問題——維修站要邊界，L05 的 AE 給不出來。
+看圖的順序：① 從左上往下走：每經過一次 max pool，圖變小一半，但每一格「看到」更大的範圍，所以越往下越懂「整體」（高階語意：這一區是探頭、這一區是針腳）。代價是位置變模糊：32×32 的一格對到原圖 8×8 個像素。
+② 從下往右上走：up sample 一路放大回 256×256。
+③ 重點在橫向箭頭：左邊每一層的輸出直接送到右邊同一層的 concat。左邊上層還是 256×256、邊緣清楚——這就是「細節」。
+一句話：瓶頸說「這是什麼」，跳接說「邊界在哪」。DL 課看過這張 U 字形的圖（DL pp.72–79），今天看它為什麼適合切割。
 -->
 
 ---
 
 <div class="eyebrow">01 · Try（先用現成的）</div>
 
-# 講師訓練好的 U-Net：遮罩疊在板子上
+# 實際比一比：AE 的誤差圖 vs U-Net 的遮罩
 
-<div class="grid grid-cols-3 gap-4 mt-2">
-<div><div class="placeholder" style="height:190px">輸入（真實不良品）<small>講師實跑後替換</small></div></div>
-<div><div class="placeholder" style="height:190px">預測遮罩（機率 &gt; 0.5）<small>講師實跑後替換</small></div></div>
-<div><div class="placeholder" style="height:190px">疊圖：紅＝預測、綠＝真實<small>講師實跑後替換（附 IoU）</small></div></div>
+<div class="grid grid-cols-[0.75fr_1.5fr] gap-5 mt-1 items-start">
+<div>
+  <img class="photo" src="/lab05-bent-error.png" alt="L05 自編碼器的誤差熱力圖：零星亮點散在零件邊緣與彎針附近" style="width:100%;max-height:220px;object-fit:contain">
+  <div class="shot-cap"><strong>L05 自編碼器</strong>（T4，彎針板）：只靠瓶頸的「整體」重建，亮點散在每條邊緣</div>
+</div>
+<div>
+  <img class="photo" src="/lab06-overlays.png" alt="三片沒看過的真實不良品：最好 IoU 0.81（焊點熔化圈得很準）、中間 0.29、最差 0（左邊探頭整片網子不見，沒圈到）" style="width:100%;border:none">
+  <div class="shot-cap"><strong>L06 U-Net</strong>（T4，紅＝預測、綠＝真實）：最好 0.81、中間 0.29、最差 0——整片探頭網子不見，訓練裡幾乎沒有這種大面積缺件</div>
+</div>
 </div>
 
-<div class="takeaway mt-4">先看結果：模型從沒看過真的瑕疵（只看過自己合成的），能圈出多少？</div>
+<div class="takeaway mt-2">整體＋細節：U-Net 直接畫出瑕疵範圍；50 張沒看過的真實不良品，平均 IoU 0.30。</div>
 
-<div class="src">模型為講師以 lab06 訓練的檢查點 unet_pcb1.pt；資料 VisA PCB1（S1）</div>
+<div class="src">左：lab05「熱力圖」格；右：lab06 v2 第 5 步 overlays.png（皆 Colab T4，見各自 research/lab-runs.md）；VisA PCB1（S1）</div>
+
 
 <!--
-★ 示範（5 分）：用 lab06 解答筆記本的 overlays.png（最好、中間、最差各一張）。一定要給學員看「最差」那張，第 27 頁的風險就是在講它。
+★ 示範（5 分）：接上一頁「整體＋細節」：左邊的 AE 只有整體，重建模糊，誤差到處都有；右邊的 U-Net 有跳接帶細節，可以直接畫出邊界。右邊用 lab06 解答筆記本的 overlays.png（最好、中間、最差各一張）。一定要給學員看「最差」那張，第 30 頁的風險就是在講它。
 -->
 
 ---
@@ -146,8 +181,8 @@ class: cover
 </svg>
 
 <div class="grid grid-cols-2 gap-6 mt-1" style="font-size:18px">
-<div class="node"><strong>D2-1 自編碼器</strong><small>輸出＝重建的影像 &#91;B, 3, H, W&#93;；所有資訊都要擠過瓶頸</small></div>
-<div class="node node--primary"><strong>D2-2 U-Net</strong><small>輸出＝每個像素一個分數 &#91;B, 1, H, W&#93;；細節走跳接，不必擠過瓶頸</small></div>
+<div class="node"><strong>L05 自編碼器</strong><small>輸出＝重建的影像 &#91;B, 3, H, W&#93;；所有資訊都要擠過瓶頸</small></div>
+<div class="node node--primary"><strong>L06 U-Net</strong><small>輸出＝每個像素一個分數 &#91;B, 1, H, W&#93;；細節走跳接，不必擠過瓶頸</small></div>
 </div>
 
 <div class="takeaway mt-3">瓶頸負責「看懂整體」，跳接負責「把邊界畫準」。</div>
@@ -165,23 +200,23 @@ class: cover
 # 跳接會把瑕疵「直接抄過去」
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
-<div class="node node--warm"><strong>D2-1 的偵測靠「修不好」</strong><small>瑕疵擠不過瓶頸 → 重建圖沒有瑕疵 → 相減後瑕疵處誤差大</small></div>
+<div class="node node--warm"><strong>L05 的偵測靠「修不好」</strong><small>瑕疵擠不過瓶頸 → 重建圖沒有瑕疵 → 相減後瑕疵處誤差大</small></div>
 <div class="node node--warm"><strong>AE 加了跳接會怎樣？</strong><small>瑕疵從跳接直接抄到輸出 → 重建得「太好」 → 誤差圖一片黑 → 漏檢</small></div>
 </div>
 
 <table class="mt-5" style="font-size:18px">
-<thead><tr><th style="width:24%"></th><th>D2-1 自編碼器</th><th>D2-2 U-Net</th></tr></thead>
+<thead><tr><th style="width:24%"></th><th>L05 自編碼器</th><th>L06 U-Net</th></tr></thead>
 <tbody>
 <tr><td>要學的答案</td><td>輸入本身（重建）</td><td>遮罩（哪些像素是瑕疵）</td></tr>
 <tr><td>跳接</td><td>不能有（會照抄）</td><td>一定要有（邊界才準）</td></tr>
-<tr><td>需要什麼資料</td><td>只要良品</td><td>要有遮罩 → 今天用合成的</td></tr>
+<tr><td>需要什麼資料</td><td>只要良品</td><td>要有遮罩 → 合成的＋少量真實的</td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-3">同一個零件，用在不同的「答案」上，效果剛好相反：架構要配合你要模型學的東西。</div>
 
 <!--
-★ 關鍵對比（5 分）：這是 D2-1 第 19 頁「照抄」（identity shortcut）的延伸。問學員：「U-Net 也會照抄，為什麼它沒問題？」→ 因為 U-Net 要輸出的是遮罩，不是輸入本身；照抄輸入得不到遮罩。
+★ 關鍵對比（5 分）：這是 L05 第 23 頁「照抄」（identity shortcut）的延伸。問學員：「U-Net 也會照抄，為什麼它沒問題？」→ 因為 U-Net 要輸出的是遮罩，不是輸入本身；照抄輸入得不到遮罩。
 -->
 
 ---
@@ -215,7 +250,7 @@ up + e3
 </div>
 </div>
 
-<div class="muted mt-2" style="font-size:17px"><code>dim=1</code> 是通道那一維（D1-3 的 &#91;B, C, H, W&#93;）：接起來之後，下一層卷積自己決定要用多少「細節」、多少「整體」。</div>
+<div class="muted mt-2" style="font-size:17px"><code>dim=1</code> 是通道那一維（L03 的 &#91;B, C, H, W&#93;）：接起來之後，下一層卷積自己決定要用多少「細節」、多少「整體」。</div>
 
 <div class="takeaway mt-3">接起來 → 通道變兩倍，所以往上那一側的卷積輸入通道要算對。</div>
 
@@ -285,62 +320,133 @@ hostOnly: true
 
 # 沒有瑕疵遮罩？自己做（DRAEM 的想法）
 
-<img class="photo mt-1" src="/synth-strip.png" alt="四格：真實良品、隨機斑塊遮罩、程式產生的彩色紋理、貼上紋理後的合成瑕疵" style="width:100%;max-height:205px;object-fit:contain;border:none">
+<img class="photo mt-1" src="/synth-strip.png" alt="五格：真實良品、板子範圍、只留在板子上的隨機斑塊、另一片板子當紋理、貼上後的合成瑕疵" style="width:100%;max-height:165px;object-fit:contain;border:none">
 
-<div class="grid grid-cols-4 gap-4 shot-cap" style="margin-top:0"><div>良品</div><div>① 遮罩</div><div>② 紋理</div><div>③ 合成瑕疵</div></div>
+<div class="grid grid-cols-5 gap-3 shot-cap text-center" style="margin-top:0"><div>良品</div><div>① 板子範圍</div><div>② 斑塊（只留板子上）</div><div>③ 紋理：另一片板子</div><div>④ 合成瑕疵</div></div>
 
-<div class="grid grid-cols-3 gap-4 mt-2" style="font-size:17px">
-<div class="node"><strong>① 遮罩</strong><small>平滑的隨機雜訊，取最亮的一小塊 → 不規則斑塊</small></div>
-<div class="node"><strong>② 紋理</strong><small>程式產生的彩色雜訊（不用來路不明的圖庫）</small></div>
-<div class="node node--warm"><strong>③ 混合</strong><small>斑塊內：原圖和紋理混在一起；斑塊外不動</small></div>
+<div class="grid grid-cols-3 gap-4 mt-1" style="font-size:16px">
+<div class="node" style="padding:6px 12px"><strong>① ② 遮罩</strong><small>平滑的隨機雜訊取最亮的一小塊 → 不規則斑塊；真實瑕疵不會在桌面上，所以只留板子上的部分</small></div>
+<div class="node" style="padding:6px 12px"><strong>③ 紋理</strong><small>從另一片良品剪一塊（轉向、平移、調亮暗）：像「零件長錯地方」，也不用來路不明的圖庫</small></div>
+<div class="node node--warm" style="padding:6px 12px"><strong>④ 混合</strong><small>斑塊內：原圖和紋理混在一起；斑塊外不動</small></div>
 </div>
 
-<div class="takeaway mt-3">每一張合成瑕疵都「自帶正確答案」：遮罩是我們畫的，所以不用人工標註。</div>
+<div class="takeaway mt-2">每一張合成瑕疵都「自帶正確答案」：遮罩是我們畫的，這部分不用人工標註。</div>
 
-<div class="src">左一為 VisA PCB1 真實良品（S1）；其餘三格由 lab06 的 <code>synth_defect</code> 在講師本機產生（random.seed(1)、SIZE 256；資料增強，不是模型輸出）；DRAEM：Zavrtanik et al., ICCV 2021（S4）</div>
+<div class="src">左一為 VisA PCB1 真實良品（S1）；其餘為 lab06 v2 第 2 步的輸出（Colab T4 實跑，random.seed(1)、SIZE 256；資料增強，不是模型輸出）；DRAEM：Zavrtanik et al., ICCV 2021（S4）</div>
 
 <!--
-★ 合成瑕疵（6 分）：DRAEM 原論文用 Perlin 雜訊做遮罩、DTD 紋理資料集當紋理；我們把紋理換成程式產生的雜訊，避開紋理資料集的授權問題（需求單的限制）。
+★ 合成瑕疵（6 分）：DRAEM 原論文用 Perlin 雜訊做遮罩、DTD 紋理資料集當紋理；我們把紋理換成「另一片良品」，避開紋理資料集的授權問題（需求單的限制）。
+第一版用程式產生的彩色雜訊當紋理、斑塊也會落在桌面上——下一頁會看到它在真實瑕疵上完全失敗。
 一半的訓練圖不加瑕疵：模型也要學會回答「這片沒有」。
 -->
 
 ---
 
-<div class="eyebrow">03 · Adapt · 損失函數</div>
+<div class="eyebrow">03 · Adapt · 只靠合成，夠嗎？</div>
 
-# 損失：逐像素 BCE ＋ Dice
+# 只用合成瑕疵訓練：真實瑕疵一個都沒圈到
 
-<div class="grid grid-cols-[1fr_1.15fr] gap-6 mt-2">
+<div class="grid grid-cols-[1.35fr_1fr] gap-5 mt-0 items-start">
 <div>
-
-<div class="node"><strong>BCE（二元交叉熵）</strong><small>每個像素都是一題「瑕疵／背景」的是非題（DL 課的二元分類）</small></div>
-
-<div class="node node--warm mt-3"><strong>問題：瑕疵太少</strong><small>真實瑕疵常不到畫面的 1%：全部猜「背景」，BCE 就很低</small></div>
-
+  <img class="photo" src="/lab06-v1-overlays.png" alt="三片真實不良品的疊圖：綠線是人工標的瑕疵，模型沒有塗任何紅色，三張的 IoU 都是 0.00" style="width:100%;border:none">
+  <div class="shot-cap">第一版的 T4 實跑：綠線＝真實瑕疵，紅色＝模型預測——一點紅都沒有</div>
 </div>
-<div style="font-size:18px">
+<div style="font-size:16px">
 
-**4×4 的例子**：16 個像素裡 2 個是瑕疵
+<table style="font-size:16px">
+<thead><tr><th></th><th>平均 IoU</th></tr></thead>
+<tbody>
+<tr><td>合成瑕疵上</td><td>0.800</td></tr>
+<tr><td>真實瑕疵上（100 張）</td><td class="key">0.000</td></tr>
+</tbody>
+</table>
 
-| 預測 | 像素正確率 | Dice |
-|---|---|---|
-| 全部猜背景 | 14／16 ＝ 87.5% | 0 |
-| 圈對那 2 個 | 16／16 ＝ 100% | 1 |
-
-```python
-loss = bce(logits, m) + (1 - dice(sigmoid(logits), m))
-```
+<div class="node node--warm mt-2" style="padding:6px 12px"><strong>兩個原因</strong><small>① 合成瑕疵是彩色雜訊、常落在桌面上，不像真的彎針、刮痕　② 沒瑕疵的圖也算 Dice：「什麼都不畫」就滿分，模型學會偷懶</small></div>
+<div class="node node--primary mt-2" style="padding:6px 12px"><strong>今天的做法</strong><small>合成改得更像＋<strong>技術員標 50 張</strong>（40 訓練、10 驗證）；Dice 只算有瑕疵的圖；另外 50 張只測試</small></div>
 
 </div>
 </div>
 
-<div class="muted" style="font-size:16px">讀作：<code>m</code>＝真實遮罩、<code>logits</code>＝模型輸出（還沒變成機率）；Dice 越大越好，所以用「1 − Dice」當損失。Dice 的算法在下一頁。</div>
+<div class="takeaway mt-1">合成資料分數高，只代表模型學會了「我們的合成規則」；要在沒看過的真實遮罩上驗收。</div>
 
-<div class="takeaway mt-2">BCE 管每個像素；Dice 只看「瑕疵那幾個像素有沒有對到」，所以不會被大片背景騙。</div>
+<div class="src">實跑：lab06 第一版解答筆記本，Colab T4，20 epochs、372 秒（research/lab-runs.md，2026-11-26 紀錄）；VisA PCB1（CC BY 4.0，S1）</div>
 
 <!--
-★ 損失（6 分）：Dice 的公式下一頁說。sigmoid 把 logit 變成 0–1 的機率（DL 課的二元分類最後一層）。
-BCEWithLogitsLoss 會自己做 sigmoid，所以 BCE 那一項直接吃 logits。
+★ 失敗的實跑（4 分）：這是真的發生過的事，不是編的。講師第一次在 T4 上跑 lab06，合成瑕疵上 IoU 0.80，看起來很成功；換成真實不良品，100 張全部 0。
+問學員：「如果只看合成資料的分數，你會不會就交差了？」——這就是為什麼驗收一定要用真實、沒看過的資料。
+失敗有兩個原因（講師本機 CPU 實驗確認，research/lab-runs.md）：① 合成的彩色雜訊和真實瑕疵差太多——修好損失之後，只用這種合成資料，真實 IoU 還是接近 0；② 損失函數的陷阱：沒有瑕疵的圖也算 Dice，「什麼都不畫」就拿滿分，模型訓練到一半會突然變成什麼都不畫（下一頁的 Dice 會再提）。
+改法：合成規則更像真的（只貼在板子上、用別片板子當紋理）；花一個下午標 50 張真實遮罩（工廠裡最有效：標 50 張比標 5,000 張便宜得多）；Dice 只算有瑕疵的圖；用 10 張驗證圖挑最好的 epoch。
+-->
+
+---
+
+<div class="eyebrow">03 · Adapt（調整）· 損失函數 ①</div>
+
+# BCE：每個像素都是一題「是不是瑕疵」的是非題
+
+<div class="grid grid-cols-[1.05fr_1fr] gap-6 mt-1 items-start">
+<div>
+
+$$\text{BCE} = -\big[\, y \log p \;+\; (1-y) \log (1-p) \,\big]$$
+
+<div style="font-size:17px" class="mt-1">
+
+- <strong>y</strong>：正確答案（1＝瑕疵、0＝背景）
+- <strong>p</strong>：模型說「是瑕疵」的機率（0–1）
+- 兩項只會有一項起作用：答案是瑕疵看左項，答案是背景看右項
+- 整張圖的 BCE ＝ 每個像素罰分的<strong>平均</strong>
+
+</div>
+</div>
+<div>
+
+<table style="font-size:17px">
+<thead><tr><th>正確答案</th><th>模型猜 p</th><th>罰分</th></tr></thead>
+<tbody>
+<tr><td>瑕疵（y＝1）</td><td>0.9（猜對、有把握）</td><td>0.11</td></tr>
+<tr><td>瑕疵（y＝1）</td><td>0.1（猜錯、很有把握）</td><td class="key">2.30</td></tr>
+<tr><td>背景（y＝0）</td><td>0.1（猜對、有把握）</td><td>0.11</td></tr>
+<tr><td>背景（y＝0）</td><td>0.9（猜錯、很有把握）</td><td class="key">2.30</td></tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+<div class="takeaway mt-3">白話：猜對就少罰，<strong>猜錯又很有把握就重罰</strong>。DL 課的二元分類用的就是它，今天只是每個像素各算一次。</div>
+
+<div class="src">罰分由公式直接計算（自然對數）：−log 0.9 ≈ 0.11、−log 0.1 ≈ 2.30</div>
+
+<!--
+★ BCE（4 分）：BCE（Binary Cross-Entropy，二元交叉熵）。不推導，只讀公式：y 是答案、p 是模型的信心。
+帶學員念一次：「答案是瑕疵時，罰分是 −log p：p 越接近 1，罰越少」。表格右邊兩個 2.30 就是「猜錯又很有把握」。
+DL 課的二元分類最後一層是 sigmoid＋binary_crossentropy，今天一模一樣，只是一張 256×256 的圖有 65,536 題。
+-->
+
+---
+
+<div class="eyebrow">03 · Adapt · 損失函數 ②</div>
+
+# 問題：全部猜「背景」，BCE 就很低
+
+<div class="grid grid-cols-3 gap-5 mt-1" style="font-size:16px">
+<div class="text-center"><div class="pxg"><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px px-d"></i><i class="px px-d"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px px-d"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i></div><div class="mt-1"><strong>正確答案</strong><br><span class="muted">100 個像素，3 個是瑕疵（橘）</span></div></div>
+<div class="text-center"><div class="pxg"><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-bad"></i><i class="px px-bad"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-bad"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i></div><div class="mt-1"><strong>預測 A：全部猜背景</strong><br><span class="muted">每個像素都給 p＝0.03</span><br>像素正確率 97%<br>BCE <strong>0.135：已經很低</strong><br>Dice <span class="key">0：完全沒對到</span></div></div>
+<div class="text-center"><div class="pxg"><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i><i class="px px-ok"></i></div><div class="mt-1"><strong>預測 B：圈對瑕疵</strong><br><span class="muted">瑕疵給 0.9、背景給 0.03</span><br>像素正確率 100%<br>BCE 0.033<br>Dice 1：完全對到</div></div>
+</div>
+
+<div class="muted text-center mt-1" style="font-size:15px"><span style="color:#16847a">綠</span>＝這格猜對、<span style="color:#c0392b">紅</span>＝這格猜錯；Dice 以「機率 &gt; 0.5 算瑕疵」計算</div>
+
+<div class="takeaway mt-1">3 個紅格子罰得很重，但被 97 個綠格子平均掉了。所以再加上只看瑕疵的 Dice：<code>bce(logits, m) + (1 - dice(sigmoid(logits), m))</code></div>
+
+<div class="src">教學示意（10×10），BCE 由公式計算。真實 PCB1 瑕疵平均只佔畫面 0.93%（research/lab-runs.md），比 3% 更少，平均掉得更嚴重</div>
+
+<!--
+★ 全猜背景（4 分）：讓學員先看中間那張：97 格綠、3 格紅，「準確率 97%」聽起來很厲害，但維修站要的那 3 格全錯。
+BCE 0.135 是怎麼來的：3 個瑕疵格各罰 −log 0.03 ≈ 3.5，97 個背景格各罰 −log 0.97 ≈ 0.03，平均下來只有 0.135。
+Dice 的算法在下一頁；這裡只要知道：它只看「瑕疵那幾格有沒有對到」，所以全猜背景會得到 0。
+程式讀法：m＝真實遮罩、logits＝模型輸出（還沒變成機率）；BCEWithLogitsLoss 會自己做 sigmoid。
+筆記本裡多一個細節：Dice 只算「有瑕疵的那幾張」。沒有瑕疵的圖如果也算 Dice，「什麼都不畫」就拿到滿分——第一版就是這樣訓練到一半突然什麼都不畫（第 13 頁）。
 -->
 
 ---
@@ -491,20 +597,37 @@ area = mask.sum() * PX_MM2
 
 <div class="eyebrow">附錄 · 選修</div>
 
-# DRAEM 的完整做法：兩個網路
+# DRAEM 的完整做法：兩個網路，先修好、再比較
 
-<div class="flex items-center justify-center gap-3 mt-6" style="font-size:18px">
-  <div class="node" style="width:22%">合成瑕疵影像</div><span class="arrow">→</span>
-  <div class="node node--secondary" style="width:26%"><strong>重建網路</strong><small>像 D2-1 的 AE：把瑕疵「修掉」</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:26%"><strong>判別網路（U-Net）</strong><small>把原圖和修好的圖「接起來」一起看，畫出遮罩</small></div>
+<div class="flex items-center justify-center gap-2 mt-2" style="font-size:15.5px">
+  <div class="text-center" style="width:12%"><img class="photo" src="/draem-synth.png" alt="合成瑕疵影像" style="width:100%"><div class="shot-cap">合成瑕疵影像</div></div>
+  <span class="arrow">→</span>
+  <div class="node node--secondary text-center" style="width:17%"><strong>重建網路</strong><small>編碼器－解碼器（像 L05 的 AE）</small></div>
+  <span class="arrow">→</span>
+  <div class="text-center" style="width:12%"><img class="photo" src="/draem-good.png" alt="修好的影像（目標是原本的良品）" style="width:100%"><div class="shot-cap">修好的圖<br>（目標＝原本的良品）</div></div>
+  <span class="arrow">→</span>
+  <div class="node node--warm text-center" style="width:15%"><strong>接起來</strong><small>原圖＋修好的圖<br>（6 通道）</small></div>
+  <span class="arrow">→</span>
+  <div class="node node--primary text-center" style="width:16%"><strong>判別網路</strong><small>U-Net：哪裡不一樣？</small></div>
+  <span class="arrow">→</span>
+  <div class="text-center" style="width:12%"><img class="photo" src="/draem-mask.png" alt="瑕疵遮罩" style="width:100%"><div class="shot-cap">瑕疵遮罩</div></div>
 </div>
 
-<div class="takeaway mt-8">DRAEM ＝ D2-1 的重建 ＋ 今天的 U-Net：先修好，再比較兩張圖哪裡不同。</div>
+<div class="grid grid-cols-3 gap-4 mt-3" style="font-size:16px">
+<div class="node"><strong>重建網路的損失</strong><small>修好的圖 vs 原本的良品（L2 ＋ SSIM）</small></div>
+<div class="node"><strong>判別網路的損失</strong><small>預測遮罩 vs 合成時畫的遮罩（Focal loss，和 BCE 同一家族）</small></div>
+<div class="node node--primary"><strong>今天的 Lab</strong><small>只做右半邊：U-Net 直接看原圖，沒有「修好的圖」可以比</small></div>
+</div>
 
-<div class="src">Zavrtanik et al., DRAEM, ICCV 2021（S4）</div>
+<div class="takeaway mt-3">DRAEM ＝ L05 的重建 ＋ 今天的 U-Net：判別網路看的是「原圖和修好的圖哪裡不同」，比只看原圖容易得多。</div>
+
+<div class="src">依 Zavrtanik et al., DRAEM, ICCV 2021, Fig. 3 重繪（S4；原圖見 arxiv.org/abs/2108.07610，授權 CC BY-NC-SA 4.0，非商用，故不直接放）；縮圖為 lab06 的合成瑕疵（講師本機，示意，不是 DRAEM 的輸出）</div>
 
 <!--
-○ 選修（3 分）：今天的 lab 只做第二個網路（直接看原圖）。學員專題要更準時，可以把 D2-1 的 AE 輸出也接進 U-Net 當第 4–6 個通道。
+○ 選修（3 分）：對照論文 Fig. 3 講：左邊重建網路把瑕疵「修掉」（L05 的想法），中間把原圖和修好的圖在通道維度接起來（今天的 concat），右邊 U-Net 判斷兩張圖哪裡不同，輸出遮罩。
+中間那張「修好的圖」是示意：我們放的是合成前的良品，也就是重建網路「應該」修成的樣子，不是真的模型輸出。
+為什麼不直接放論文的圖：arXiv 上這篇的授權是 CC BY-NC-SA 4.0（非商用），和 L05 不用 MVTec AD 是同一個理由。講師上課可以直接開 arXiv 頁面給學員看原圖。
+學員專題要更準時，可以把 L05 的 AE 輸出也接進 U-Net 當第 4–6 個通道。
 -->
 
 ---
@@ -514,14 +637,14 @@ area = mask.sum() * PX_MM2
 # U-Net 還會回來：擴散模型的去雜訊器
 
 <div class="grid grid-cols-2 gap-6 mt-5" style="font-size:18px">
-<div class="node"><strong>今天（D2-2）</strong><small>輸入：PCB 影像 → 輸出：每個像素「是不是瑕疵」</small></div>
-<div class="node node--primary"><strong>D3-3 擴散模型</strong><small>輸入：加了雜訊的影像 → 輸出：每個像素「雜訊是多少」</small></div>
+<div class="node"><strong>今天（L06）</strong><small>輸入：PCB 影像 → 輸出：每個像素「是不是瑕疵」</small></div>
+<div class="node node--primary"><strong>L11 擴散模型</strong><small>輸入：加了雜訊的影像 → 輸出：每個像素「雜訊是多少」</small></div>
 </div>
 
 <div class="takeaway mt-6">輸入和輸出一樣大、要逐像素回答的工作，U-Net 都是常見選擇。</div>
 
 <!--
-○ 預告（2 分）：Stable Diffusion 的去雜訊網路就是一個（加了注意力的）U-Net。D3-3 的去雜訊 U-Net 結構和今天很像，但還要多一個輸入：現在是第幾步（timestep），所以不能原封不動搬過去。
+○ 預告（2 分）：Stable Diffusion 的去雜訊網路就是一個（加了注意力的）U-Net。L11 的去雜訊 U-Net 結構和今天很像，但還要多一個輸入：現在是第幾步（timestep），所以不能原封不動搬過去。
 -->
 
 ---
@@ -532,7 +655,7 @@ area = mask.sum() * PX_MM2
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
 <div class="node node--warm"><strong>現象</strong><small>預測遮罩或影像出現規則的格子狀紋路</small></div>
-<div class="node"><strong>原因與解法</strong><small>ConvTranspose 的核大小不能被 stride 整除時，有些像素被「蓋」到兩次。主要解法：換成「先 Upsample 再卷積」（D2-1 第 9 頁的方法二）</small></div>
+<div class="node"><strong>原因與解法</strong><small>ConvTranspose 的核大小不能被 stride 整除時，有些像素被「蓋」到兩次。主要解法：換成「先 Upsample 再卷積」（L05 第 12 頁的方法二）</small></div>
 </div>
 
 <div class="takeaway mt-6">今天的 <code>ConvTranspose2d(…, 2, stride=2)</code> 核大小＝stride，不會重疊；學員自己改架構時才會遇到。</div>
@@ -556,19 +679,20 @@ area = mask.sum() * PX_MM2
 執行階段：**T4 GPU**<br>
 資料：VisA PCB1（新的執行階段會重新下載約 1.9 GB；建議講師放共用雲端硬碟）
 
-1. 只看過**合成**瑕疵的 U-Net，能圈出**真實**瑕疵嗎？
+1. 用合成瑕疵＋50 張真實遮罩訓練的 U-Net，能圈出**沒看過的**真實瑕疵嗎？
 2. 在真實遮罩上，IoU、Dice 是多少？
 3. 面積估得準嗎（mm²）？
 
 </div>
 <div>
 
-<div class="placeholder" style="height:250px">目標：最好／中間／最差三張疊圖、IoU、Dice、面積誤差<small>講師實跑後換成真實輸出</small></div>
+<img class="photo" src="/lab06-overlays.png" alt="最好、中間、最差三張疊圖：IoU 0.81、0.29、0.00" style="width:100%;border:none">
+<div class="shot-cap">講師實跑（Colab T4，v2）：50 張沒看過的真實不良品，平均 IoU 0.304、Dice 0.411；11 張完全沒對到</div>
 
 </div>
 </div>
 
-<div class="takeaway mt-3">驗收看的是<strong>真實</strong>遮罩上的成績，不是合成瑕疵上的。</div>
+<div class="takeaway mt-3">驗收看的是<strong>沒看過的真實</strong>遮罩上的成績，不是合成瑕疵上的。</div>
 
 <!--
 ★ Lab 開始（3 分）：先執行前兩格（下載與讀圖），等待時講下一頁。
@@ -581,15 +705,15 @@ area = mask.sum() * PX_MM2
 
 # Lab 2／7：筆記本拆成哪幾塊？
 
-<div class="mt-3" style="font-size:17px"><strong>訓練（只用良品）</strong></div>
+<div class="mt-3" style="font-size:17px"><strong>訓練（良品＋技術員標的 50 張）</strong></div>
 <div class="flex items-center gap-2 mt-1" style="font-size:17px">
-  <div class="node"><code>X_good</code><small class="nw">&#91;N,3,256,256&#93;</small></div><span class="arrow">→</span>
+  <div class="node"><code>X_good</code>＋<code>X_lab</code><small>良品＋40 張真實遮罩</small></div><span class="arrow">→</span>
   <div class="node node--warm"><code>synth_defect</code><small class="nw">&#91;3,H,W&#93;＋&#91;1,H,W&#93;</small></div><span class="arrow">→</span>
   <div class="node node--primary"><code>UNet</code><small>logits &#91;B,1,H,W&#93;</small></div><span class="arrow">→</span>
   <div class="node"><code>loss_fn</code><small>BCE＋(1−Dice)</small></div>
 </div>
 
-<div class="mt-4" style="font-size:17px"><strong>驗收（只用真實不良品）</strong></div>
+<div class="mt-4" style="font-size:17px"><strong>驗收（另外 50 張，訓練沒看過）</strong></div>
 <div class="flex items-center gap-2 mt-1" style="font-size:17px">
   <div class="node"><code>X_bad</code>、<code>M_bad</code><small>真實影像與遮罩</small></div><span class="arrow">→</span>
   <div class="node"><code>predict</code><small>機率 &gt; 0.5</small></div><span class="arrow">→</span>
@@ -600,7 +724,7 @@ area = mask.sum() * PX_MM2
 <div class="takeaway mt-4">五個 TODO：<code>synth_defect</code> 的混合、<code>UNet.forward</code> 往上三次、<code>loss_fn</code>、<code>iou_dice</code>、面積。</div>
 
 <!--
-★ 拆塊（3 分）：訓練和驗收用的資料完全分開：真實不良品從頭到尾沒進過訓練。
+★ 拆塊（3 分）：訓練和驗收用的資料完全分開：100 張真實不良品先洗牌，前 50 張（X_lab）進訓練，後 50 張（X_bad）從頭到尾沒進過訓練。
 -->
 
 ---
@@ -609,27 +733,28 @@ area = mask.sum() * PX_MM2
 
 # Lab 3／7：先檢查合成瑕疵，再訓練
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2" style="font-size:18px">
+<div class="grid grid-cols-[1.25fr_1fr] gap-5 mt-1 items-start">
 <div>
+  <img class="photo" src="/train-batch.png" alt="八張訓練樣本，紅線是遮罩邊界：上排是良品加合成瑕疵或沒有瑕疵，下排是技術員標的真實不良品（彎針、刮痕、焊錫）" style="width:100%;border:none">
+  <div class="shot-cap">筆記本第 2 步的「批次網格」：上排合成、下排真實（Colab T4 實跑，SIZE 256）</div>
+</div>
+<div style="font-size:17px">
 
-執行「合成瑕疵」那兩格，回答：
+執行第 2 步的三格，回答：
 
-1. 遮罩的白色斑塊，和第四格的瑕疵位置一樣嗎？
-2. 一個批次 16 張裡，有瑕疵的大約幾張？（應該接近一半）
-3. 合成瑕疵看起來像真的刮痕或焊錫熔化嗎？哪裡不像？
+1. 紅線（遮罩）和瑕疵的位置對得上嗎？
+2. 上排有沒有斑塊落在桌面上？（應該沒有）
+3. 合成瑕疵和下排真的瑕疵，哪裡像、哪裡不像？
+
+<div class="node node--warm mt-2"><strong>為什麼要先看</strong><small>資料錯了（遮罩沒對齊、全部都有瑕疵），loss 照樣會降——但學到的是錯的東西</small></div>
 
 </div>
-<div>
-
-<div class="node node--warm"><strong>為什麼要先看</strong><small>合成資料錯了（遮罩和瑕疵沒對齊、全部都有瑕疵），模型照樣會訓練、loss 照樣會降——但學到的是錯的東西</small></div>
-
-</div>
 </div>
 
-<div class="takeaway mt-4">訓練之前先看資料：這是第 6／7 頁稽核的第一題。</div>
+<div class="takeaway mt-2">訓練之前先看資料：這是第 6／7 頁稽核的第一題。</div>
 
 <!--
-★ 檢查（4 分）：第 3 題沒有標準答案。合成的瑕疵多半是「彩色的斑」，真實的 PCB1 瑕疵是彎針、熔化、刮痕、缺件——這個落差就是第 27 頁的風險。
+★ 檢查（4 分）：第 3 題沒有標準答案。合成的瑕疵是「別片板子的一塊貼錯地方」，真實的 PCB1 瑕疵是彎針、熔化、刮痕、缺件——這個落差就是為什麼還要 50 張真實遮罩，也是風險頁要講的。
 -->
 
 ---
@@ -640,10 +765,10 @@ area = mask.sum() * PX_MM2
 
 <div style="font-size:18px" class="mt-2">
 
-<strong>【目標】</strong>只用良品＋合成瑕疵訓練 U-Net，對每個像素輸出瑕疵機率<br>
+<strong>【目標】</strong>用良品＋合成瑕疵＋50 張真實遮罩訓練 U-Net，對每個像素輸出瑕疵機率<br>
 <strong>【輸入與輸出】</strong>PCB 影像 <code>&#91;B, 3, 256, 256&#93;</code>（0–1）→ logits <code>&#91;B, 1, 256, 256&#93;</code><br>
-<strong>【限制】</strong>真實不良品與遮罩<strong>只用來驗收</strong>；Colab T4；每個 epoch 存檢查點<br>
-<span class="muted" style="font-size:16px">為什麼：真實遮罩一進訓練，驗收分數就不再代表「沒看過的瑕疵」</span><br>
+<strong>【限制】</strong>測試用的 50 張真實不良品<strong>不能進訓練</strong>，也不能拿來挑 epoch（用 10 張驗證圖）；Colab T4；只存驗證 IoU 最好的檢查點<br>
+<span class="muted" style="font-size:16px">為什麼：測試的遮罩一進訓練，驗收分數就不再代表「沒看過的瑕疵」</span><br>
 <strong>【驗收】</strong>① shape 表和練習頁一致　② loss 下降　③ 在真實遮罩上回報平均 IoU、Dice 與最差的一張　④ 面積用 mm² 回報
 
 </div>
@@ -662,14 +787,14 @@ area = mask.sum() * PX_MM2
 這是 PyTorch 筆記本，請只填五個 # TODO：<br>
 ① synth_defect：斑塊內換成 beta*x ＋ (1−beta)*紋理，斑塊外不動<br>
 ② UNet.forward：往上三次，每次 up 放大後和同層的 e 用 torch.cat（dim=1）接起來，再進 dec；最後 head<br>
-③ loss_fn：BCEWithLogits ＋（1 − 平均 Dice），Dice 用 sigmoid 後的機率<br>
+③ loss_fn：BCEWithLogits ＋（1 − 有瑕疵那幾張的平均 Dice），Dice 用 sigmoid 後的機率<br>
 ④ iou_dice：每張的 IoU 與 Dice，分母為 0 時記 1.0<br>
 ⑤ 面積：像素數 × PX_MM2<br>
-不要把真實遮罩放進訓練。每一格說明每一行在做什麼。
+不要把測試用的 X_bad、M_bad 放進訓練。每一格說明每一行在做什麼。
 </PromptBox>
 
 <div class="steps mt-2" style="font-size:17px">
-  <div><span class="num">1</span>訓練時間待 T4 實測；等待時看 loss 有沒有往下</div>
+  <div><span class="num">1</span>20 epochs 約 13 分鐘（講師 T4 實測 777 秒，VRAM 峰值 3.41 GB）；等待時看驗證 IoU 有沒有往上</div>
   <div><span class="num">2</span>沒有 Agent 額度：照「接起來」、「損失」、「IoU 與 Dice」、「面積」四頁的程式填；卡住開 <code>-solution.ipynb</code></div>
 </div>
 
@@ -686,19 +811,19 @@ area = mask.sum() * PX_MM2
 <table style="font-size:17px">
 <thead><tr><th style="width:30%">稽核問題</th><th>具體動作</th><th style="width:32%">應該是</th></tr></thead>
 <tbody>
-<tr><td>合成資料對齊嗎？</td><td>看條帶圖：遮罩和瑕疵位置一樣</td><td>一樣；約一半有瑕疵</td></tr>
-<tr><td>訓練有沒有用到真實遮罩？</td><td>找 <code>M_bad</code> 出現在哪幾格</td><td>只在驗收格</td></tr>
-<tr><td>Dice 用的是機率還是 logits？</td><td>看 <code>loss_fn</code></td><td><code>sigmoid(logits)</code></td></tr>
-<tr><td>合成 vs 真實差多少？</td><td>比較兩行 IoU</td><td>合成的通常高很多（實測後填入）</td></tr>
+<tr><td>合成資料對齊嗎？</td><td>看批次網格：紅線和瑕疵位置一樣</td><td>一樣；斑塊都在板子上</td></tr>
+<tr><td>測試的遮罩有沒有混進訓練？</td><td>找 <code>M_bad</code> 出現在哪幾格</td><td>只在驗收格；訓練只用 <code>M_lab</code></td></tr>
+<tr><td>Dice 用的是機率還是 logits？只算有瑕疵的圖嗎？</td><td>看 <code>loss_fn</code></td><td><code>sigmoid(logits[has])</code></td></tr>
+<tr><td>合成 vs 真實差多少？</td><td>比較兩行 IoU</td><td>合成較高（T4：0.47 vs 0.30）</td></tr>
 <tr><td>最差的一張錯在哪？</td><td>看最差那張疊圖</td><td>說出是哪一類瑕疵</td></tr>
-<tr><td>面積合理嗎？</td><td>看三張的預測與真實 mm²</td><td>同一個數量級（實測後填入）</td></tr>
+<tr><td>面積合理嗎？</td><td>看三張的預測與真實 mm²</td><td>小瑕疵接近（T4：7.10 vs 6.78 mm²）；大片缺件會嚴重低估（0.63 vs 216.5）</td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-3">一次只改一件事：例如合成瑕疵加一種「細長的線」（像刮痕），比較真實 IoU。</div>
 
 <!--
-★ 稽核（8 分）：最常見錯誤：Agent 把真實不良品也丟進訓練（「資料多一點比較好」）→ 真實 IoU 變得很漂亮，但已經不能代表沒看過的瑕疵。
+★ 稽核（8 分）：最常見錯誤：Agent 把測試用的 50 張也丟進訓練（「資料多一點比較好」）→ 真實 IoU 變得很漂亮，但已經不能代表沒看過的瑕疵。
 -->
 
 ---
@@ -707,8 +832,7 @@ area = mask.sum() * PX_MM2
 
 # Lab 7／7：Gradio 維修站工具
 
-<div class="grid grid-cols-[1.3fr_1fr] gap-5 mt-1">
-<div>
+<div class="smallcode">
 
 ```python
 def locate(img):
@@ -722,19 +846,19 @@ gr.Interface(fn=locate, inputs=gr.Image(type="pil"),
 ```
 
 </div>
+
+<div class="grid grid-cols-[1.35fr_1fr] gap-5 mt-2 items-start">
 <div>
-
-<div class="placeholder" style="height:200px">維修站工具畫面<small>講師實跑後替換</small></div>
-
+  <div class="shot"><img src="/lab06-gradio-ui.png" alt="lab06 的 Gradio 維修站工具：左邊上傳 PCB 影像，右邊顯示紅色預測瑕疵與面積" /></div>
+  <div class="shot-cap">講師實跑截圖（Colab T4，尚未上傳圖片時的畫面）</div>
 </div>
+<div class="muted" style="font-size:16px">讀作：<code>tf</code> 縮成 256×256；機率 &gt; 0.5 的像素算瑕疵；像素數 × <code>PX_MM2</code>（一個像素幾 mm²）＝面積；<code>overlay</code> 把瑕疵像素塗紅。</div>
 </div>
 
-<div class="muted mt-2" style="font-size:16px">讀作：<code>tf</code> 縮成 256×256；機率 &gt; 0.5 的像素算瑕疵；像素數 × <code>PX_MM2</code>（一個像素幾 mm²）＝面積；<code>overlay</code> 把瑕疵像素塗紅。</div>
-
-<div class="takeaway mt-2">D2-1 的檢測站回答「要不要送修」；今天的工具回答「修哪裡、多大」。</div>
+<div class="takeaway mt-2">L05 的檢測站回答「要不要送修」；今天的工具回答「修哪裡、多大」。</div>
 
 <!--
-★ Ship（4 分）：overlay() 在筆記本裡把預測的像素塗紅。可以和 D2-1 的檢測站放在同一個 gr.Blocks 裡（D1-4 提過）。
+★ Ship（4 分）：overlay() 在筆記本裡把預測的像素塗紅。可以和 L05 的檢測站放在同一個 gr.Blocks 裡（L04 提過）。
 -->
 
 ---
@@ -744,21 +868,22 @@ gr.Interface(fn=locate, inputs=gr.Image(type="pil"),
 # 風險：合成的瑕疵不等於真實的瑕疵
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
-<div class="node node--warm"><strong>模型只學到「彩色斑塊」</strong><small>真實 PCB1 的瑕疵是彎針、焊錫熔化、刮痕、缺件；合成資料沒有涵蓋的類型，模型可能完全看不到</small></div>
-<div class="node"><strong>一定要在真實遮罩上驗收</strong><small>合成資料上的 IoU 只代表「模型學會了我們的合成規則」</small></div>
+<div class="node node--warm"><strong>合成資料沒涵蓋的瑕疵，模型可能完全看不到</strong><small>第一版只用合成瑕疵：真實 IoU 0（第 13 頁）。標的 50 張也只涵蓋彎針、熔化、刮痕、缺件四類；產線上出現第五類，一樣可能漏掉</small></div>
+<div class="node"><strong>一定要在沒看過的真實遮罩上驗收</strong><small>合成資料上的 IoU 只代表「模型學會了我們的合成規則」；拿訓練用過的遮罩來驗收也不算</small></div>
 </div>
 
 <table class="mt-4" style="font-size:18px">
-<thead><tr><th></th><th>合成瑕疵上</th><th>真實遮罩上</th></tr></thead>
+<thead><tr><th></th><th>合成瑕疵上</th><th>沒看過的真實遮罩上</th></tr></thead>
 <tbody>
-<tr><td>平均 IoU</td><td>講師實跑後填入</td><td>講師實跑後填入</td></tr>
+<tr><td>第一版：只用合成（T4 實跑）</td><td>0.800</td><td>0.000（100 張）</td></tr>
+<tr><td>今天的版本：合成＋40 張真實（T4 實跑）</td><td>0.468</td><td class="key">0.304（50 張；11 張是 0）</td></tr>
 </tbody>
 </table>
 
 <div class="takeaway mt-3">合成資料讓你「開始」，真實資料決定你「能不能上線」。</div>
 
 <!--
-★ 風險（4 分）：數字來自 lab06 驗收格的兩行輸出。如果真實 IoU 很低，就照實說：這是誠實的基準線；改進方向是讓合成規則更像真實瑕疵，或收集少量真實遮罩微調。
+★ 風險（4 分）：兩列都是 T4 實跑（research/lab-runs.md）。0.30 不是很高：50 張裡 11 張完全沒對到，最差的是整片探頭網子不見這種大面積缺件——訓練的 40 張裡幾乎沒有。真實 IoU 一定比合成低很多，照實說：這是誠實的基準線。上線前還要定期收集新的瑕疵、補標遮罩。
 -->
 
 ---
@@ -771,13 +896,13 @@ gr.Interface(fn=locate, inputs=gr.Image(type="pil"),
   <span class="chip">位置＋面積</span><span class="arrow">→</span>
   <span class="chip">跳接＝U-Net</span><span class="arrow">→</span>
   <span class="chip">AE 不能加跳接</span><span class="arrow">→</span>
-  <span class="chip">合成瑕疵</span><span class="arrow">→</span>
+  <span class="chip">合成＋少量真實遮罩</span><span class="arrow">→</span>
   <span class="chip">BCE＋Dice</span><span class="arrow">→</span>
   <span class="chip">IoU／Dice</span><span class="arrow">→</span>
   <span class="chip">mm²</span>
 </div>
 
-<div class="takeaway mt-6">跳接讓每個像素都能回答；合成資料解決「沒有標註」；真實遮罩才是驗收。</div>
+<div class="takeaway mt-6">跳接讓每個像素都能回答；合成資料讓標註少一點，少量真實遮罩讓模型看得到真的瑕疵；沒看過的真實遮罩才是驗收。</div>
 
 <!--
 ★ 總整理（2 分）：請學員用一句話回答「為什麼 AE 不能加跳接，U-Net 卻一定要」。常見錯答：「U-Net 比較新」——重點是兩個模型要學的答案不同（重建 vs 遮罩）。
@@ -800,7 +925,7 @@ U-Net 的跳接把往下那一層的特徵圖怎麼處理？
   :options="['會變慢', '參數太多', '瑕疵會被直接抄到輸出，誤差變小', '不能用 GPU']"
   :why="['跳接只多一次接合，速度不是問題。', '參數增加不多，也不是重點。', '', '跳接和 GPU 無關。']"
   explain="異常偵測靠「瑕疵重建不好」；有跳接，瑕疵從捷徑直接抄過去，重建誤差變小，就抓不到了。">
-為什麼 D2-1 用來偵測瑕疵的自編碼器不能加跳接？
+為什麼 L05 用來偵測瑕疵的自編碼器不能加跳接？
 </Mcq>
 
 <FillClear group="quiz1" corner />
@@ -842,7 +967,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D2-3：一張 T4 跑得動 512px 嗎？
+# 下一堂 L07：一張 T4 跑得動 512px 嗎？
 
 <div class="node node--primary mt-2">行銷科技組第四天要大量生成 512px 商品圖。直接在像素上生成太貴；下一堂把主角圖的瓶頸變成「一團機率雲」（VAE），也看 Stable Diffusion 怎麼先壓縮再生成。</div>
 

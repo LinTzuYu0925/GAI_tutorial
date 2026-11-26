@@ -2,7 +2,7 @@
 theme: default
 title: 斷線不怕、主管點得到
 info: |
-  生成式AI原理 · D1-4
+  生成式AI原理 · L04
   Drive 檢查點與續訓、Hugging Face Hub、VRAM 估算、T4 注意事項、Gradio 展示（第一天的交付）。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D1-4</div>
+<div class="eyebrow">生成式AI原理 · L04</div>
 
 # 斷線不怕、主管點得到
 
@@ -44,12 +44,12 @@ class: cover
 # 資訊部：白訓練一天，主管只看到截圖
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D1-4】部門：資訊部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L04】部門：資訊部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>訓練到一半 Colab 斷線就全部重來；主管想要自己點得到的展示</dd>
     <dt>現況痛點</dt><dd>上週白訓練一天；成果只有截圖</dd>
     <dt>成功指標（KPI）</dt><dd>斷線後從最後一個 epoch 接著訓練；給主管一個能上傳圖片的網址</dd>
-    <dt>可用資料</dt><dd>D1-3 的 CIFAR-10 分類器；下一步想換成 Hub 上的現成模型（先確認 T4 放得下、授權能用）</dd>
+    <dt>可用資料</dt><dd>L03 的 CIFAR-10 分類器；下一步想換成 Hub 上的現成模型（先確認 T4 放得下、授權能用）</dd>
     <dt>限制與法規</dt><dd>免費 Colab（連線時間、閒置中斷、GPU 額度都有限）；模型授權</dd>
     <dt>為何現有工具不夠</dt><dd>模型只在記憶體裡，斷線就沒了；筆記本不是給主管用的介面</dd>
   </dl>
@@ -72,7 +72,7 @@ class: cover
 5. **交付**一個 Gradio 網頁（第一天的成品）
 
 <!--
-★ 目標（1 分）。不教：HF Spaces 部署（D6-3）、量化（D5-3）。
+★ 目標（1 分）。不教：HF Spaces 部署（L23）、量化（L19）。
 -->
 
 ---
@@ -118,7 +118,7 @@ torch.save({"epoch": epoch,
 </div>
 <div style="font-size:18px">
 
-- **model**：權重（D1-3 學過）
+- **model**：權重（L03 學過）
 - **optimizer**：Adam 的動量；沒存，接續時像重新起步
 - **epoch**：知道從哪裡接
 - 每個 epoch 結束就存一次
@@ -129,7 +129,7 @@ torch.save({"epoch": epoch,
 <div class="takeaway mt-3">只存權重＝能用模型；存三樣＝能接著訓練。</div>
 
 <!--
-★ 存檔（5 分）：比較 D1-3 只存 state_dict。Drive 授權視窗會跳出來，請學員用自己的帳號。
+★ 存檔（5 分）：比較 L03 只存 state_dict。Drive 授權視窗會跳出來，請學員用自己的帳號。
 -->
 
 ---
@@ -182,7 +182,7 @@ model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B-Instruct",
 <div class="takeaway mt-4">Hugging Face Hub 就像「放模型的 GitHub」。</div>
 
 <!--
-★ Hub（4 分）：D1-2 的 pipeline 背後就是 from_pretrained。整班同一個 IP 下載容易被限速，所以課前準備要求每人登入 HF 帳號。
+★ Hub（4 分）：L02 的 pipeline 背後就是 from_pretrained。整班同一個 IP 下載容易被限速，所以課前準備要求每人登入 HF 帳號。
 -->
 
 ---
@@ -245,6 +245,83 @@ Qwen/Qwen2.5-0.5B-Instruct   （示意；筆記本 Part B 印出真的清單）
 
 <div class="eyebrow">03 · Measure（量測驗收）· VRAM</div>
 
+# 為什麼要算 VRAM？模型要先「放得進」顯示卡
+
+<div class="flex items-center gap-3 mt-3" style="font-size:18px">
+  <div class="node" style="width:30%"><strong>硬碟／Google Drive</strong><small>倉庫：檔案、檢查點都放這裡。大，但慢</small></div><span class="arrow">→</span>
+  <div class="node" style="width:30%"><strong>RAM（主記憶體）</strong><small>CPU 的桌面：Python 變數、讀進來的資料</small></div><span class="arrow">→</span>
+  <div class="node node--primary" style="width:30%"><strong>VRAM（顯示卡記憶體）</strong><small>GPU 的工作檯：GPU 只能算放在這裡的東西</small></div>
+</div>
+
+<div class="mt-5" style="font-size:18px"><strong>要放進 VRAM 的：</strong>模型權重 ＋ 這一批資料 ＋ 計算的中間結果（訓練還要梯度）</div>
+
+<div class="mt-4" style="font-size:17px">
+<div class="flex justify-between muted"><span>T4 的 VRAM：16 GB（固定，不能加）</span><span>16 GB</span></div>
+<div class="flex" style="height:34px;border:2px solid var(--primary);border-radius:6px;overflow:hidden">
+  <div style="width:6.25%;background:var(--soft-teal);border-right:1px solid var(--secondary)"></div>
+  <div style="flex:1"></div>
+</div>
+<div class="flex" style="height:34px;border:2px solid var(--warm-accent);border-radius:6px;overflow:hidden;margin-top:6px">
+  <div style="width:87.5%;background:var(--soft-amber)"></div>
+  <div style="flex:1"></div>
+</div>
+<div class="muted mt-1">上：0.5B 參數模型，fp16 權重約 1 GB　　下：7B 參數模型，fp16 權重約 14 GB（下一頁教怎麼算）</div>
+</div>
+
+<div class="takeaway mt-4">放不下就會出現 <code>CUDA out of memory</code>；所以載入模型之前，先估算會用多少 VRAM。</div>
+
+<div class="src">T4 規格：16 GB 顯示卡記憶體（S5）；Colab 的 <code>nvidia-smi</code> 顯示的可用量會比 16 略少</div>
+
+<!--
+★ 為什麼要算（4 分）：用比喻講——硬碟是倉庫、RAM 是 CPU 的桌面、VRAM 是 GPU 的工作檯。模型存在 Drive 裡不算數，要「搬上工作檯」GPU 才能算。工作檯大小是固定的：T4 就是 16 GB，不像 RAM 可以加插。
+兩條長條是算術結果（下一頁的公式），不是實測：0.5B 很輕鬆，7B 光權重就快把工作檯占滿，還沒放資料和中間結果。
+學員常見誤會：「Colab 有 12 GB RAM 又有 16 GB VRAM，所以有 28 GB」——不對，兩個是不同地方，GPU 計算只看 VRAM。
+-->
+
+---
+
+<div class="eyebrow">03 · Measure · VRAM · 單位</div>
+
+# 單位：bit → byte → KB → MB → GB
+
+<div class="grid grid-cols-[1.45fr_1fr] gap-6 mt-1">
+<div>
+
+<table style="font-size:16px">
+<thead><tr><th style="width:27%">單位</th><th style="width:26%">等於</th><th>感覺一下</th></tr></thead>
+<tbody>
+<tr><td>bit（位元）</td><td>0 或 1</td><td>最小的單位</td></tr>
+<tr><td>byte（位元組）</td><td>8 bit</td><td>一個英文字母</td></tr>
+<tr><td>KB（千）</td><td>1,000 B</td><td>CIFAR-10 一張圖 32×32×3 ≈ 3 KB</td></tr>
+<tr><td>MB（百萬）</td><td>1,000 KB</td><td>一張手機照片約數 MB</td></tr>
+<tr><td>GB（十億）</td><td>1,000 MB</td><td>T4 的 VRAM ＝ 16 GB</td></tr>
+</tbody>
+</table>
+
+</div>
+<div style="font-size:18px">
+
+<strong>一個參數佔幾個 byte？</strong>
+
+<div class="node node--primary mt-2"><strong>fp32</strong>：32 bit ÷ 8 ＝ <strong>4 B</strong></div>
+<div class="node node--secondary mt-2"><strong>fp16</strong>：16 bit ÷ 8 ＝ <strong>2 B</strong></div>
+<div class="node node--dashed mt-2"><strong>4-bit</strong>：4 bit ÷ 8 ＝ <strong>0.5 B</strong><small>L19 量化再教</small></div>
+
+</div>
+</div>
+
+<div class="takeaway mt-4">小寫 b 是 bit，大寫 B 是 byte：網速 100 Mbps 是 bit，檔案 100 MB 是 byte，差 8 倍。</div>
+
+<!--
+★ 單位（4 分）：從 0/1 開始，一路乘上去。重點只有兩個：① 8 bit ＝ 1 byte，所以 fp32 的「32」除以 8 就是 4 個 byte；② K、M、G 每一級乘 1,000。
+有學員會問 1,024：電腦裡常用 1,024（寫成 KiB、MiB、GiB），nvidia-smi 顯示的 MiB 就是這種。差不到 10%，本課估算一律用 1,000，好算就好。
+CIFAR-10 那一格：每個像素 3 個顏色、每個顏色 0–255 剛好 1 個 byte，所以 32×32×3 個 byte。
+-->
+
+---
+
+<div class="eyebrow">03 · Measure · VRAM · 估算</div>
+
 # VRAM 估算：參數量 × 每個參數的位元組
 
 <div class="grid grid-cols-[1fr_1.1fr] gap-6 mt-2 items-center">
@@ -252,7 +329,7 @@ Qwen/Qwen2.5-0.5B-Instruct   （示意；筆記本 Part B 印出真的清單）
 
 $$\text{權重記憶體} \approx N \times b$$
 
-- **N**：參數量
+- **N**：參數量（0.5B 的 B 是 billion＝十億個，不是 byte）
 - **b**：每個參數幾個位元組（fp32 ＝ 4，fp16 ＝ 2）
 
 </div>
@@ -298,7 +375,7 @@ $$\text{權重記憶體} \approx N \times b$$
 
 <!--
 ★ 練習（8 分）：參數量是題目給的整數，方便手算（真實模型的參數量以模型卡為準）。不收回。
-目的：自己發現 7B 在 fp16 的權重就 14 GB，加上其他東西就超過 16 GB → D5-3 的 4-bit 量化就是為了這個。
+目的：自己發現 7B 在 fp16 的權重就 14 GB，加上其他東西就超過 16 GB → L19 的 4-bit 量化就是為了這個。
 -->
 
 ---
@@ -307,7 +384,7 @@ hostOnly: true
 
 <div class="eyebrow">03 · Measure · VRAM · 練習解答</div>
 
-# 練習解答：7B 要等到 D5-3 的 4-bit
+# 練習解答：7B 要等到 L19 的 4-bit
 
 <table class="vlines" style="font-size:18px">
 <thead><tr><th style="width:30%">模型</th><th>fp32</th><th>fp16</th><th>T4 推論</th></tr></thead>
@@ -318,7 +395,7 @@ hostOnly: true
 </tbody>
 </table>
 
-<div class="takeaway mt-4">怎麼判斷：權重 ≤ 約一半 VRAM 才算舒服；接近上限就要量化（D5-3）。</div>
+<div class="takeaway mt-4">怎麼判斷：權重 ≤ 約一半 VRAM 才算舒服；接近上限就要量化（L19）。</div>
 
 <!--
 ★ 解答（2 分）：這些是算術結果，不是實測。0.5B 的實測值在筆記本 Part B（講師實跑後寫進 lab-runs.md）。
@@ -334,7 +411,7 @@ hostOnly: true
 <thead><tr><th style="width:28%">項目</th><th style="width:20%">T4</th><th>所以我們……</th></tr></thead>
 <tbody>
 <tr><td>fp16（半精度）</td><td>✓ 支援</td><td>推論一律用 <code>torch.float16</code></td></tr>
-<tr><td>bf16（另一種 16 位元格式：範圍大、精度低）</td><td>✗ 沒有原生支援</td><td>看到教學用 <code>bfloat16</code>，改成 fp16（D5-4 微調特別注意）</td></tr>
+<tr><td>bf16（另一種 16 位元格式：範圍大、精度低）</td><td>✗ 沒有原生支援</td><td>看到教學用 <code>bfloat16</code>，改成 fp16（L20 微調特別注意）</td></tr>
 <tr><td>FlashAttention-2（較快的注意力計算；注意力在 D5 教）</td><td>✗ 需要更新的 GPU</td><td>不要開 <code>attn_implementation="flash_attention_2"</code></td></tr>
 </tbody>
 </table>
@@ -355,7 +432,7 @@ hostOnly: true
 
 <div class="flex items-center gap-2 mt-4" style="font-size:18px">
   <div class="node node--primary" style="width:23%"><strong>① batch 變小</strong><small>64 → 32 → 16</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:23%"><strong>② 改 fp16</strong><small>推論：權重少一半；訓練改用混合精度（D5-4）</small></div><span class="arrow">→</span>
+  <div class="node node--primary" style="width:23%"><strong>② 改 fp16</strong><small>推論：權重少一半；訓練改用混合精度（L20）</small></div><span class="arrow">→</span>
   <div class="node node--primary" style="width:23%"><strong>③ 釋放記憶體</strong><small><code>del</code>、<code>gc.collect()</code>、<code>empty_cache()</code></small></div><span class="arrow">→</span>
   <div class="node node--warm" style="width:23%"><strong>④ 重新啟動</strong><small>執行階段 → 重新啟動</small></div>
 </div>
@@ -376,31 +453,27 @@ torch.OutOfMemoryError: CUDA out of memory. Tried to allocate … GiB.
 
 # 一張圖看一批樣本：matplotlib 網格
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-5 mt-1">
-<div>
+<div class="smallcode">
 
 ```python
 fig, axes = plt.subplots(2, 8, figsize=(14, 4))
-for ax, img, p in zip(axes.flat, x[:16], pred):
+for ax, img, t, p in zip(axes.flat, x[:16], y[:16], pred):
     ax.imshow(img.permute(1, 2, 0))   # CHW → HWC
-    ax.set_title(CLASSES[p])
+    ax.set_title(f"{CLASSES[p]}\n(true: {CLASSES[t]})", color="green" if p == t else "red")
     ax.axis("off")
 ```
 
 </div>
-<div>
 
-<div class="placeholder" style="height:170px">2×8 測試圖＋預測類別<small>講師實跑後替換</small></div>
+<div class="shot mt-1 mx-auto" style="width:76%"><img src="/lab04-pred-grid.png" alt="2×8 張 CIFAR-10 測試圖，每張標出預測類別與真實類別；16 張中 13 張對（綠）、3 張錯（紅）" /></div>
+<div class="shot-cap text-center">實跑（Colab T4）：只訓練 2 個 epoch（準確率 0.611），16 張對 13 張；紅字＝預測錯</div>
 
-</div>
-</div>
-
-<div class="takeaway mt-3">之後判斷 AE、GAN、擴散模型的好壞，第一步都是「印一張網格來看」。</div>
+<div class="takeaway mt-1">之後判斷 AE、GAN、擴散模型的好壞，第一步都是「印一張網格來看」。</div>
 
 <div class="src">回顧：Vibe 12a（matplotlib）</div>
 
 <!--
-★ 網格（3 分）：matplotlib 要 HWC，所以要 permute 回來——D1-3 的通道順序再出現一次。
+★ 網格（3 分）：matplotlib 要 HWC，所以要 permute 回來——L03 的通道順序再出現一次。
 -->
 
 ---
@@ -441,7 +514,7 @@ gr.Interface(fn=predict,
 <div class="src">回顧：數據代理人 pp.50–61（Plotly Dash，同樣的想法）；Gradio 文件（S7）</div>
 
 <!--
-★ Gradio（5 分）：unsqueeze(0) 讀作「在最前面加一個 batch 維度」（和 x[None] 一樣）。gr.Interface 適合「一個輸入、一個輸出」；需要多個按鈕、分頁或自訂版面時改用 gr.Blocks（期末專題會用到，D6-3 示範）。分享網址的有效期限依 Gradio 版本（待確認），正式上線在 D6-3 講 HF Spaces。
+★ Gradio（5 分）：unsqueeze(0) 讀作「在最前面加一個 batch 維度」（和 x[None] 一樣）。gr.Interface 適合「一個輸入、一個輸出」；需要多個按鈕、分頁或自訂版面時改用 gr.Blocks（期末專題會用到，L23 示範）。分享網址的有效期限依 Gradio 版本（待確認），正式上線在 L23 講 HF Spaces。
 -->
 
 ---
@@ -468,7 +541,7 @@ gr.Interface(fn=predict,
 
 # HF Spaces：網頁長期掛在網路上
 
-<div class="node mt-4" style="font-size:18px"><strong>Hugging Face Spaces</strong><small>把 Gradio 程式放上去，有一個長期網址；免費方案可能沒有 GPU（D6-3 處理）</small></div>
+<div class="node mt-4" style="font-size:18px"><strong>Hugging Face Spaces</strong><small>把 Gradio 程式放上去，有一個長期網址；免費方案可能沒有 GPU（L23 處理）</small></div>
 
 <div class="takeaway mt-6">課堂上預設用 Colab 的 share 網址；期末專題再考慮 Spaces。</div>
 
@@ -496,7 +569,8 @@ gr.Interface(fn=predict,
 </div>
 <div>
 
-<div class="placeholder" style="height:250px">目標：續訓紀錄＋VRAM 表＋Gradio 畫面<small>講師實跑後換成真實截圖</small></div>
+<div class="shot"><img src="/lab04-gradio-ui.png" alt="lab04 Part C 的 Gradio 分類器網頁：左邊上傳圖片，右邊顯示前 3 名" /></div>
+<div class="shot-cap">最後的交付：Part C 的 Gradio 網頁（講師實跑截圖，尚未上傳圖片時的畫面）。續訓紀錄、VRAM 表在 Part A、B</div>
 
 </div>
 </div>
@@ -677,10 +751,10 @@ hostOnly: true
 # 第一天：從「能做什麼」到「做出能點的東西」
 
 <div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-4">
-  <span class="chip">D1-1 需求評估表</span><span class="arrow">→</span>
-  <span class="chip">D1-2 文字與影像生成</span><span class="arrow">→</span>
-  <span class="chip">D1-3 PyTorch 迴圈</span><span class="arrow">→</span>
-  <span class="chip">D1-4 檢查點＋Gradio</span>
+  <span class="chip">L01 需求評估表</span><span class="arrow">→</span>
+  <span class="chip">L02 文字與影像生成</span><span class="arrow">→</span>
+  <span class="chip">L03 PyTorch 迴圈</span><span class="arrow">→</span>
+  <span class="chip">L04 檢查點＋Gradio</span>
 </div>
 
 <div class="takeaway mt-6">明天開始打開生成模型的黑盒子：先從「只看過良品」的自編碼器開始。</div>
@@ -775,7 +849,7 @@ hostOnly: true
 # 回家作業（不收回，下次上課開頭對答案）
 
 <div class="steps mt-3">
-  <div><span class="num">1</span><strong>第三張需求評估表</strong>：挑課程地圖上任一張需求單（D3–D6），填 D1-1 的八格</div>
+  <div><span class="num">1</span><strong>第三張需求評估表</strong>：挑課程地圖上任一張需求單（D3–D6），填 L01 的八格</div>
   <div><span class="num">2</span><strong>完成移植</strong>：lab03 跑完 10 個 epoch，和 Keras 版比較準確率</div>
   <div><span class="num">3</span><strong>VRAM 實測</strong>：lab04 Part B 的表填完，換一個 1.5B 模型再量一次（記得先估算）</div>
 </div>
@@ -792,7 +866,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D2-1：找出從沒看過的瑕疵
+# 下一堂 L05：找出從沒看過的瑕疵
 
 <div class="node node--primary mt-2">品保部 A 線的 AOI 過殺太高，新瑕疵又漏檢，而且幾乎沒有瑕疵樣本。明天用「只看過良品」的自編碼器，把重建誤差變成瑕疵分數，並交出一個 Gradio 檢測站。</div>
 

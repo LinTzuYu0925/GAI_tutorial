@@ -2,8 +2,8 @@
 theme: default
 title: GAN 一直畫一樣的圖？從零寫一個擴散模型
 info: |
-  生成式AI原理 · D3-3
-  行銷部嫌 GAN 的型錄縮圖變化不夠。把圖一步一步弄髒，再訓練網路一步一步「猜出雜訊、扣掉雜訊」：從零寫一個小 DDPM，和 D3-1 的 DCGAN 比多樣性與速度。
+  生成式AI原理 · L11
+  行銷部嫌 GAN 的型錄縮圖變化不夠。把圖一步一步弄髒，再訓練網路一步一步「猜出雜訊、扣掉雜訊」：從零寫一個小 DDPM，和 L09 的 DCGAN 比多樣性與速度。
 colorSchema: light
 fonts:
   provider: none
@@ -19,11 +19,11 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D3-3</div>
+<div class="eyebrow">生成式AI原理 · L11</div>
 
 # GAN 一直畫一樣的圖？從零寫一個擴散模型
 
-<p class="subtitle">先把圖弄髒，再學會一步一步擦乾淨：自己寫一個小 DDPM，和 D3-1 的 GAN 比一比</p>
+<p class="subtitle">先把圖弄髒，再學會一步一步擦乾淨：自己寫一個小 DDPM，和 L09 的 GAN 比一比</p>
 
 <div class="chain flex flex-wrap items-center gap-x-2 gap-y-3 mt-8">
   <span class="chip">多樣性不夠</span><span class="arrow">→</span>
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：D3-1 的 GAN 一次就畫完，很快；今天的擴散模型要走很多步，慢，但多樣性好。今天要用自己的數字說「好多少、慢多少」。
+★ 開場（2 分）：L09 的 GAN 一次就畫完，很快；今天的擴散模型要走很多步，慢，但多樣性好。今天要用自己的數字說「好多少、慢多少」。
 -->
 
 ---
@@ -45,19 +45,19 @@ class: cover
 # 行銷部：GAN 畫的型錄縮圖，變化不夠
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D3-3】部門：行銷部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L11】部門：行銷部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
-    <dt>問題</dt><dd>GAN 生成器畫出來的圖常常差不多（D3-1 學過的 mode collapse），要不要改用擴散模型？</dd>
+    <dt>問題</dt><dd>GAN 生成器畫出來的圖常常差不多（L09 學過的 mode collapse），要不要改用擴散模型？</dd>
     <dt>現況痛點</dt><dd>型錄縮圖缺乏變化，設計師要一張一張手動挑</dd>
-    <dt>成功指標（KPI）</dt><dd>樣本多樣性不低於 DCGAN（用 D3-1 同一個量法）；記下取樣時間和步數的關係</dd>
-    <dt>可用資料</dt><dd>Fashion-MNIST（和 D3-1 一樣，代替商品縮圖）</dd>
+    <dt>成功指標（KPI）</dt><dd>樣本多樣性不低於 DCGAN（用 L09 同一個量法）；記下取樣時間和步數的關係</dd>
+    <dt>可用資料</dt><dd>Fashion-MNIST（和 L09 一樣，代替商品縮圖）</dd>
     <dt>限制與法規</dt><dd>Colab T4；32 × 32 小圖、小模型；生成圖不能是訓練圖的翻版</dd>
-    <dt>為何現有工具不夠</dt><dd>GAN 的多樣性沒有保證：D3-1 要另外量，才知道有沒有崩塌</dd>
+    <dt>為何現有工具不夠</dt><dd>GAN 的多樣性沒有保證：L09 要另外量，才知道有沒有崩塌</dd>
   </dl>
 </div>
 
 <!--
-★ 需求單（2 分）：今天的問題是「要不要換工具」。答案不是「擴散比較新所以比較好」，而是拿 D3-1 同一個量法、同一份資料比出來。
+★ 需求單（2 分）：今天的問題是「要不要換工具」。答案不是「擴散比較新所以比較好」，而是拿 L09 同一個量法、同一份資料比出來。
 -->
 
 ---
@@ -73,12 +73,12 @@ class: cover
 5. **把擴散模型放上生成三難**：用自己量到的多樣性和秒數
 
 <!--
-★ 目標（2 分）。不教：分數匹配（score matching）與 ELBO 的推導（△ 附錄只認名字）、條件式生成（D4-1）、潛在擴散／Stable Diffusion（D4-2）。
+★ 目標（2 分）。不教：分數匹配（score matching）與 ELBO 的推導（△ 附錄只認名字）、條件式生成（L13）、潛在擴散／Stable Diffusion（L14）。
 -->
 
 ---
 
-<div class="eyebrow">00 · Frame · 回到 D3-1 的三角形</div>
+<div class="eyebrow">00 · Frame · 回到 L09 的三角形</div>
 
 # 生成三難：GAN 快又清楚，但多樣性沒保證
 
@@ -97,24 +97,24 @@ class: cover
 </div>
 <div style="font-size:18px">
 
-| D3-1 的 DCGAN（講師 T4 實跑） | |
+| L09 的 DCGAN（講師 T4 實跑） | |
 |---|---|
 | 品質 | 看得出衣物 |
 | 速度 | 一次前向就畫完 |
 | 多樣性 | 這次**沒有**崩塌：兩兩距離 22.08（真圖 22.90） |
 
-<div class="muted mt-2" style="font-size:16px">但 GAN 沒有任何一項損失在要求「畫得多樣」：換資料、換參數，就可能崩塌（D3-1 第 15 頁）。</div>
+<div class="muted mt-2" style="font-size:16px">但 GAN 沒有任何一項損失在要求「畫得多樣」：換資料、換參數，就可能崩塌（L09 第 16 頁）。</div>
 
 </div>
 </div>
 
-<div class="takeaway mt-2">換工具之前先定好量法：今天用 D3-1 同一個「兩兩距離」，和 DCGAN 比。</div>
+<div class="takeaway mt-2">換工具之前先定好量法：今天用 L09 同一個「兩兩距離」，和 DCGAN 比。</div>
 
 <div class="src">DCGAN 數字：lab09 講師 Colab T4 實跑（SEED 0，20 epochs）；生成三難：Xiao et al., ICLR 2022（S3）</div>
 
 <!--
-★ Frame（4 分）：誠實面對 D3-1 的結果：我們那次沒有崩塌。行銷部的抱怨來自真實商品圖（更複雜的資料、更大的模型），GAN 在那裡比較容易崩塌；Xiao et al. 也寫 GAN「mode coverage 差」。所以今天不是要證明 GAN 一定崩塌，而是看擴散模型的多樣性有沒有「保證」得比較好，代價是什麼。
-兩兩距離：32 張圖兩兩之間的平均像素距離，越小代表越常畫同樣的東西（D3-1 第 15 頁）。
+★ Frame（4 分）：誠實面對 L09 的結果：我們那次沒有崩塌。行銷部的抱怨來自真實商品圖（更複雜的資料、更大的模型），GAN 在那裡比較容易崩塌；Xiao et al. 也寫 GAN「mode coverage 差」。所以今天不是要證明 GAN 一定崩塌，而是看擴散模型的多樣性有沒有「保證」得比較好，代價是什麼。
+兩兩距離：32 張圖兩兩之間的平均像素距離，越小代表越常畫同樣的東西（L09 第 16 頁）。
 -->
 
 ---
@@ -168,6 +168,30 @@ class: cover
 
 <!--
 ★ 往前加噪（4 分）：forward process（往前加噪）。DL 課 pp.85–87 看過「加噪、去噪」的示意圖；今天第一次寫成程式。強調：往前這一半沒有任何參數，是固定公式；整個模型只學「往回」那一半。
+-->
+
+---
+
+<div class="eyebrow">02 · Open · 往回走</div>
+
+# 往回走：把剛才的過程倒過來看
+
+<img class="photo mt-1" src="/lab11-forward_strip-reversed.png" alt="同一隻短靴的七張圖，順序倒過來：從 t＝999 的純雜訊，到 750、500、250、100、50，最後 t＝0 的清楚短靴" style="width:100%;max-height:175px;object-fit:contain">
+<div class="shot-cap">就是上一頁那七張圖，順序倒過來（往前加噪的圖左右對調，沒有重新生成）</div>
+
+<div class="grid grid-cols-2 gap-5 mt-3" style="font-size:18px">
+<div class="node"><strong>往前（forward）：每一步，有人灑了一把雜訊</strong><small>靴子一步比一步髒。這一半是固定的規則，不用學</small></div>
+<div class="node node--primary"><strong>往回（backward）：猜剛才灑了什麼雜訊，把它擦掉</strong><small>每一步都不是「憑空畫一張圖」，只是「猜出那把雜訊、擦掉一點」。擦 1000 次，靴子就回來了</small></div>
+</div>
+
+<div class="takeaway mt-3">把加噪的影片倒著播，就是生成。模型只需要學：「現在這張髒圖，剛才被灑了什麼雜訊？」</div>
+
+<div class="src">Ho et al., 2020 §2（S1）；倒序圖由上一頁的 lab11 B 部分輸出重新排列</div>
+
+<!--
+★ 往回走（4 分）：科普講法。想像有一段影片：一隻乾淨的靴子，每過一格就被灑一把沙（雜訊），1000 格後只剩一堆沙。生成就是把這段影片倒著播：每一格，我們要知道「剛才灑下去的是哪些沙」，才能把它拿掉。
+重點：模型猜的是「雜訊」不是「乾淨的圖」（第 11 頁會用圖解釋）。起點是一堆全新的、隨機的沙（純雜訊），所以每次畫出的靴子都不一樣。
+倒序圖是上一頁同一張圖的七格重新排列，不是模型從頭生成的；真正的生成過程在取樣那頁（lab11 E 部分）。
 -->
 
 ---
@@ -262,7 +286,7 @@ opt.zero_grad(); loss.backward(); opt.step()
 
 - 題目和答案都是**程式自己出的**：不用標註
 - 損失就是 DL 課的 **MSE**：每個像素「猜的雜訊 − 真的雜訊」的平方，再平均
-- 最後一行和 D1-3 的訓練迴圈一模一樣
+- 最後一行和 L03 的訓練迴圈一模一樣
 
 </div>
 </div>
@@ -272,7 +296,7 @@ opt.zero_grad(); loss.backward(); opt.step()
 <div class="src">預測雜訊與簡化損失 L_simple：Ho et al., 2020 §3.2、§3.4 式 14（S1）</div>
 
 <!--
-★ 訓練（5 分）：逐行用中文讀。強調第一行：每張圖的 t 都不一樣，同一個 batch 裡有乾淨的、也有幾乎全是雜訊的，網路要全部都會。最後一行就是 D1-3 的三行，學員已經寫過。
+★ 訓練（5 分）：逐行用中文讀。強調第一行：每張圖的 t 都不一樣，同一個 batch 裡有乾淨的、也有幾乎全是雜訊的，網路要全部都會。最後一行就是 L03 的三行，學員已經寫過。
 -->
 
 ---
@@ -281,31 +305,37 @@ opt.zero_grad(); loss.backward(); opt.step()
 
 # 網路猜的是「雜訊」，不是「乾淨的圖」
 
-<div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
+<img class="photo mt-1" src="/remove-one-noise.png" alt="去噪方塊示意：左邊是髒圖（一隻貓，蓋著雜訊）和步數 999，一起進入 Noise Predicter；它輸出一張純雜訊圖，從髒圖扣掉（減號）之後，右邊得到雜訊少了一點的貓" style="width:100%;max-height:150px;object-fit:contain">
+<div class="shot-cap">一個「去噪」方塊：髒圖＋步數 → <strong>Noise Predicter</strong> 猜出雜訊 → 用髒圖<strong>扣掉</strong>它 → 稍微乾淨的圖</div>
+
+<div class="grid grid-cols-2 gap-5 mt-2" style="font-size:17px">
 <div class="node node--warm"><strong>常見誤解</strong><small>「model(x_t, t) 會直接吐出一張乾淨的衣服」→ 寫成 <code>F.mse_loss(model(x_t, t), x0)</code></small></div>
 <div class="node node--primary"><strong>DDPM 的做法</strong><small>model(x_t, t) 吐出 ε̂：「這張圖裡的雜訊長這樣」。乾淨的圖是用 x_t <strong>扣掉</strong> ε̂ 算出來的</small></div>
 </div>
 
-<div class="flex items-center justify-center gap-2 mt-4" style="font-size:17px">
-  <div class="node" style="width:18%">x_t<small>髒圖 &#91;B,1,32,32&#93;</small></div><span class="arrow">→</span>
-  <div class="node node--warm" style="width:18%"><strong>U-Net</strong><small>＋ 步數 t</small></div><span class="arrow">→</span>
-  <div class="node node--primary" style="width:20%">ε̂<small>預測的雜訊 &#91;B,1,32,32&#93;</small></div><span class="arrow">→</span>
-  <div class="node" style="width:24%">x_t 扣掉一點 ε̂<small>→ 稍微乾淨的 x_{t−1}</small></div>
-</div>
+<div class="takeaway mt-2">每一步只扣掉一點點，要扣 1000 次；而且<strong>取樣時每步扣完還會再灑回一小把新的隨機雜訊</strong>（取樣頁會看到，DDIM 也會提到）。</div>
 
-<div class="takeaway mt-4">輸出和輸入一樣大，但內容是「雜訊」；每一步只扣掉一點點，要扣 1000 次。</div>
-
-<div class="src">Ho et al., 2020 §3.2：ε_θ 預測 ε（S1）</div>
+<div class="src">Ho et al., 2020 §3.2（S1）；示意圖：轉載（S11，僅供教學引用）</div>
 
 <!--
-★ 誤解（3 分）：這是 lab 最常見的錯誤（Lab 6／7 會再稽核一次）。「也可以預測 x₀ 嗎？」可以，有的論文這樣做，但 DDPM 論文發現預測雜訊的樣本品質比較好（S1 §3.4）。今天統一預測雜訊。
+★ 誤解（4 分）：先看圖，從左讀到右：髒圖和「999」（現在是第幾步）一起送進綠色的 Noise Predicter；它不輸出貓，輸出一張雜訊；再用原本的髒圖減掉這張雜訊，得到「雜訊少一點的貓」。
+這是 lab 最常見的錯誤（Lab 6／7 會再稽核一次）。「也可以預測 x₀ 嗎？」可以，有的論文這樣做，但 DDPM 論文發現預測雜訊的樣本品質比較好（S1 §3.4）。今天統一預測雜訊。
+★ 伏筆：去噪時每一步還會「加回」一點隨機雜訊。學員常以為「去噪＝只減不加」，之後談 DDIM（把它拿掉）、CFG 時會一再回頭用到，所以在這裡先說一次，取樣頁再看程式。
+圖上的貓照片是示意圖，不是我們模型的輸出。
 -->
 
 ---
 
 <div class="eyebrow">02 · Open · 去噪網路</div>
 
-# 去噪網路就是 D2-2 的 U-Net，多一個輸入 t
+# 去噪網路就是 L06 的 U-Net，多一個輸入 t
+
+<div class="flex items-center justify-center gap-2" style="font-size:15px">
+  <div class="node" style="width:22%">髒圖 x_t ＋ 步數 t</div><span class="arrow">→</span>
+  <div class="node node--primary" style="width:30%"><strong>Noise Predicter＝U-Net</strong><small>上一頁圖裡的綠色方塊</small></div><span class="arrow">→</span>
+  <div class="node" style="width:15%">ε̂<small>預測的雜訊</small></div><span class="arrow">→</span>
+  <div class="node" style="width:22%">x_t − ε̂<small>稍微乾淨的圖</small></div>
+</div>
 
 <div class="flex items-center justify-center gap-2 mt-3" style="font-size:17px">
   <div class="node" style="width:15%">x_t<small class="nw">&#91;B,1,32,32&#93;</small></div><span class="arrow">→</span>
@@ -315,23 +345,23 @@ opt.zero_grad(); loss.backward(); opt.step()
   <div class="node" style="width:15%">ε̂<small class="nw">&#91;B,1,32,32&#93;</small></div>
 </div>
 
-<svg viewBox="0 0 900 70" style="width:100%;height:70px" aria-label="跳接箭頭從往下那一側連到往上那一側">
+<svg viewBox="0 0 900 70" style="width:100%;height:52px" aria-label="跳接箭頭從往下那一側連到往上那一側">
   <path d="M250,8 C330,60 570,60 650,8" fill="none" stroke="var(--primary)" stroke-width="3" marker-end="url(#sk11)"/>
   <defs><marker id="sk11" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker></defs>
-  <text x="450" y="64" text-anchor="middle" style="font-size:18px" fill="var(--primary)">跳接：和 D2-2 一樣，用 torch.cat 接起來</text>
+  <text x="450" y="64" text-anchor="middle" style="font-size:18px" fill="var(--primary)">跳接：和 L06 一樣，用 torch.cat 接起來</text>
 </svg>
 
 <div class="grid grid-cols-2 gap-6 mt-1" style="font-size:18px">
-<div class="node"><strong>D2-2 U-Net</strong><small>PCB 影像 → 每個像素「是不是瑕疵」&#91;B,1,H,W&#93;</small></div>
+<div class="node"><strong>L06 U-Net</strong><small>PCB 影像 → 每個像素「是不是瑕疵」&#91;B,1,H,W&#93;</small></div>
 <div class="node node--primary"><strong>今天的 TinyUNet</strong><small>髒圖 x_t ＋ 步數 t → 每個像素「雜訊是多少」&#91;B,1,32,32&#93;；參數約 198 萬</small></div>
 </div>
 
-<div class="takeaway mt-3">輸入輸出一樣大、逐像素回答：U-Net 正好；只差要告訴它「現在是第幾步」（下一頁）。</div>
+<div class="takeaway" style="margin-top:2px;font-size:20px">上一頁的 Noise Predicter 就是這個 U-Net；只差要告訴它「現在第幾步」。</div>
 
-<div class="src">D2-2 第 6 頁（同一張圖）；Ho et al., 2020 §4 用 U-Net 當去噪網路（S1）</div>
+<div class="src">L06 第 6 頁（同一張圖）；Ho et al., 2020 §4 用 U-Net 當去噪網路（S1）</div>
 
 <!--
-★ U-Net（4 分）：直接拿 D2-2 的主角圖。學員應該能自己說出 shape：32 → 16 → 8 → 4。參數 1,981,921 是 TinyUNet 的架構固定值（lab11 C 部分印出）。
+★ U-Net（4 分）：先指著最上面一排：這就是上一頁圖的「去噪」方塊，綠色的 Noise Predicter 現在打開來看，裡面就是 L06 的 U-Net。直接拿 L06 的主角圖。學員應該能自己說出 shape：32 → 16 → 8 → 4。參數 1,981,921 是 TinyUNet 的架構固定值（lab11 C 部分印出）。
 -->
 
 ---
@@ -363,10 +393,10 @@ h = h + self.time(temb)[:, :, None, None]   # 每個通道加一個數
 
 <div class="takeaway mt-3">t 不能只當一個數字丟進去：變成 sin／cos 向量，相近的 t 得到相近的向量。</div>
 
-<div class="src">Ho et al., 2020 §4：Transformer 的 sinusoidal position embedding（S1）；D5-2 的 Transformer 會再看到它</div>
+<div class="src">Ho et al., 2020 §4：Transformer 的 sinusoidal position embedding（S1）；L18 的 Transformer 會再看到它</div>
 
 <!--
-★ 時間嵌入（4 分）：embedding（嵌入）：把一個東西變成一串數字。這個 sin／cos 的做法來自 Transformer 的「位置編碼」，D5-2 會再看到，到時候說「D3-3 看過」。[:, :, None, None] 讀作「多兩個長度 1 的維度，好加到每個像素上」。
+★ 時間嵌入（4 分）：embedding（嵌入）：把一個東西變成一串數字。這個 sin／cos 的做法來自 Transformer 的「位置編碼」，L18 會再看到，到時候說「L11 看過」。[:, :, None, None] 讀作「多兩個長度 1 的維度，好加到每個像素上」。
 -->
 
 ---
@@ -391,7 +421,7 @@ h = h + self.time(temb)[:, :, None, None]   # 每個通道加一個數
 <FillClear group="strip" />
 
 <!--
-★ 無 AI 檢核點（6 分）：個人作業，不收回。讓學員自己發現：1000 步裡，後面好幾百步其實「已經看不出來」。這會在 Lab 和第 15 頁的取樣迴圈用到：取樣時前面幾百步，網路是在「從一片雜訊裡決定要畫什麼」。
+★ 無 AI 檢核點（6 分）：個人作業，不收回。讓學員自己發現：1000 步裡，後面好幾百步其實「已經看不出來」。這會在 Lab 和第 16 頁的取樣迴圈用到：取樣時前面幾百步，網路是在「從一片雜訊裡決定要畫什麼」。
 -->
 
 ---
@@ -436,7 +466,7 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
 <div style="font-size:17px">
 
 - 第 4 行：**扣掉一點**猜到的雜訊，再除以 √α_t（α_t ＝ 1 − β_t）
-- 第 5 行：最後一步以外，**加回一點新雜訊**
+- 第 5 行：最後一步以外，**再灑回一小把新的隨機雜訊**（前面說過會出現的那一行）
 - 起點雜訊不同 → 畫出不同的衣服
 
 </div>
@@ -453,7 +483,7 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
 <div class="src">Ho et al., 2020 Algorithm 2（σ_t² ＝ β_t）（S1）</div>
 
 <!--
-★ 取樣（5 分）：sampling（取樣）。不用背係數，讀法是「扣掉一小部分雜訊，再加一點新的隨機」。為什麼要加回雜訊？每一步都留一點隨機性，結果才會多樣；DDIM（Lab 的 F 部分）把它拿掉，可以跳著走。
+★ 取樣（5 分）：sampling（取樣）。不用背係數，讀法是「扣掉一小部分雜訊，再加一點新的隨機」。為什麼要加回雜訊？它不是「去噪沒去乾淨」，是刻意的：每一步都留一點隨機性，結果才會多樣；DDIM（Lab 的 F 部分）把它拿掉，可以跳著走。
 -->
 
 ---
@@ -465,8 +495,8 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
 <div class="grid grid-cols-2 gap-6 mt-2">
 <div>
 
-<img class="photo" src="/lab09-run-loss.png" alt="D3-1 的 GAN 損失曲線：D 和 G 的損失整段上下劇烈跳動" style="width:100%;max-height:200px;object-fit:contain">
-<div class="shot-cap">D3-1 的 GAN：兩個損失一直搶（講師 T4 實跑）</div>
+<img class="photo" src="/lab09-run-loss.png" alt="L09 的 GAN 損失曲線：D 和 G 的損失整段上下劇烈跳動" style="width:100%;max-height:200px;object-fit:contain">
+<div class="shot-cap">L09 的 GAN：兩個損失一直搶（講師 T4 實跑）</div>
 
 </div>
 <div>
@@ -485,7 +515,7 @@ for t in reversed(range(1000)):            # 999, 998, …, 0
 <div class="takeaway mt-2">沒有對手，就沒有「誰贏誰輸」的震盪：損失會穩定下降，但品質還是要看樣本網格。</div>
 
 <!--
-○ 選修（3 分）：左圖是 D3-1 的 lab09 實跑截圖。提醒：擴散模型的 loss 很早就變平，但樣本還在進步，所以最後一樣要看樣本網格。
+○ 選修（3 分）：左圖是 L09 的 lab09 實跑截圖。提醒：擴散模型的 loss 很早就變平，但樣本還在進步，所以最後一樣要看樣本網格。
 -->
 
 ---
@@ -506,7 +536,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 <div class="grid grid-cols-[1fr_1.5fr] gap-5 mt-2 items-center" style="font-size:16px">
 <div class="flex flex-col gap-2">
-<div class="node" style="padding:6px 14px"><strong>DDPMScheduler</strong><small>第 15 頁的迴圈：1000 步、每步加回雜訊</small></div>
+<div class="node" style="padding:6px 14px"><strong>DDPMScheduler</strong><small>第 16 頁的迴圈：1000 步、每步加回雜訊</small></div>
 <div class="node node--primary" style="padding:6px 14px"><strong>DDIMScheduler</strong><small>不加回雜訊、跳著走；<strong>網路不用重訓</strong></small></div>
 </div>
 <div>
@@ -520,7 +550,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div class="src">Song et al., DDIM, ICLR 2021 §4.1、§5（S2）；diffusers <code>DDIMScheduler</code>（S6）</div>
 
 <!--
-○ 選修（3 分）：scheduler（排程器）。DDIM 論文寫：同一個訓練好的模型，不需要重新訓練（S2 §4.1）。右圖是講師 T4 第二次實跑（lab11 F 部分）：每一欄同一個起點雜訊，圖上的三種步數（250、50、10，從五種步數的實跑圖裁出）畫出同一件衣服，10 步略模糊、較淡。學員自己的數字在 Lab 7／7 的表。D3-4 會用 DDIM 縮短檢測時間。clip_sample＝False 的原因在 Lab 6／7（講師第一次實跑踩到的坑）。
+○ 選修（3 分）：scheduler（排程器）。DDIM 論文寫：同一個訓練好的模型，不需要重新訓練（S2 §4.1）。右圖是講師 T4 第二次實跑（lab11 F 部分）：每一欄同一個起點雜訊，圖上的三種步數（250、50、10，從五種步數的實跑圖裁出）畫出同一件衣服，10 步略模糊、較淡。學員自己的數字在 Lab 7／7 的表。L12 會用 DDIM 縮短檢測時間。clip_sample＝False 的原因在 Lab 6／7（講師第一次實跑踩到的坑）。
 -->
 
 ---
@@ -532,7 +562,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div style="font-size:19px" class="mt-4">
 
 - **分數匹配**（score matching）：猜雜訊的方向，等於猜「往資料比較多的方向走」
-- **ELBO**（D2-3 學過的證據下界）：DDPM 的 MSE 損失，是 ELBO 拿掉權重後的簡化版
+- **ELBO**（L07 學過的證據下界）：DDPM 的 MSE 損失，是 ELBO 拿掉權重後的簡化版
 - 兩條路推到最後，訓練程式都長得像今天這幾行
 
 </div>
@@ -586,7 +616,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 <div class="steps mt-2" style="font-size:17px">
   <div><span class="num">1</span><strong>A、B</strong>：現成 DDPM；<code>q_sample</code> 一行加噪、<code>betas</code>／<code>alpha_bar</code> 排程</div>
-  <div><span class="num">2</span><strong>C</strong>：<code>time_embedding</code>、<code>Block</code>（D2-2 的 block ＋ 時間）、<code>TinyUNet</code></div>
+  <div><span class="num">2</span><strong>C</strong>：<code>time_embedding</code>、<code>Block</code>（L06 的 block ＋ 時間）、<code>TinyUNet</code></div>
   <div><span class="num">3</span><strong>D</strong>：訓練迴圈（TODO ①：出題、猜雜訊、MSE）</div>
   <div><span class="num">4</span><strong>E</strong>：<code>sample</code>（TODO ②：扣掉雜訊）；<code>mean_pairwise</code> 和 DCGAN 比；小分類器數「出現幾類」</div>
   <div><span class="num">5</span><strong>F、G</strong>：<code>sample_ddim</code> 步數 vs 秒數；<code>nearest</code> 找最像的訓練圖</div>
@@ -615,7 +645,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 </div>
 
 <!--
-★ Specify（3 分）：驗收第 ④ 點的 22.08 是 D3-1 講師實跑的數字。第 ④ 點故意要三個證據：講師第一次實跑發現，只看兩兩距離會誤判（圖比較細、比較暗，距離也會變小）。
+★ Specify（3 分）：驗收第 ④ 點的 22.08 是 L09 講師實跑的數字。第 ④ 點故意要三個證據：講師第一次實跑發現，只看兩兩距離會誤判（圖比較細、比較暗，距離也會變小）。
 -->
 
 ---
@@ -624,23 +654,36 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 # Lab 4／7：Generate → Execute
 
+<div class="grid grid-cols-[1fr_1.25fr] gap-4 mt-1">
+<div class="node" style="font-size:14px;text-align:left;line-height:1.4"><strong>公式與提示（照著填，不用猜）</strong>
+<small>
+① <strong>出題</strong>：<br>
+t ＝ 0～T−1 的隨機整數（每張圖一個）<br>
+ε ＝ 和 x0 一樣大的標準常態雜訊<br>
+x_t ＝ √ᾱ_t · x0 ＋ √(1−ᾱ_t) · ε<br>
+loss ＝ MSE（猜的雜訊，真的雜訊）<br>
+② <strong>取樣</strong>：<br>
+mean ＝ ( x − β_t / √(1−ᾱ_t) · ε̂ ) / √α_t<br>
+t＞0：x ＝ mean ＋ √β_t · 新的 ε；t＝0：x ＝ mean
+</small></div>
 <PromptBox>
-這是 PyTorch 筆記本，請只填兩個 # TODO：<br>
-① 訓練迴圈：t ＝ 每張圖隨機一個 0～T−1 的整數；eps ＝ randn_like(x0)；x_t ＝ sab&#91;t&#93;·x0 ＋ s1mab&#91;t&#93;·eps（view 成 &#91;B,1,1,1&#93;）；loss ＝ MSE(model(x_t, t), eps)<br>
-② sample：mean ＝ (x − betas&#91;t&#93; / sqrt_1mab&#91;t&#93; · eps_hat) / √alphas&#91;t&#93;；t ＞ 0 時 x ＝ mean ＋ √betas&#91;t&#93; · 新的雜訊，否則 x ＝ mean<br>
-不要改模型、排程和 epochs。每一格說明每一行在做什麼。
+這是 PyTorch 筆記本，請只填兩個 # TODO，不要改模型、排程和 epochs。<br>
+① 訓練迴圈：t ＝ torch.randint(0, <PromptBlank id="l4.t" hint="上限是？" />, (B,))；eps ＝ <PromptBlank id="l4.eps" hint="哪個 torch 函式？" />(x0)；x_t ＝ <PromptBlank id="l4.sab" hint="√ᾱ 的變數名" />&#91;t&#93;·x0 ＋ <PromptBlank id="l4.s1mab" hint="√(1−ᾱ) 的變數名" />&#91;t&#93;·eps（兩個係數都 view 成 &#91;B,1,1,1&#93;）；loss ＝ MSE(model(x_t, t), <PromptBlank id="l4.target" hint="拿什麼當答案？" />)<br>
+② sample：mean ＝ (x − betas&#91;t&#93; / <PromptBlank id="l4.denom" hint="分母變數名" /> · eps_hat) / <PromptBlank id="l4.alpha" hint="√α_t 怎麼寫？" />；t ＞ 0 時 x ＝ mean ＋ <PromptBlank id="l4.sigma" hint="√β_t 怎麼寫？" /> · 新的雜訊，否則 x ＝ mean<br>
+每一格說明每一行在做什麼。
 </PromptBox>
-
-<div class="steps mt-2" style="font-size:17px">
-  <div><span class="num">1</span>T4 訓練約 8 分鐘（每個 epoch 約 23 秒）；等待時看每個 epoch 印出的 loss</div>
-  <div><span class="num">2</span>沒有 Agent 額度：照「訓練」和「取樣」兩頁的程式填；卡住開 <code>-solution.ipynb</code></div>
-  <div><span class="num">3</span>預期輸出：<code>out＝預測的雜訊 (8, 1, 32, 32)</code>、<code>參數 1,981,921</code></div>
 </div>
 
-<div class="node node--warm mt-2" style="font-size:16px"><strong>常見錯誤</strong><small>loss 寫成 <code>F.mse_loss(model(x_t, t), x0)</code>：網路改學「猜原圖」，取樣公式就對不上，畫不出衣服（示意，未實測）</small></div>
+<div class="steps mt-1" style="font-size:15px">
+  <div><span class="num">1</span>T4 訓練約 8 分鐘；看每個 epoch 的 loss。預期輸出：<code>out (8, 1, 32, 32)</code>、<code>參數 1,981,921</code></div>
+  <div><span class="num">2</span>沒有 Agent 額度：照「訓練」「取樣」兩頁填；卡住開 <code>-solution.ipynb</code></div>
+</div>
+
+<div class="node node--warm mt-1" style="font-size:14px"><strong>常見錯誤</strong><small>loss 寫成 <code>F.mse_loss(model(x_t, t), x0)</code>：網路改學「猜原圖」，取樣公式就對不上，畫不出衣服（示意，未實測）</small></div>
 
 <!--
-★ 執行（約 18 分，訓練時先做 Lab 5／7 的預測）：最常見錯誤就是第 10 頁的誤解。第二常見：model(x0, t)（把乾淨圖丟進去）：網路沒看到雜訊，學不到要猜什麼。這兩個錯誤講師都沒有實跑，結果長怎樣不要描述得太肯定，請學員自己看 loss 和樣本。
+★ 不讓學員整段複製給 Agent：公式放在左邊的「提示」框，學員要看著公式把右邊空格（變數名、函式名、答案是誰）自己打進去，全部填完才能按「複製」。填的過程就是把公式對到程式的過程；填不出來的，回頭看「訓練」和「取樣」兩頁。空格的答案：T、torch.randn_like、sab、s1mab、eps、sqrt_1mab[t]、alphas[t].sqrt()、betas[t].sqrt()。
+★ 執行（約 18 分，訓練時先做 Lab 5／7 的預測）：最常見錯誤就是第 11 頁的誤解。第二常見：model(x0, t)（把乾淨圖丟進去）：網路沒看到雜訊，學不到要猜什麼。這兩個錯誤講師都沒有實跑，結果長怎樣不要描述得太肯定，請學員自己看 loss 和樣本。
 -->
 
 ---
@@ -662,13 +705,13 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <div style="font-size:17px">
 
 1. 64 張裡，數得出幾種衣物？有沒有兩張幾乎一樣？
-2. 和 D3-1 的 DCGAN 網格比：哪一個比較清楚？
+2. 和 L09 的 DCGAN 網格比：哪一個比較清楚？
 3. 兩兩距離是多少？比 22.08 大還是小？分類器說出現幾類？兩個證據說的一樣嗎？
 
 </div>
 </div>
 
-<div class="takeaway mt-3">多樣性用「網格＋數字」一起說，和 D3-1 判斷崩塌的方法一樣。</div>
+<div class="takeaway mt-3">多樣性用「網格＋數字」一起說，和 L09 判斷崩塌的方法一樣。</div>
 
 <!--
 ★ 對照（6 分）：講師實跑：兩兩距離 17.42（真圖 22.90、DCGAN 22.08），分類器數出 10 類都有，但 Pullover、Ankle boot 各只有 1 張、Coat 2 張。距離偏低主要因為圖比較細、比較暗（衣物佔畫面 22.5%，真圖 42.7%）。學員的數字會因為 GPU 和隨機性略有不同。第 2 題常見答案：擴散的圖比較「乾淨」但有時邊緣有雜點，小模型、短訓練的正常現象。
@@ -718,7 +761,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <table class="mt-2" style="font-size:17px">
 <thead><tr><th style="width:30%">做法</th><th>兩兩距離（真圖 22.90）</th><th>64 張的秒數（T4）</th><th>網路跑幾次</th></tr></thead>
 <tbody>
-<tr><td>D3-1 DCGAN（20 epochs）</td><td>22.08</td><td>沒有量（一次前向）</td><td>1</td></tr>
+<tr><td>L09 DCGAN（20 epochs）</td><td>22.08</td><td>沒有量（一次前向）</td><td>1</td></tr>
 <tr><td>DDPM 1000 步</td><td>17.42（10 類都有）</td><td>6.70</td><td>1000</td></tr>
 <tr><td>DDIM 50 步</td><td>18.68</td><td>0.33</td><td>50</td></tr>
 <tr><td>DDIM 10 步</td><td>16.27（略模糊）</td><td>0.07</td><td>10</td></tr>
@@ -734,7 +777,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 <FillClear group="ship" />
 
 <!--
-★ Ship（4 分）：DCGAN 的數字來自 D3-1 的講師 T4 實跑（lab09），其餘是 lab11 第二次 T4 實跑（research/lab-runs.md）。誠實面對：KPI「多樣性高於 DCGAN」用兩兩距離看沒有達成；類別數說 10 類都有但比例不均。這張表要原樣交給行銷部，再由他們決定（D4-4 的備忘錄會再用）。提醒：兩兩距離太大也可能是壞事（樣本是雜訊）。
+★ Ship（4 分）：DCGAN 的數字來自 L09 的講師 T4 實跑（lab09），其餘是 lab11 第二次 T4 實跑（research/lab-runs.md）。誠實面對：KPI「多樣性高於 DCGAN」用兩兩距離看沒有達成；類別數說 10 類都有但比例不均。這張表要原樣交給行銷部，再由他們決定（L16 的備忘錄會再用）。提醒：兩兩距離太大也可能是壞事（樣本是雜訊）。
 -->
 
 ---
@@ -760,7 +803,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 </div>
 <div style="font-size:17px">
 
-| | GAN（D3-1） | 擴散（今天） |
+| | GAN（L09） | 擴散（今天） |
 |---|---|---|
 | 品質 | ✓ | ✓ |
 | 多樣性 | 沒保證：22.08 | △ 17.42，但 10 類都有 |
@@ -821,10 +864,10 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 <div class="takeaway mt-3">「新」要自己驗證：上架前，生成圖都要做一次最近鄰檢查。</div>
 
-<div class="src">D2-3 第 24 頁（背下訓練資料）；D4-3 的 LoRA 會再用同一個方法</div>
+<div class="src">L07 第 24 頁（背下訓練資料）；L15 的 LoRA 會再用同一個方法</div>
 
 <!--
-★ 風險（4 分）：nearest neighbour（最近鄰）。講師實跑：生成圖的最近鄰距離中位數 6.55，比沒參加訓練的測試圖（5.89）還大 → 沒有背下來的跡象。我們的小模型、Fashion-MNIST 背下來的機會不大，但大模型會（D2-3 已提過）。左上角「generated」和第一個 d 標籤重疊：這張是第二次實跑的舊畫圖程式畫的；筆記本之後改成把標籤寫在左邊，學員看到的圖版面會不一樣，數字不變。著作權的細節 D6 再談；今天只要會做檢查。
+★ 風險（4 分）：nearest neighbour（最近鄰）。講師實跑：生成圖的最近鄰距離中位數 6.55，比沒參加訓練的測試圖（5.89）還大 → 沒有背下來的跡象。我們的小模型、Fashion-MNIST 背下來的機會不大，但大模型會（L07 已提過）。左上角「generated」和第一個 d 標籤重疊：這張是第二次實跑的舊畫圖程式畫的；筆記本之後改成把標籤寫在左邊，學員看到的圖版面會不一樣，數字不變。著作權的細節 D6 再談；今天只要會做檢查。
 -->
 
 ---
@@ -844,7 +887,7 @@ for t in sched.timesteps:                     # 980, 960, …, 0
 
 <div class="takeaway mt-6">擴散模型＝學會「猜雜訊」的 U-Net，加上一個一步一步扣掉雜訊的迴圈。</div>
 
-<div class="muted mt-3" style="font-size:17px">和學習評量的關係：「解釋 Diffusion vs GAN」用今天和 D3-1 的三難表格；D4-1 會在這個迴圈裡加上「條件」（要畫哪一類）。</div>
+<div class="muted mt-3" style="font-size:17px">和學習評量的關係：「解釋 Diffusion vs GAN」用今天和 L09 的三難表格；L13 會在這個迴圈裡加上「條件」（要畫哪一類）。</div>
 
 <!--
 ★ 總整理（2 分）：請學員用一句話回答「擴散模型的網路在猜什麼？」（雜訊）。
@@ -900,7 +943,7 @@ x<sub>t</sub> ＝ √ᾱ<sub>t</sub>·x₀ ＋ √(1−ᾱ<sub>t</sub>)·ε 中�
 
 <!--
 ★ 檢核 2／2（1 分）。答案：3 A、4 B。
-全部答案與理由：1 B（A 是第 10 頁的常見誤解）、2 C、3 A、4 B（A、D 是 GAN 的問題）。
+全部答案與理由：1 B（A 是第 11 頁的常見誤解）、2 C、3 A、4 B（A、D 是 GAN 的問題）。
 -->
 
 ---
@@ -909,11 +952,11 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D3-4：AE 熱圖太模糊？用擴散模型「修好」板子
+# 下一堂 L12：AE 熱圖太模糊？用擴散模型「修好」板子
 
 <div style="font-size:19px" class="mt-4">
 
-- 品保部回來了：D2-1 的 AE 重建太模糊，細紋路一直被判成瑕疵
+- 品保部回來了：L05 的 AE 重建太模糊，細紋路一直被判成瑕疵
 - 不從純雜訊開始：把板子**加噪到一半**再擦回來 → 一張「正常版」的板子
 - 和 AE 比 AUROC、過殺、每張幾毫秒；用今天的 DDIM 加速
 

@@ -12,7 +12,8 @@
 | `materials/src/make_sft.py` → `materials/data/sft_train.jsonl` | 216 筆合成 SFT 資料（seed 2026） |
 | `materials/data/eval_tickets.jsonl` | 評估集＝D5-1 的 40 張客服單（從沒拿來訓練） |
 | `materials/src/lab20-qlora.py` | 筆記本原始檔 |
-| `public/before_after_cpu.png` | 講師本機 CPU 小規模試跑的前後回覆（真實輸出排成圖，因為含簡體字原文） |
+| `public/before_after_t4.png` | 講師 T4 實跑 T002 的前後回覆（真實輸出排成圖，因為含簡體字原文）；投影片用這張 |
+| `public/before_after_cpu.png` | 講師本機 CPU 小規模試跑的前後回覆（舊版，投影片已不用） |
 
 ## 2. 進度
 

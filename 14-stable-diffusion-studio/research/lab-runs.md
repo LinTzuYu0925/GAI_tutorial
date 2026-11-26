@@ -24,3 +24,11 @@
 ### 第 2 次
 
 - [ ] 待執行（修正後的遮罩、偏差網格、Gradio）。
+
+### 第 3 次（2026-11-26，講師 T4，解答筆記本存有輸出）
+
+- 環境：torch 2.14.1+cu130、diffusers 0.43.0、transformers 5.24.1、Python 3.13.16。
+- 第 1 部分：512 × 512、25 步 6.1 秒，VRAM 峰值 2.81 GB。
+- 第 5 部分：換背景 5.0 秒，VRAM 峰值 3.41 GB；輸出圖和投影片上的 `lab14-inpaint-swap.png` 逐像素相同（seed 固定）。
+- 附錄（講師示範，不發給學員）：ControlNet Canny（`lllyasviel/sd-controlnet-canny`）＋SD1.5，UniPC 25 步、seed 0：6.6 秒，VRAM 峰值 4.18 GB；圖 `public/lab14-controlnet-demo.png`。耳機、手機的位置和角度保留，背景變成木紋桌。
+- Gradio（第 7 部分）有執行，沒有截圖；Ship 頁改成不放截圖。

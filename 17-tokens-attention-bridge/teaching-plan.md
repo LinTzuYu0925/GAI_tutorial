@@ -4,9 +4,9 @@
 
 ## 1. 怎麼使用這份計畫
 
-- **學員**：Colab（CPU 執行階段即可）跑 `lab17-tokens-attention.ipynb`；第 7、16 頁輸入答案。
+- **學員**：Colab（CPU 執行階段即可）跑 `lab17-tokens-attention.ipynb`；第 7、24 頁輸入答案。
 - **工具**：Google Colab、AI coding agent（只用在兩個 TODO）。
-- **沒有 Agent 額度**：TODO 的程式就在第 14、21 頁。
+- **沒有 Agent 額度**：TODO 的程式就在第 22、31 頁。
 - **誠實原則**：投影片上的數字都來自 lab 實跑（講師本機 CPU，待 Colab 核對）；單價是假設值。
 
 ## 2. 時間表

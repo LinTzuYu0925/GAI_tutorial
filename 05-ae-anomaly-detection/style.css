@@ -278,3 +278,9 @@
 /* Tensor shape inside a node: keep on one line */
 .node small.nw { white-space: nowrap; font-size: 15px; }
 .nw { white-space: nowrap; }
+
+/* Latent vector rows (slide: 潛在空間) */
+.lat { display: grid; grid-template-columns: 1.6em 70px 1fr; align-items: center; gap: 6px; margin-top: 4px; font-size: 15px; line-height: 1.3; }
+.lat span { color: var(--warm-accent); font-weight: 700; }
+.lat i { display: block; height: 10px; border-radius: 3px; background: var(--warm-accent); opacity: .75; }
+.lat em { font-style: normal; color: var(--muted-text); }

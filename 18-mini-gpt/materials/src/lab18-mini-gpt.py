@@ -43,9 +43,11 @@ def fetch(name):
     local = os.environ.get("LAB_DATA_DIR")          # 只有講師本機測試會設定
     if local:
         return os.path.join(local, name)
-    if not os.path.exists(name):
-        urllib.request.urlretrieve(f"{RAW}/{name}", name)
-    return name
+    path = os.path.join("data/download", name)
+    if not os.path.exists(path):
+        os.makedirs("data/download", exist_ok=True)
+        urllib.request.urlretrieve(f"{RAW}/{name}", path)
+    return path
 
 # %% [markdown]
 # ## 1. 真的小模型：下一個 token 的前 10 名

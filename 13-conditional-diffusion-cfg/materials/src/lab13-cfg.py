@@ -55,8 +55,8 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
 CLASSES = ["T恤", "褲子", "套頭衫", "洋裝", "外套", "涼鞋", "襯衫", "運動鞋", "包包", "短靴"]
 tf = transforms.Compose([transforms.Pad(2), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])
-train_ds = datasets.FashionMNIST("data", train=True, download=True, transform=tf)
-test_ds = datasets.FashionMNIST("data", train=False, download=True, transform=tf)
+train_ds = datasets.FashionMNIST("data/download", train=True, download=True, transform=tf)
+test_ds = datasets.FashionMNIST("data/download", train=False, download=True, transform=tf)
 if SUBSET:
     train_ds = Subset(train_ds, range(SUBSET))
 loader = DataLoader(train_ds, batch_size=128, shuffle=True, drop_last=True, num_workers=2)

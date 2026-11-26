@@ -2,7 +2,7 @@
 theme: default
 title: 從 Keras 到 PyTorch
 info: |
-  生成式AI原理 · D1-3
+  生成式AI原理 · L03
   把 DL 課跑過的 CIFAR-10 CNN 從 Keras 搬到 PyTorch：Tensor、nn.Module、DataLoader、五行訓練迴圈、state_dict。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D1-3</div>
+<div class="eyebrow">生成式AI原理 · L03</div>
 
 # 從 Keras 到 PyTorch
 
@@ -45,7 +45,7 @@ class: cover
 # 工廠資訊組：分類器要搬家
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D1-3】部門：工廠資訊組<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L03】部門：工廠資訊組<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>瑕疵分類器是 Keras 寫的，要接 Hugging Face 生態系得先搬到 PyTorch</dd>
     <dt>現況痛點</dt><dd>生成式工具（transformers、diffusers、peft、trl）都以 PyTorch 為主</dd>
@@ -82,10 +82,10 @@ class: cover
 # 為什麼要搬到 PyTorch？
 
 <div class="grid grid-cols-4 gap-3 mt-4" style="font-size:18px">
-  <div class="node node--primary"><strong>transformers</strong><small>LLM、Tokenizer<br><span class="nw">D1-2、D5</span></small></div>
+  <div class="node node--primary"><strong>transformers</strong><small>LLM、Tokenizer<br><span class="nw">L02、D5</span></small></div>
   <div class="node node--primary"><strong>diffusers</strong><small>擴散模型<br><span class="nw">D3、D4</span></small></div>
-  <div class="node node--primary"><strong>peft</strong><small>LoRA 微調<br><span class="nw">D4-3、D5-4</span></small></div>
-  <div class="node node--primary"><strong>trl</strong><small>LLM 微調<br><span class="nw">D5-4</span></small></div>
+  <div class="node node--primary"><strong>peft</strong><small>LoRA 微調<br><span class="nw">L15、L20</span></small></div>
+  <div class="node node--primary"><strong>trl</strong><small>LLM 微調<br><span class="nw">L20</span></small></div>
 </div>
 
 <div class="node mt-5" style="font-size:18px"><strong>PyTorch</strong><small>這四個套件的模型都是 <code>torch.nn.Module</code>；訓練、微調都寫 PyTorch 迴圈</small></div>
@@ -95,7 +95,7 @@ class: cover
 <div class="src">回顧：DL pp.36–37（TF 與 PyTorch 比較）、pp.94–97（PyTorch 附錄）；套件文件見 research/sources.md S1–S4</div>
 
 <!--
-★ 為什麼（3 分）：D1-2 已經用過 transformers 和 diffusers，學員看過 torch_dtype、.to("cuda")——今天把這些看懂。
+★ 為什麼（3 分）：L02 已經用過 transformers 和 diffusers，學員看過 torch_dtype、.to("cuda")——今天把這些看懂。
 -->
 
 ---
@@ -383,7 +383,7 @@ for x, y in train_loader:
 <div class="src">回顧：DL pp.25–27（損失與反向傳播）</div>
 
 <!--
-★ 五行（8 分）：一行一行用中文唸。強調：生成模型的訓練只會改①②（模型和損失不同），③④⑤永遠一樣。D2-1 的 AE 會直接重用這個迴圈。
+★ 五行（8 分）：一行一行用中文唸。強調：生成模型的訓練只會改①②（模型和損失不同），③④⑤永遠一樣。L05 的 AE 會直接重用這個迴圈。
 -->
 
 ---
@@ -398,12 +398,19 @@ for x, y in train_loader:
   <div class="node node--warm" style="width:30%"><strong>結果</strong><small>梯度變成過去所有批次的總和，方向被舊批次帶偏，訓練變差</small></div>
 </div>
 
-<div class="placeholder mt-4" style="height:90px">筆記本「常見錯誤」格印出的兩個梯度值<small>講師實跑後替換（第二個約為第一個的 2 倍）</small></div>
+<div class="mt-4 muted" style="font-size:16px">筆記本「常見錯誤」格：同一批 8 張圖，連做兩次 backward，看最後一層 bias 的梯度</div>
+
+```text
+第一次 backward 後：-0.149505
+沒有 zero_grad 再一次：-0.299010（約為 2 倍＝梯度被加總了）
+```
 
 <div class="takeaway mt-3">PyTorch 預設把梯度「累加」；每一批開始前都要清空。</div>
 
+<div class="src">實跑：lab03「常見錯誤」格，seed 0，本機 CPU（torch 2.15.0）；T4 上小數末幾位可能略不同，但一定是 2 倍</div>
+
 <!--
-★ 常見錯誤（4 分）：筆記本會用同一批資料做兩次 backward 印出梯度。這個設計是故意的（有時要累加梯度來模擬大 batch），所以不會報錯——更危險。
+★ 常見錯誤（4 分）：筆記本會用同一批資料做兩次 backward 印出梯度。-0.149505 → -0.299010，剛好兩倍：第二次的梯度直接加在第一次上面。這個設計是故意的（有時要累加梯度來模擬大 batch），所以不會報錯——更危險。
 -->
 
 ---
@@ -458,7 +465,7 @@ model2.load_state_dict(torch.load("cifar_cnn.pt"))   # 再把權重放進去
 <div class="takeaway mt-4">state_dict 只有數字，沒有程式；載入時要先有同樣的 <code>Net</code> 類別。</div>
 
 <!--
-★ 存檔（3 分）：對照 Keras 的 model.save() 會連架構一起存。D1-4 會再加上「優化器狀態＋epoch」，做成可以斷線續訓的檢查點。
+★ 存檔（3 分）：對照 Keras 的 model.save() 會連架構一起存。L04 會再加上「優化器狀態＋epoch」，做成可以斷線續訓的檢查點。
 -->
 
 ---
@@ -502,7 +509,7 @@ for step in range(100):
 
 - 讓平方誤差最小的 μ，就是資料平均
 - 假設資料是常態分布時，這也是「讓資料出現機率最大」（最大概似，maximum likelihood）的最簡單例子
-- D5-2 的交叉熵是同一個想法
+- L18 的交叉熵是同一個想法
 
 </div>
 </div>
@@ -687,7 +694,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D1-4：斷線不怕、主管點得到
+# 下一堂 L04：斷線不怕、主管點得到
 
 <div class="node node--primary mt-2">今天的分類器只存在 Colab 的記憶體裡。下一堂把它做成「斷線可以續訓」的檢查點，從 Hugging Face Hub 載模型、估算 VRAM，最後用 Gradio 做成主管點得到的網頁。</div>
 

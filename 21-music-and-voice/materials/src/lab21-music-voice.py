@@ -145,9 +145,10 @@ try:
 except Exception as e:
     print("TTS 沒有成功（套件版本或下載問題）：", type(e).__name__, e)
     import urllib.request
-    urllib.request.urlretrieve("https://raw.githubusercontent.com/LinTzuYu0925/GAI_tutorial/day6-done/21-music-and-voice/materials/data/voiceover.wav", "voiceover_instructor.wav")
+    os.makedirs("data/download", exist_ok=True)
+    urllib.request.urlretrieve("https://raw.githubusercontent.com/LinTzuYu0925/GAI_tutorial/day6-done/21-music-and-voice/materials/data/voiceover.wav", "data/download/voiceover_instructor.wav")
     print("備案：改聽講師的旁白（Kokoro，講師本機生成）")
-    display(Audio("voiceover_instructor.wav"))
+    display(Audio("data/download/voiceover_instructor.wav"))
 
 # %% [markdown]
 # ## 5. 交付：配樂＋授權說明

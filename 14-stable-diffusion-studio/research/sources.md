@@ -14,3 +14,5 @@
 | S8 | C2PA 內容憑證；生成圖加浮水印或標示 | c2pa.org 規格 | 待確認 | 2026-11-25 |
 | S9 | ControlNet：以邊緣、姿勢等額外條件控制 SD | Zhang, Rao, Agrawala, *Adding Conditional Control to Text-to-Image Diffusion Models*, ICCV 2023 | 待確認 | 2026-11-25 |
 | S10 | 文字生成圖模型對職業提示詞有性別、膚色偏差 | Luccioni et al., *Stable Bias: Analyzing Societal Representations in Diffusion Models*, NeurIPS 2023 Datasets & Benchmarks | 待確認 | 2026-11-25 |
+| S11 | ControlNet Canny 權重（講師示範用） | Hugging Face `lllyasviel/sd-controlnet-canny`（model card，授權 OpenRAIL） | 待確認 | 2026-11-26 |
+| S12 | CLIP 3 維示意圖、餘弦示意圖的縮圖 `clip-headphones.jpg`、`clip-backpack.jpg`、`clip-mug.jpg` | L22 `materials/data/catalog/` 的 c0_2、c6_0、c7_0（SD1.5 生成的虛構商品照，creativeml-openrail-m，見 L22 S3），縮成 112 px | 已確認（來源與授權） | 2026-11-27 |

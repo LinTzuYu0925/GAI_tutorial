@@ -38,8 +38,9 @@ import soundfile as sf
 import torchaudio.functional as AF
 
 URL = "https://upload.wikimedia.org/wikipedia/commons/a/ae/Zh-tw-%E7%95%A2%E6%A5%AD%28%E6%BC%94%E8%97%9D%E7%95%8C%29.wav"
-LOCAL = "speech_zh_tw.wav"     # 講師可先放到雲端硬碟，改成那個路徑；全班同時下載可能被 Wikimedia 限流（HTTP 429）
+LOCAL = "data/download/speech_zh_tw.wav"     # 講師可先放到雲端硬碟，改成那個路徑；全班同時下載可能被 Wikimedia 限流（HTTP 429）
 import os
+os.makedirs("data/download", exist_ok=True)
 if not os.path.exists(LOCAL):
     for attempt in range(3):
         try:
@@ -119,8 +120,8 @@ import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
-train_ds = datasets.FashionMNIST("data", train=True, download=True, transform=transforms.ToTensor())
-test_ds = datasets.FashionMNIST("data", train=False, download=True, transform=transforms.ToTensor())
+train_ds = datasets.FashionMNIST("data/download", train=True, download=True, transform=transforms.ToTensor())
+test_ds = datasets.FashionMNIST("data/download", train=False, download=True, transform=transforms.ToTensor())
 train_loader = DataLoader(train_ds, batch_size=128, shuffle=True)
 X_test = torch.stack([test_ds[i][0] for i in range(2000)])
 

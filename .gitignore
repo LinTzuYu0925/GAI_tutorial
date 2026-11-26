@@ -10,3 +10,7 @@ __pycache__/
 .env
 data/
 polish_note*.md
+polish_notes/
+# Lab downloads (datasets, weights, audio) land in materials/data/download/ — never commit
+**/materials/data/download/
+data/download/

@@ -76,8 +76,8 @@ import torch.nn.functional as F
 from torchvision import datasets, transforms
 
 tf = transforms.Compose([transforms.Pad(2), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])  # 28→32，−1～1
-train_ds = datasets.FashionMNIST("data", train=True, download=True, transform=tf)
-test_ds = datasets.FashionMNIST("data", train=False, download=True, transform=tf)
+train_ds = datasets.FashionMNIST("data/download", train=True, download=True, transform=tf)
+test_ds = datasets.FashionMNIST("data/download", train=False, download=True, transform=tf)
 print("訓練圖", len(train_ds), "張；一張", tuple(train_ds[0][0].shape))
 
 T = 1000
@@ -207,8 +207,8 @@ hist = []
 
 if USE_CKPT:
     for url in CKPT_URLS:
-        if os.system(f"wget -q -O {CKPT} {url}") == 0: break
-    model.load_state_dict({k: v.float() for k, v in torch.load(CKPT, map_location=device).items()})
+        if os.system(f"mkdir -p data/download && wget -q -O data/download/{CKPT} {url}") == 0: break
+    model.load_state_dict({k: v.float() for k, v in torch.load("data/download/" + CKPT, map_location=device).items()})
     print("載入講師的檢查點，跳過訓練")
 else:
     if device == "cuda": torch.cuda.reset_peak_memory_stats()

@@ -2,7 +2,7 @@
 theme: default
 title: 舊照片放大：偽造者與鑑定師
 info: |
-  生成式AI原理 · D3-1
+  生成式AI原理 · L09
   GAN：生成器偽造、鑑別器鑑定，兩個一起進步。用 Real-ESRGAN 把舊型錄照片放大 4 倍，自己訓練 DCGAN，認出不穩定與 mode collapse；對抗損失今天仍在很多產品裡。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D3-1</div>
+<div class="eyebrow">生成式AI原理 · L09</div>
 
 # 舊照片放大：偽造者與鑑定師
 
@@ -35,8 +35,8 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：第三天的主題是「GAN 還是擴散？」。今天上午學 GAN；今天下午（D3-3）學擴散；第四天寫比較備忘錄（學習評量）。
-第二天作業（門檻建議）的回顧放在 D3-2 開場前，不佔本堂時間。
+★ 開場（2 分）：第三天的主題是「GAN 還是擴散？」。今天上午學 GAN；今天下午（L11）學擴散；第四天寫比較備忘錄（學習評量）。
+第二天作業（門檻建議）的回顧放在 L10 開場前，不佔本堂時間。
 -->
 
 ---
@@ -46,14 +46,14 @@ class: cover
 # 電商部：舊型錄照片太小，網站改版用不了
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D3-1】部門：電商部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L09】部門：電商部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>數千張舊型錄照片解析度太低，網站改版用不了</dd>
     <dt>現況痛點</dt><dd>重拍一張要上千元，數千張不可能</dd>
     <dt>成功指標（KPI）</dt><dd>4 倍放大後細節清楚、沒有誤導顧客的假細節；每張處理時間</dd>
     <dt>可用資料</dt><dd>舊型錄風格的低解析度照片（CC0）；Fashion-MNIST</dd>
     <dt>限制與法規</dt><dd>Colab T4；產品照不能誇大產品（消費者保護）</dd>
-    <dt>為何現有工具不夠</dt><dd>一般放大（bicubic 內插）只會變糊；D2-3 的 VAE 樣本也偏糊</dd>
+    <dt>為何現有工具不夠</dt><dd>一般放大（bicubic 內插）只會變糊；L07 的 VAE 樣本也偏糊</dd>
   </dl>
 </div>
 
@@ -74,7 +74,7 @@ class: cover
 5. **使用** Real-ESRGAN 放大舊照片，指出「假細節」風險；說出對抗損失今天還用在哪裡
 
 <!--
-★ 目標（1 分）。不教：WGAN 的數學（△ 點名）、StyleGAN 架構、條件式 GAN 的實作（D4-1 用擴散做）。
+★ 目標（1 分）。不教：WGAN 的數學（△ 點名）、StyleGAN 架構、條件式 GAN 的實作（L13 用擴散做）。
 -->
 
 ---
@@ -135,25 +135,26 @@ class: cover
 
 # 偽造者與鑑定師
 
-<div class="grid items-center mt-3" style="font-size:18px;grid-template-columns:15% 5% 25% 5% 25% 5% 15%;row-gap:4px">
-  <div class="node">隨機數字 z</div><span class="arrow text-center">→</span>
-  <div class="node node--warm"><strong>G 生成器</strong><small class="nw">偽造者：畫一張假圖</small></div><span class="arrow text-center">→</span>
-  <div class="node node--primary"><strong>D 鑑別器</strong><small class="nw">鑑定師：真的還是假的？</small></div><span class="arrow text-center">→</span>
-  <div class="node">分數<small>越大越像真的</small></div>
-  <div style="grid-column:5" class="arrow text-center">↑</div>
-  <div style="grid-column:5" class="node">真實照片<small>也交給 D 看</small></div>
+<div class="grid items-center mt-1" style="font-size:15px;grid-template-columns:15% 4% 17% 4% 20% 4% 16% 4% 13%;grid-template-rows:auto auto;row-gap:0">
+  <div style="grid-row:1"><img class="photo" src="/gan-noise-z.png" alt="一張彩色雜訊圖" style="height:80px;width:100%"><div class="shot-cap" style="font-size:13px">隨機數字 z（示意）</div></div><span class="arrow text-center">→</span>
+  <div class="node node--warm"><strong>G 生成器</strong><small class="nw">偽造者</small></div><span class="arrow text-center">→</span>
+  <div><img class="photo" src="/gan-fake-early-sketch.png" alt="一張模糊、帶雜點的耳機假圖" style="height:80px;width:100%"><div class="shot-cap" style="font-size:13px">假耳機（示意：早期草稿）</div></div><span class="arrow text-center">→</span>
+  <div class="node node--primary"><strong>D 鑑別器</strong><small class="nw">鑑定師</small></div><span class="arrow text-center">→</span>
+  <div class="node">真／假<small>分數</small></div>
+  <div style="grid-row:2;grid-column:7" class="arrow text-center">↑</div>
+  <div style="grid-row:3;grid-column:5 / span 3"><div style="display:flex;gap:10px;align-items:center;justify-content:flex-end"><div class="shot-cap" style="font-size:13px;margin:0">真耳機（真實照片）<br>也交給 D 看</div><img class="photo" src="/headphones-lowres.jpg" alt="一副真實的黑色頭戴式耳機照片" style="height:80px;width:72px"></div></div>
 </div>
 
-<div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
+<div class="muted" style="font-size:15px;text-align:center">D 的分數會回饋給兩邊：告訴 G「哪裡不像真的」，也告訴 D「哪裡看走眼」</div>
+
+<div class="grid grid-cols-2 gap-6 mt-2" style="font-size:17px">
 <div class="node node--primary"><strong>D 想要</strong><small>真圖給高分、假圖給低分</small></div>
 <div class="node node--warm"><strong>G 想要</strong><small>讓 D 把假圖也打高分</small></div>
 </div>
 
-<div class="muted mt-2" style="font-size:17px">GAN（生成對抗網路）。注意：G 從頭到尾<strong>沒看過真圖</strong>，只能從 D 的分數學「怎樣比較像真的」。</div>
+<div class="takeaway mt-2">GAN（生成對抗網路）：鑑定師越挑剔，偽造者越像真；G <strong>沒看過真圖</strong>。</div>
 
-<div class="takeaway mt-2">兩個網路互相較勁：鑑定師越會挑毛病，偽造者就被逼得越像真的。</div>
-
-<div class="src">回顧：DL pp.82–84（GAN 概念）；Goodfellow et al., 2014（S3，待逐字核對）</div>
+<div class="src">圖型：標準 GAN 畫法（Google ML、CMU 11-785）；耳機：Sprinno，CC0（S1）；z 與假圖為示意；DL pp.82–84</div>
 
 <!--
 ★ 主角（5 分）：GAN（Generative Adversarial Network，生成對抗網路）。G＝generator（生成器），D＝discriminator（鑑別器）。DL 課看過概念（DL pp.82–84），今天寫程式。
@@ -162,34 +163,64 @@ class: cover
 
 ---
 
+<div class="eyebrow">02 · Open · 科普版</div>
+
+# 一輪對決：偽造者和鑑定師怎麼一起變強
+
+<div class="grid grid-cols-4 gap-3 mt-3" style="font-size:16px">
+<div class="node"><strong>第 1 輪</strong><small>G 交出一張亂七八糟的「耳機」；D 一眼看穿：「這是雜點，不是耳機」，真耳機給高分</small></div>
+<div class="node node--warm"><strong>G 學到</strong><small>D 的評語告訴 G 往哪裡改：輪廓要有、顏色要黑。G <strong>沒看過真圖</strong>，只聽評語</small></div>
+<div class="node node--primary"><strong>D 也進步</strong><small>G 的假圖變像了，D 就得盯更細的地方：耳罩的皮革、接縫、反光</small></div>
+<div class="node"><strong>幾千輪之後</strong><small>假圖已經很像耳機；D 越來越難分，兩邊的進步互相推著走</small></div>
+</div>
+
+<div class="grid grid-cols-2 gap-5 mt-4" style="font-size:18px">
+<div class="node node--warm"><strong>比喻：偽鈔與驗鈔員</strong><small>偽造者想印出騙得過驗鈔員的鈔票；驗鈔員想不被騙。驗鈔員越嚴，偽鈔越逼真；偽鈔越逼真，驗鈔員越要練眼力。兩邊都沒有「標準答案」，答案是對方</small></div>
+<div class="node"><strong>為什麼 G 從不看真圖也學得會？</strong><small>D 的分數是 G 唯一的老師：分數高＝「你這樣畫比較像真的」。G 只做一件事：讓分數變高</small></div>
+</div>
+
+<div class="takeaway mt-3">GAN 沒有「標準答案」，只有一個會越來越嚴格的對手：這就是它畫得銳利、也不穩定的原因。</div>
+
+<!--
+★ 科普版（4 分）：用說故事的方式講一遍。1) 一開始 G 只會畫雜訊，D 隨便都分得出；2) D 把「哪裡不像」的資訊傳給 G（數學上是梯度），G 修正；3) G 變強之後，D 的舊本事不夠用，也要升級；4) 兩邊互相拉高，直到 D 幾乎分不出真假。
+重點澄清：(a) G 沒看過真圖，只從 D 的分數學；(b) 「對抗」不是兩邊敵對毀掉對方，而是互相逼出進步；(c) 這個平衡很難維持：D 太強，G 學不動（梯度消失，下一頁就是 non-saturating 修正）；G 太強或只會騙一種手法，就會 mode collapse（後面會看到）。
+上一頁圖裡的「假耳機」是示意：我們沒有訓練過耳機 GAN；本課實作的是 Fashion-MNIST 的 DCGAN。
+-->
+
+---
+
 <div class="eyebrow">02 · Open · D 就是分類器</div>
 
 # D 是你早就會的東西：二元分類 CNN
 
-<div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2">
-<div>
+<div class="grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-5 mt-2">
+<div style="font-size:15px">
 
 ```python
 D = nn.Sequential(
-    nn.Conv2d(1, 64, 4, 2, 1),   nn.LeakyReLU(0.2),  # 28 → 14；負的一邊乘 0.2
-    nn.Conv2d(64, 128, 4, 2, 1), nn.BatchNorm2d(128),
-    nn.LeakyReLU(0.2),                               # 14 → 7
-    nn.Flatten(), nn.Linear(128 * 7 * 7, 1))         # [B,1]；筆記本再 .view(-1) → [B]
+    nn.Conv2d(1, 64, 4, 2, 1),         # 28→14
+    nn.LeakyReLU(0.2),
+    nn.Conv2d(64, 128, 4, 2, 1),       # 14→7
+    nn.BatchNorm2d(128),
+    nn.LeakyReLU(0.2),
+    nn.Flatten(),
+    nn.Linear(128 * 7 * 7, 1))         # [B,1]
 ```
 
 </div>
 <div style="font-size:18px">
 
-- 輸入一張圖，輸出一個 logit（還沒變成機率的分數）
+- 輸入一張圖，輸出一個 logit（還沒變成機率的分數）；筆記本再 <code>.view(-1)</code> → [B]
+- LeakyReLU：負的一邊乘 0.2，梯度不會完全消失
 - 損失：<code>BCEWithLogitsLoss</code>，真＝1、假＝0
-- 和 D1-3 的 CIFAR-10 分類器一樣，只是「類別」換成真／假
+- 和 L03 的 CIFAR-10 分類器一樣，只是「類別」換成真／假
 
 </div>
 </div>
 
 <div class="takeaway mt-3">GAN 一半的程式你已經會了；新的只有「G」和「輪流訓練」。</div>
 
-<div class="src">回顧：DL pp.38–55（CNN 分類）；D1-3 的訓練迴圈</div>
+<div class="src">回顧：DL pp.38–55（CNN 分類）；L03 的訓練迴圈</div>
 
 <!--
 ★ D（3 分）：LeakyReLU：負的那一邊不是 0，而是乘 0.2，讓梯度不會完全消失（DCGAN 的建議）。
@@ -211,7 +242,7 @@ $$\min_G \max_D \; \mathbb{E}_{x}\big[\log D(x)\big] + \mathbb{E}_{z}\big[\log\b
 <thead><tr><th style="width:26%">符號</th><th>讀作</th></tr></thead>
 <tbody>
 <tr><td>𝔼_x、𝔼_z</td><td>平均：對所有真圖 x、所有隨機數字 z 取平均（程式裡就是一個 batch 的平均）</td></tr>
-<tr><td>D(x)</td><td>D 認為真圖 x「是真的」的機率（第 7 頁的 logit 經過 sigmoid）</td></tr>
+<tr><td>D(x)</td><td>D 認為真圖 x「是真的」的機率（第 8 頁的 logit 經過 sigmoid）</td></tr>
 <tr><td>G(z)</td><td>G 用隨機數字 z 畫出的假圖</td></tr>
 <tr><td>log D(x) ＋ log(1 − D(G(z)))</td><td>D 判對的程度：真圖說真、假圖說假，就變大</td></tr>
 <tr><td>max_D、min_G</td><td>D 要把它推高；G 要把它壓低（讓 D 判錯）</td></tr>
@@ -264,7 +295,7 @@ loss_g = bce(d(fake), ones)      # 假圖，但標成「真」(1)
 <table class="mt-5" style="font-size:17px">
 <thead><tr><th style="width:34%">規則</th><th>為什麼</th></tr></thead>
 <tbody>
-<tr><td>用 stride 2 的卷積取代池化</td><td>讓網路自己學怎麼縮小／放大（D2-1 的 down／up）</td></tr>
+<tr><td>用 stride 2 的卷積取代池化</td><td>讓網路自己學怎麼縮小／放大（L05 的 down／up）</td></tr>
 <tr><td>BatchNorm</td><td>讓兩個網路的訓練比較穩</td></tr>
 <tr><td>G 用 ReLU、最後一層 tanh；D 用 LeakyReLU</td><td>tanh 輸出 −1～1，所以真圖也要正規化到 −1～1</td></tr>
 </tbody>
@@ -324,7 +355,7 @@ hostOnly: true
 </tbody>
 </table>
 
-<div class="takeaway mt-4">G 和 D2-1 的解碼器幾乎一樣：從小小的瓶頸一路放大。差別在 G 的輸入是隨機數字，不是編碼器給的。</div>
+<div class="takeaway mt-4">G 和 L05 的解碼器幾乎一樣：從小小的瓶頸一路放大。差別在 G 的輸入是隨機數字，不是編碼器給的。</div>
 
 <!--
 ★ 解答（2 分）：本機 CPU 煙霧測試印出 z (16,100) → fc 後 (16,128,7,7) → 輸出 (16,1,28,28)（research/lab-runs.md）。
@@ -346,7 +377,7 @@ loss_g = bce(d(fake), ones)
 opt_g.zero_grad(); loss_g.backward(); opt_g.step()
 ```
 
-<div class="takeaway mt-3">還是 D1-3 的五行迴圈，只是做兩次：一次給 D、一次給 G。</div>
+<div class="takeaway mt-3">還是 L03 的五行迴圈，只是做兩次：一次給 D、一次給 G。</div>
 
 <!--
 ★ 迴圈（5 分）：fake.detach() 讀作「這一步把假圖當成固定的資料」，不然 D 的 backward 會一路傳進 G，把 G 也改掉。
@@ -431,9 +462,9 @@ opt_g.zero_grad(); loss_g.backward(); opt_g.step()
 <thead><tr><th style="width:30%">產品／模型</th><th>對抗損失做什麼</th><th style="width:16%">本課</th></tr></thead>
 <tbody>
 <tr><td>Real-ESRGAN</td><td>放大時畫出銳利的細節</td><td>今天</td></tr>
-<tr><td>Stable Diffusion 的 VAE 解碼器</td><td>還原照片時不要糊</td><td>D2-3</td></tr>
-<tr><td>EnCodec、HiFi-GAN</td><td>還原聲音時聽起來自然</td><td>D2-4、D6-1</td></tr>
-<tr><td>SDXL-Turbo（ADD，對抗擴散蒸餾）</td><td>讓擴散模型 1–4 步就畫完</td><td>D4-4</td></tr>
+<tr><td>Stable Diffusion 的 VAE 解碼器</td><td>還原照片時不要糊</td><td>L07</td></tr>
+<tr><td>EnCodec、HiFi-GAN</td><td>還原聲音時聽起來自然</td><td>L08、L21</td></tr>
+<tr><td>SDXL-Turbo（ADD，對抗擴散蒸餾）</td><td>讓擴散模型 1–4 步就畫完</td><td>L16</td></tr>
 </tbody>
 </table>
 
@@ -452,7 +483,7 @@ opt_g.zero_grad(); loss_g.backward(); opt_g.step()
 # 條件式 GAN 與感知損失
 
 <div class="grid grid-cols-2 gap-6 mt-5" style="font-size:18px">
-<div class="node"><strong>條件式 GAN</strong><small>G 和 D 都多吃一個標籤（例如「鞋子」）→ 想要哪一類就畫哪一類；D4-1 用擴散模型做同樣的事</small></div>
+<div class="node"><strong>條件式 GAN</strong><small>G 和 D 都多吃一個標籤（例如「鞋子」）→ 想要哪一類就畫哪一類；L13 用擴散模型做同樣的事</small></div>
 <div class="node"><strong>感知損失（perceptual loss）</strong><small>不比像素，比「預訓練 CNN 看到的特徵」；Real-ESRGAN 同時用 L1、感知、對抗三種損失（S2，待確認）</small></div>
 </div>
 
@@ -559,7 +590,7 @@ opt_g.zero_grad(); loss_g.backward(); opt_g.step()
 </div>
 
 <!--
-★ Specify（3 分）：驗收沒有寫「loss 下降」——因為 GAN 的 loss 不會單調下降（第 14 頁）。
+★ Specify（3 分）：驗收沒有寫「loss 下降」——因為 GAN 的 loss 不會單調下降（第 15 頁）。
 -->
 
 ---
@@ -603,7 +634,7 @@ opt_g.zero_grad(); loss_g.backward(); opt_g.step()
 </div>
 <div>
 
-<div class="node node--primary"><strong>換一個種子</strong><small>把第 1 格的 <code>SEED</code> 改成你的座號再跑一次，和講師的 SEED＝0（第 19 頁 Lab 1／7 的網格）比：只換隨機性，結果差多少？</small></div>
+<div class="node node--primary"><strong>換一個種子</strong><small>把第 1 格的 <code>SEED</code> 改成你的座號再跑一次，和講師的 SEED＝0（第 20 頁 Lab 1／7 的網格）比：只換隨機性，結果差多少？</small></div>
 
 </div>
 </div>
@@ -734,7 +765,7 @@ hostOnly: true
 | 速度 | ✓ 一次前向就畫完 |
 | 多樣性 | ✗ 容易崩塌 |
 
-<div class="muted mt-2" style="font-size:16px">D2-3 的 VAE：快、多樣，但糊。D3-3 的擴散模型會填第三列。</div>
+<div class="muted mt-2" style="font-size:16px">L07 的 VAE：快、多樣，但糊。L11 的擴散模型會填第三列。</div>
 
 </div>
 </div>
@@ -769,7 +800,7 @@ hostOnly: true
 <div class="src">消費者保護法、公平交易法對不實廣告的規定（S8，待確認條號）</div>
 
 <!--
-★ 風險（4 分）：和 D2-3 的「VAE 會讓小字變形」對照：VAE 是糊掉，GAN 是畫錯。兩種都要人工檢查文字。
+★ 風險（4 分）：和 L07 的「VAE 會讓小字變形」對照：VAE 是糊掉，GAN 是畫錯。兩種都要人工檢查文字。
 -->
 
 ---
@@ -853,7 +884,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D3-2：沒有成對影像的 B 線
+# 下一堂 L10：沒有成對影像的 B 線
 
 <div class="node node--primary mt-2">品保部 B 線換了相機，A 線的瑕疵模型一直誤報；而且沒有「同一片板子在兩條線各拍一張」的成對影像。下一堂用兩組 G 和 D：CycleGAN，把 B 線的影像「翻譯」成 A 線的樣子——還要檢查瑕疵有沒有被翻譯掉。</div>
 

@@ -287,3 +287,23 @@
 /* Tensor shape inside a node: keep on one line */
 .node small.nw { white-space: nowrap; font-size: 15px; }
 .nw { white-space: nowrap; }
+
+/* Q / K / V 配色（沿用 3Blue1Brown：query 黃、key 青、value 紅；文字用深一點的同色系以便閱讀） */
+:root {
+  --q: #d9a400; --q-text: #8a6700; --q-soft: #fff6d6;
+  --k: #14919b; --k-text: #0e6f77; --k-soft: #e0f4f5;
+  --v: #d64550; --v-text: #b02a35; --v-soft: #fde8ea;
+}
+.cq { color: var(--q-text); font-weight: 700; background: var(--q-soft); padding: 0 .2em; border-radius: 4px; }
+.ck { color: var(--k-text); font-weight: 700; background: var(--k-soft); padding: 0 .2em; border-radius: 4px; }
+.cv { color: var(--v-text); font-weight: 700; background: var(--v-soft); padding: 0 .2em; border-radius: 4px; }
+
+/* Q / K / V 配色（沿用 3Blue1Brown：query 黃、key 青、value 紅；文字用深一點的同色系以便閱讀） */
+:root {
+  --q: #d9a400; --q-text: #8a6700; --q-soft: #fff6d6;
+  --k: #14919b; --k-text: #0e6f77; --k-soft: #e0f4f5;
+  --v: #d64550; --v-text: #b02a35; --v-soft: #fde8ea;
+}
+.cq { color: var(--q-text); font-weight: 700; background: var(--q-soft); padding: 0 .2em; border-radius: 4px; }
+.ck { color: var(--k-text); font-weight: 700; background: var(--k-soft); padding: 0 .2em; border-radius: 4px; }
+.cv { color: var(--v-text); font-weight: 700; background: var(--v-soft); padding: 0 .2em; border-radius: 4px; }

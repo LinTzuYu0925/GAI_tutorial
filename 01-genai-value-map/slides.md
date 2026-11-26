@@ -2,7 +2,7 @@
 theme: default
 title: GenAI 能為公司做什麼？
 info: |
-  生成式AI原理 · D1-1
+  生成式AI原理 · L01
   從執行長的一個問題出發：生成式 AI 的價值在哪、怎麼評估、怎麼決定買或自己跑。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D1-1</div>
+<div class="eyebrow">生成式AI原理 · L01</div>
 
 # GenAI 能為公司做什麼？
 
@@ -45,7 +45,7 @@ class: cover
 # 今天的需求單來自執行長室
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D1-1】部門：執行長室<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L01】部門：執行長室<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>競爭對手都在用生成式 AI，我們該把錢花在哪裡？</dd>
     <dt>現況痛點</dt><dd>各部門各自試用免費工具，沒有人算過價值、成本與風險</dd>
@@ -87,7 +87,7 @@ class: cover
 
 <!--
 ★ 六步迴圈（4 分）：對照 Vibe Coding 單元 01 的 Specify → Generate → Execute → Audit → Iterate。
-Open 是這門課的「原理」：每一個模型都會畫圖、類比、最多一條公式，再寫一段程式。Ship 是每天都要交出一個能點的東西（第一天在 D1-4）。
+Open 是這門課的「原理」：每一個模型都會畫圖、類比、最多一條公式，再寫一段程式。Ship 是每天都要交出一個能點的東西（第一天在 L04）。
 -->
 
 ---
@@ -127,7 +127,7 @@ LLM 在第五天才深入，緊接著就是 Agent 模組；今天的導覽先讓
 4. **評估**一張需求單：價值 × 可行性 × 資料 × 風險，並決定買 API 或自己跑
 
 <!--
-★ 目標（1 分）。不教：任何模型的程式碼（D1-2 開始）；Agent、RAG、工具呼叫（屬於後續 Agent 模組）。
+★ 目標（1 分）。不教：任何模型的程式碼（L02 開始）；Agent、RAG、工具呼叫（屬於後續 Agent 模組）。
 -->
 
 ---
@@ -173,10 +173,10 @@ LLM 在第五天才深入，緊接著就是 Agent 模組；今天的導覽先讓
 <div class="src">示範用模型與授權見 research/sources.md S3–S6；MusicGen 權重為非商用授權，只由講師示範。</div>
 
 <!--
-★ 現場示範（8 分）：打開 D1-2 的 lab02 解答筆記本，最後貼上 `materials/tour-musicgen.py` 這一格（MusicGen）。
+★ 現場示範（8 分）：打開 L02 的 lab02 解答筆記本，最後貼上 `materials/tour-musicgen.py` 這一格（MusicGen）。
 文案提示詞：lab02 Part A 的產品規格 SPEC ＋「請寫一段 80 字以內的上架文案。」。圖片提示詞用英文（lab02 Part B）。音樂：「upbeat electronic jingle, 10 seconds」（長度由 max_new_tokens 決定，不是提示詞裡的「10 seconds」）。
-頁面上是講師在 Colab T4 實跑的結果（research/lab-runs.md）。只看結果，不解釋原理；告訴學員 D1-2 自己跑文字與影像，音樂在 D6-1。
-可以順口點出：三版都超過 80 字，第 1 版寫「續航 30 小時」又說「長達 2 小時」（模型把規格裡「10 分鐘快充可聽 2 小時」的 2 小時錯接到續航），第 2、3 版混進簡體字。小模型的文案要人檢查，D1-2 會回來談。
+頁面上是講師在 Colab T4 實跑的結果（research/lab-runs.md）。只看結果，不解釋原理；告訴學員 L02 自己跑文字與影像，音樂在 L21。
+可以順口點出：三版都超過 80 字，第 1 版寫「續航 30 小時」又說「長達 2 小時」（模型把規格裡「10 分鐘快充可聽 2 小時」的 2 小時錯接到續航），第 2、3 版混進簡體字。小模型的文案要人檢查，L02 會回來談。
 備案：Colab 沒額度 → 直接用這頁的圖與音檔。
 -->
 
@@ -320,8 +320,8 @@ LLM 在第五天才深入，緊接著就是 Agent 模組；今天的導覽先讓
 ★ p_data 與 p_θ（6 分）：延續上一頁的兩個軸，現在把平面每一格都畫出來：每一格是一張圖。
 先指黑色虛線：「真實照片落在這一塊，這叫 p_data，我們只看得到手上的照片，看不到全貌。」再指藍色實線：「模型心中『照片通常長這樣』的範圍，叫 p_θ。」
 p 讀作「機率分布」；θ 讀作「theta，模型的參數」。訓練就是調 θ，讓藍框和黑框重疊；生成就是在藍框裡抽一個點，再把點畫成圖。
-常見誤解一：生成模型「背下」訓練資料再拼貼。理想上它學的是範圍（分布），抽到的是新點；但 D2-3 會講到模型也可能背下資料，這是隱私風險。
-常見誤解二：以為生成就是調亮度。這張圖只是為了畫得出來才用兩個軸；真正的模型（例如 D2-3 的 VAE）自己學出上百個軸，每個點畫出來是一隻不同的貓。
+常見誤解一：生成模型「背下」訓練資料再拼貼。理想上它學的是範圍（分布），抽到的是新點；但 L07 會講到模型也可能背下資料，這是隱私風險。
+常見誤解二：以為生成就是調亮度。這張圖只是為了畫得出來才用兩個軸；真正的模型（例如 L07 的 VAE）自己學出上百個軸，每個點畫出來是一隻不同的貓。
 -->
 
 ---
@@ -424,7 +424,7 @@ $$p_\theta(x \mid y)$$
 
 <div class="takeaway mt-3">寫提示詞，就是在 p<sub>θ</sub> 的大範圍裡，指定「要從哪一小塊抽樣」。</div>
 
-<div class="src">教學示意圖。之後會再出現：D4-1 條件擴散模型、D5-2 GPT 依前文生成下一個字</div>
+<div class="src">教學示意圖。之後會再出現：L13 條件擴散模型、L18 GPT 依前文生成下一個字</div>
 
 <!--
 ★ 條件（5 分）：延續前兩頁的同一個平面。藍色大範圍是「所有貓」，也就是前面的 p_θ。
@@ -441,10 +441,10 @@ $$p_\theta(x \mid y)$$
 <table style="font-size:17px">
 <thead><tr><th style="width:31%">類別</th><th style="width:22%">產生什麼</th><th style="width:33%">代表例子</th><th>本課</th></tr></thead>
 <tbody>
-<tr><td><strong>LLM</strong>（大型語言模型）</td><td>文字、程式碼、JSON</td><td>Qwen、Llama、Claude</td><td>D1-2、D5</td></tr>
+<tr><td><strong>LLM</strong>（大型語言模型）</td><td>文字、程式碼、JSON</td><td>Qwen、Llama、Claude</td><td>L02、D5</td></tr>
 <tr><td><strong>擴散</strong>／Flow Matching（流匹配）</td><td>影像、影片</td><td>Stable Diffusion</td><td>D3、D4</td></tr>
-<tr><td><strong>多模態</strong>（multimodal）</td><td>看圖說話</td><td>VLM（視覺語言模型）；CLIP 負責對齊文字與影像，本身不生成</td><td>D4-2、D6-2</td></tr>
-<tr><td><strong>音訊</strong></td><td>音樂、語音</td><td>MusicGen、TTS（文字轉語音）</td><td>D2-4、D6-1</td></tr>
+<tr><td><strong>多模態</strong>（multimodal）</td><td>看圖說話</td><td>VLM（視覺語言模型）；CLIP 負責對齊文字與影像，本身不生成</td><td>L14、L22</td></tr>
+<tr><td><strong>音訊</strong></td><td>音樂、語音</td><td>MusicGen、TTS（文字轉語音）</td><td>L08、L21</td></tr>
 <tr><td><strong>Agent</strong>（LLM 組成的系統）</td><td>多步驟自動完成任務</td><td>Claude Code</td><td>下一個模組</td></tr>
 </tbody>
 </table>
@@ -472,7 +472,7 @@ $$p_\theta(x \mid y)$$
 </div>
 
 <div class="grid grid-cols-6 gap-2 mt-6 muted" style="font-size:15px">
-  <div class="text-center">D2-3</div><div class="text-center">D3-1</div><div class="text-center">D5-1</div><div class="text-center">D3-3</div><div class="text-center">D4</div><div class="text-center">D5</div>
+  <div class="text-center">L07</div><div class="text-center">L09</div><div class="text-center">L17</div><div class="text-center">L11</div><div class="text-center">D4</div><div class="text-center">D5</div>
 </div>
 
 <div class="takeaway mt-8">每一個里程碑，課程裡都會有一天用到或親手做一個小版本。</div>
@@ -507,7 +507,7 @@ $$p_\theta(x \mid y)$$
 
 <!--
 ★ 四面向評估（5 分）：分數越高越好；特別強調風險 5 分代表風險很低，避免學員搞混方向。
-曜嶼電子的需求單剛好落在這四個領域：客服（D5）、行銷（D1-2、D4）、研發與品保（D2、D3）。下一頁每個面向各舉一個高分、一個低分的例子。
+曜嶼電子的需求單剛好落在這四個領域：客服（D5）、行銷（L02、D4）、研發與品保（D2、D3）。下一頁每個面向各舉一個高分、一個低分的例子。
 -->
 
 ---
@@ -557,7 +557,7 @@ $$p_\theta(x \mid y)$$
 
 <!--
 ★ 買或自己跑（5 分）：這一頁就是需求評估表的一個欄位。舉例：客服單有客戶個資 → 開放權重或去識別化；行銷文案沒有個資 → API 最快。
-這門課兩種都會用：D1-2 一次 API 呼叫，其他大多是開放權重（因為要打開黑盒子）。
+這門課兩種都會用：L02 一次 API 呼叫，其他大多是開放權重（因為要打開黑盒子）。
 -->
 
 ---
@@ -735,13 +735,13 @@ $$p_\theta(x \mid y)$$
 </div>
 </div>
 
-<div class="src">影像：VisA PCB1 良品與不良品 001（Zou et al., 2022，CC BY 4.0），講師裁切；D2-1 會用同一個資料集</div>
+<div class="src">影像：VisA PCB1 良品與不良品 001（Zou et al., 2022，CC BY 4.0），講師裁切；L05 會用同一個資料集</div>
 
 <!--
 ★ 練習 2（6 分）：先指兩張電路板：「左上這片是良品，下面這片有一根針腳彎掉。產線上的 AOI 認得它看過的瑕疵，但沒看過的新瑕疵常漏掉。」
 目的：學員自己發現「品保這張價值和資料都高，但模型家族不是一般分類器」：一般分類器要每種瑕疵都有標註，新瑕疵根本沒有樣本。
-選「一般分類器」的學員不用糾正太久，解答頁會說明；這就是 D2-1 的主題。
-異常偵測讀作「只學良品長什麼樣，看到不像良品的就報警」，所以不需要新瑕疵的樣本（D2-1 實作）。過殺讀作「良品被誤判成瑕疵、白白丟掉」。
+選「一般分類器」的學員不用糾正太久，解答頁會說明；這就是 L05 的主題。
+異常偵測讀作「只學良品長什麼樣，看到不像良品的就報警」，所以不需要新瑕疵的樣本（L05 實作）。過殺讀作「良品被誤判成瑕疵、白白丟掉」。
 -->
 
 ---
@@ -768,7 +768,7 @@ hostOnly: true
 <div class="takeaway mt-3">怎麼判斷：②–⑥ 和上表一致就對；分數差 1 分沒關係，只要說得出理由。</div>
 
 <!--
-★ 解答（3 分）：強調品保那張的「模型家族」不是分類器，因為沒有新瑕疵的標註——這就是 D2-1 的主題。
+★ 解答（3 分）：強調品保那張的「模型家族」不是分類器，因為沒有新瑕疵的標註——這就是 L05 的主題。
 行銷那張和「產品範例圖」的差別：情境圖要約模特兒、外拍，生成的是「場景」，省最多，所以價值 4；但產品本身不能讓模型亂畫（按鍵、接孔會畫錯），要用真實產品照合成進場景（D4 的 LoRA／局部重繪），所以可行性 4、最大風險是產品細節被畫錯。
 -->
 
@@ -818,7 +818,7 @@ hostOnly: true
 <div class="takeaway mt-6">本課不實作；聽到名字時知道它們也是「學分布、再抽樣」。</div>
 
 <!--
-△ 備用（2 分）：有學員問「還有哪些生成模型」時再用。自迴歸影像 token 的概念在 D2-4（VQ-VAE）會出現。
+△ 備用（2 分）：有學員問「還有哪些生成模型」時再用。自迴歸影像 token 的概念在 L08（VQ-VAE）會出現。
 -->
 
 ---
@@ -902,7 +902,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D1-2：今晚就要文案和產品圖
+# 下一堂 L02：今晚就要文案和產品圖
 
 <div class="node node--primary mt-2">今天看講師示範、決定要做哪些需求單；下一堂打開 Colab T4，自己跑文字模型和影像模型，並弄懂「為什麼每次輸出都不一樣」。</div>
 

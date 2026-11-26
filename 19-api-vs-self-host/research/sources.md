@@ -2,9 +2,9 @@
 
 | id | 主張 | 來源 | 狀態 | 日期 |
 |---|---|---|---|---|
-| S1 | `client.messages.create(model, max_tokens, system, messages, output_config)`；`usage.input_tokens／output_tokens`；`messages.count_tokens`；回應可能含思考區塊 | Claude Code 內建 claude-api 參考資料（Python README、token-counting） | 參考資料已讀 | 2026-11-26 |
-| S2 | 2026-10-21 版 API 起，送 `temperature`／`top_p`／`top_k` 會回 400；`claude-opus-5-5` 思考不能關、effort 預設 medium | 同上（Thinking & Effort 表） | 參考資料已讀；官方文件待確認 | 2026-11-26 |
-| S3 | 單價：`claude-opus-5-5` 4／20、`claude-haiku-5-5` 0.10／0.50 美元／百萬 token（Haiku 5.5 為 10 萬 token 以內的提示） | 同上（價格表，2026-11-03 快取） | 上線前請查官方價格頁 | 2026-11-26 |
+| S1 | `from google import genai; client.interactions.create(model, system_instruction, input, generation_config={"max_output_tokens"})`；`output_text`；用量 `usage.total_input_tokens／total_output_tokens`；套件 `google-genai`，金鑰環境變數 `GEMINI_API_KEY` | aistudio.google.com/docs（get-started、text-generation，由 ai.google.dev 轉址） | 文件已讀；用量欄位名稱文件只在 REST 範例出現，**尚未用真實金鑰在 Colab 跑過** | 2026-11-26 |
+| S2 | 免費額度：輸入「可能被用來改進產品」（付費層不會）；有每分鐘／每天上限（數字在 AI Studio 儀表板，文件未列）；Gemini 4 與 3.6 以後模型會忽略 temperature／top_p／top_k | aistudio.google.com/docs（pricing、rate-limits） | 官方文件已讀；EEA／英國／瑞士免費層限制頁面未見，待確認 | 2026-11-26 |
+| S3 | 單價：`gemini-3.5-flash-lite` 輸入 0.30／輸出 2.50 美元／百萬 token（付費層）；免費層不收費 | aistudio.google.com/docs/pricing | 官方價格頁；部分模型 2027-01-01 起調價，上線前請再查 | 2026-11-26 |
 | S4 | `parse_reply` 四個例子的結果；0.5B 本機測試的有效 JSON 與正確率 | lab19 本機 CPU 煙霧測試（`research/lab-runs.md`） | 已實跑 | 2026-11-26 |
 | S5 | Qwen2.5-1.5B-Instruct 授權 Apache-2.0；Qwen2.5-3B-Instruct 為 Qwen Research License | HF 模型卡 license 欄位；課程地圖 §9.2 | 待確認 | 2026-11-26 |
 | S6 | Gradio `share=True` 連結 72 小時有效 | Gradio 文件 | 待確認 | 2026-11-26 |

@@ -57,8 +57,8 @@ class Net(nn.Module):
         return self.classifier(self.features(x))
 
 tf = transforms.ToTensor()
-train_ds = datasets.CIFAR10("data", train=True, download=True, transform=tf)
-test_ds = datasets.CIFAR10("data", train=False, download=True, transform=tf)
+train_ds = datasets.CIFAR10("data/download", train=True, download=True, transform=tf)
+test_ds = datasets.CIFAR10("data/download", train=False, download=True, transform=tf)
 train_loader = DataLoader(train_ds, batch_size=64, shuffle=True, num_workers=2)
 test_loader = DataLoader(test_ds, batch_size=256, num_workers=2)
 CLASSES = train_ds.classes

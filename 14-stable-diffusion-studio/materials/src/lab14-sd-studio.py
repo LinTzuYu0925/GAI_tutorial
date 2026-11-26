@@ -19,7 +19,9 @@
 
 # %%
 # 第 1 格：環境
-%pip install -q -U diffusers transformers accelerate gradio
+# 固定為 lab-runs.md 記錄的、已在 Colab T4 實跑通過的版本（Colab 預設的舊版 diffusers 會 import 失敗）。
+%pip install -q diffusers==0.43.0 transformers==5.24.1 accelerate gradio
+# 若看到 import 錯誤：執行階段 → 重新啟動工作階段，再從第 1 格重跑。
 import torch, time, platform, gc
 import numpy as np
 import matplotlib.pyplot as plt

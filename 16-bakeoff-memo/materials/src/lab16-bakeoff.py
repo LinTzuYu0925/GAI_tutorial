@@ -144,10 +144,11 @@ class ResnetGenerator(nn.Module):
         return self.model(x)
 
 URL = "http://efrosgans.eecs.berkeley.edu/cyclegan/pretrained_models/summer2winter_yosemite.pth"
-if not os.path.exists("summer2winter.pth"):
-    urllib.request.urlretrieve(URL, "summer2winter.pth")
+os.makedirs("data/download", exist_ok=True)
+if not os.path.exists("data/download/summer2winter.pth"):
+    urllib.request.urlretrieve(URL, "data/download/summer2winter.pth")
 G = ResnetGenerator().to(device).eval()
-sd_gan = torch.load("summer2winter.pth", map_location=device)
+sd_gan = torch.load("data/download/summer2winter.pth", map_location=device)
 # 2018 年的檔案多存了 InstanceNorm 的統計量（現在的 PyTorch 不用）；官方程式載入時也是把它們丟掉
 sd_gan = {k: v for k, v in sd_gan.items() if not k.endswith(("running_mean", "running_var", "num_batches_tracked"))}
 G.load_state_dict(sd_gan)

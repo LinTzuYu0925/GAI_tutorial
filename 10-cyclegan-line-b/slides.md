@@ -2,7 +2,7 @@
 theme: default
 title: 沒有成對影像的 B 線
 info: |
-  生成式AI原理 · D3-2
+  生成式AI原理 · L10
   B 線換了相機，A 線的瑕疵模型一直誤報；沒有成對影像，用 CycleGAN 把 B 線影像轉成 A 線風格，再量過殺與瑕疵是否被抹掉。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D3-2</div>
+<div class="eyebrow">生成式AI原理 · L10</div>
 
 # 沒有成對影像的 B 線
 
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：昨天（D3-1）的 GAN 是「從隨機數字畫一張圖」。今天的 GAN 是「把一張圖翻成另一種風格」，而且沒有成對的例子可以學。
+★ 開場（2 分）：昨天（L09）的 GAN 是「從隨機數字畫一張圖」。今天的 GAN 是「把一張圖翻成另一種風格」，而且沒有成對的例子可以學。
 -->
 
 ---
@@ -45,9 +45,9 @@ class: cover
 # 品保部 B 線：換了相機，A 線模型一直誤報
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D3-2】部門：製造品保部（B 線）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L10】部門：製造品保部（B 線）<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
-    <dt>問題</dt><dd>B 線換了相機，D2-1 在 A 線訓練的瑕疵模型，在 B 線一直誤報</dd>
+    <dt>問題</dt><dd>B 線換了相機，L05 在 A 線訓練的瑕疵模型，在 B 線一直誤報</dd>
     <dt>現況痛點</dt><dd>B 線過殺率高，好板子被打下來重檢；沒有「同一片板子在兩條線各拍一張」的成對影像</dd>
     <dt>成功指標（KPI）</dt><dd>轉換後，A 線模型在 B 線的過殺下降；真實瑕疵沒有被抹掉（漏檢不變差）</dd>
     <dt>可用資料</dt><dd>VisA PCB1（A 線）；用程式做出的 B 線相機差異（偏暖、偏亮、對比強、雜訊多）</dd>
@@ -57,7 +57,7 @@ class: cover
 </div>
 
 <!--
-★ 需求單（3 分）：過殺（over-kill）：好的被判成壞的；漏檢：壞的沒被抓到（D2-1 學過）。今天兩個都要看：只降過殺、卻讓瑕疵消失，是更糟的結果。
+★ 需求單（3 分）：過殺（over-kill）：好的被判成壞的；漏檢：壞的沒被抓到（L05 學過）。今天兩個都要看：只降過殺、卻讓瑕疵消失，是更糟的結果。
 B 線是我們用程式做出來的（合成），課堂上才知道「正確答案」；真實產線要先拍照比對。
 -->
 
@@ -93,7 +93,7 @@ B 線是我們用程式做出來的（合成），課堂上才知道「正確答
 <div style="font-size:18px">
 
 - 人眼：一樣是好板子
-- D2-1 的 AE：只看過 A 線 → 顏色、亮度、對比、雜訊都「不正常」→ **誤報**
+- L05 的 AE：只看過 A 線 → 顏色、亮度、對比、雜訊都「不正常」→ **誤報**
 - 這叫**分布偏移**（domain shift）：訓練和使用時的資料長得不一樣
 
 </div>
@@ -106,6 +106,28 @@ B 線是我們用程式做出來的（合成），課堂上才知道「正確答
 <!--
 ★ Frame（4 分）：domain（領域、資料來源）。請學員先猜：B 線的過殺會是多少？Lab 2／7 會量出來。
 B 線的四個差異：紅 ×1.12、藍 ×0.80（偏暖）；gamma 0.8（偏亮）；對比 ×1.2；雜訊（標準差 0.04）。為什麼不用模糊：模糊會讓 AE 重建「更容易」，反而不會誤報（講師本機試跑發現）。
+-->
+
+---
+
+<div class="eyebrow">00 · Frame · 領域轉換</div>
+
+# 領域轉換（domain transfer）：把 A 領域的畫面變成 B 領域
+
+<img class="photo" src="/domain-transfer.gif" alt="動畫：左邊一匹棕色的馬在草地上，右邊同一個場景裡的馬逐漸變成斑馬，背景草地和柵欄不變" style="max-height:250px;object-fit:contain;margin:0 auto">
+<div class="shot-cap">CycleGAN 的經典動畫：馬 → 斑馬。只換「領域的風格」，場景、姿勢、背景都留著</div>
+
+<div class="grid grid-cols-2 gap-6 mt-2" style="font-size:16px">
+<div class="node"><strong>馬 → 斑馬</strong><small>換的是「毛皮的樣子」；位置、姿勢、草地不動</small></div>
+<div class="node node--primary"><strong>B 線 → A 線（今天的問題）</strong><small>換的是「相機的樣子」（顏色、亮度、雜訊）；板子、元件、瑕疵都不能動</small></div>
+</div>
+
+<div class="takeaway mt-2">今天要學的就是這種「只換風格、內容留著」的轉換，而且我們手上沒有成對的照片。</div>
+
+<div class="src">動畫：CycleGAN 示意（Zhu et al., 2017，S3；轉載，僅供課堂教學引用）</div>
+
+<!--
+★ 領域轉換（3 分）：domain（領域）＝一群風格相近的照片。請學員先看動畫，說出「什麼變了、什麼沒變」。再對應到今天：B 線照片轉成 A 線風格，變的是相機味道，不變的是板子上的東西。注意最後一句：不變的內容裡包含瑕疵，這是第 3 部分 Measure 要驗收的重點。
 -->
 
 ---
@@ -129,7 +151,7 @@ B 線的四個差異：紅 ×1.12、藍 ×0.80（偏暖）；gamma 0.8（偏亮�
 <div class="src">Isola et al., pix2pix, 2017（S2）；Zhu et al., CycleGAN, 2017（S3）；照片：Chad Madden（CC0）、Agness Abubakar Saidi（CC0），Wikimedia Commons（S7、S8）</div>
 
 <!--
-★ 成對 vs 不成對（5 分）：問學員：「如果有成對影像，今天最簡單的做法是什麼？」→ 直接訓練一個 B → A 的 U-Net（D2-2），用 L1 比答案。沒有成對，才需要 CycleGAN。
+★ 成對 vs 不成對（5 分）：問學員：「如果有成對影像，今天最簡單的做法是什麼？」→ 直接訓練一個 B → A 的 U-Net（L06），用 L1 比答案。沒有成對，才需要 CycleGAN。
 -->
 
 ---
@@ -138,7 +160,7 @@ B 線的四個差異：紅 ×1.12、藍 ×0.80（偏暖）；gamma 0.8（偏亮�
 
 # 講師跑好的 CycleGAN：B 線照片轉成 A 線風格
 
-<div class="placeholder" style="height:300px;padding:16px 24px">B 線輸入 → epoch 1、5、10、20 的 G(B) → A 線同一片板子的照片（G 從沒看過）<small>講師 T4 實跑後替換（lab10 <code>cyclegan_epochs.png</code>）</small></div>
+<div style="width:732px;margin:0 auto"><img class="photo" src="/lab10-epochs-strip.png" alt="兩列各 6 張：B 線輸入、epoch 1、5、10、20 的 G(B)、A 線同一片板子的照片；顏色從偏黃逐步變成和 A 線一樣的灰底藍板" style="width:100%"><div class="grid grid-cols-6 gap-1 shot-cap" style="text-align:center;font-size:14px"><div>B 線輸入</div><div>epoch 1</div><div>epoch 5</div><div>epoch 10</div><div>epoch 20</div><div>A 線照片（G 沒看過）</div></div><div class="shot-cap" style="text-align:center">上下兩列是兩片不同的板子（lab10，T4 實跑）</div></div>
 
 <div class="takeaway mt-3">先猜：轉完的顏色會像 A 線嗎？板子上的元件、文字會不會被改掉？</div>
 
@@ -162,10 +184,10 @@ B 線的四個差異：紅 ×1.12、藍 ×0.80（偏暖）；gamma 0.8（偏亮�
   <div class="node">F(a)</div><span class="arrow text-center">→</span>
   <div class="node node--primary"><strong>D_B</strong><small>是真的 B 線照片嗎？</small></div>
 </div>
-<div class="muted mt-1" style="font-size:16px;text-align:right">D_A 也看真的 A 線照片 a、D_B 也看真的 B 線照片 b，才學得會分真假（和 D3-1 一樣）</div>
+<div class="muted mt-1" style="font-size:16px;text-align:right">D_A 也看真的 A 線照片 a、D_B 也看真的 B 線照片 b，才學得會分真假（和 L09 一樣）</div>
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
-<div class="node"><strong>和昨天一樣</strong><small>每一對 G 和 D 就是 D3-1 的 GAN：G 想騙過 D，D 想分出真假</small></div>
+<div class="node"><strong>和昨天一樣</strong><small>每一對 G 和 D 就是 L09 的 GAN：G 想騙過 D，D 想分出真假</small></div>
 <div class="node node--warm"><strong>今天新的</strong><small>G 的輸入不是隨機數字，而是一張照片；而且有兩對，互相當對方的「檢查員」（下一頁）</small></div>
 </div>
 
@@ -174,7 +196,46 @@ B 線的四個差異：紅 ×1.12、藍 ×0.80（偏暖）；gamma 0.8（偏亮�
 <div class="src">Zhu et al., CycleGAN, ICCV 2017（S3）</div>
 
 <!--
-★ 主角圖（6 分）：請學員指出：哪兩個方塊是 D3-1 的 G？哪兩個是 D？只有箭頭的方向和輸入換了。
+★ 主角圖（6 分）：請學員指出：哪兩個方塊是 L09 的 G？哪兩個是 D？只有箭頭的方向和輸入換了。
+-->
+
+---
+
+<div class="eyebrow">02 · Open · 四個願望，四項損失</div>
+
+# 我們要四件事，所以有四項損失
+
+<div class="grid grid-cols-[1.1fr_1fr] gap-5 mt-1 items-start">
+<div>
+<img class="photo" src="/cyclegan-losses.png" alt="CycleGAN 示意圖：斑馬照片經 G_AB 變成假的馬，再經 G_BA 還原成重建的斑馬；假馬和真馬交給 D_B 判斷真假；原圖和重建圖之間拉一條 L2 損失" style="width:100%;max-height:235px;object-fit:contain">
+<div class="shot-cap">圖中「A、B」是領域，本課的 G 是 B→A、F 是 A→B；L2 在本課用 L1</div>
+</div>
+<div style="font-size:15px;line-height:1.45">
+
+1. **G 把 B 轉成 A**：轉出的 G(b) 要像真的 A
+2. **F 把 A 轉成 B**：轉出的 F(a) 要像真的 B
+3. **去程再回程**：b → G → F → b̂，要和 b 一樣
+4. **回程再去程**：a → F → G → â，要和 a 一樣
+5. 假圖要**騙過鑑定師**：G(b) 騙 D_A、F(a) 騙 D_B
+
+</div>
+</div>
+
+<div class="grid grid-cols-4 gap-3 mt-2" style="font-size:14px">
+<div class="node node--primary"><strong>D_A 損失</strong><small>願望 1、5</small></div>
+<div class="node node--primary"><strong>D_B 損失</strong><small>願望 2、5</small></div>
+<div class="node node--warm"><strong>b − b̂</strong><small>願望 3：去程循環</small></div>
+<div class="node node--warm"><strong>a − â</strong><small>願望 4：回程循環</small></div>
+</div>
+
+<div class="takeaway mt-2">3、4 兩項「轉得回來」守住內容；瑕疵有沒有被抹掉，「Measure」那頁會直接量。</div>
+
+<div class="src">圖：CycleGAN 示意（轉載；Zhu et al., 2017，S3；僅供教學引用）</div>
+
+<!--
+★ 四個願望（5 分）：先唸願望，再對圖：願望 1、2 是「要像」；3、4 是「要轉得回來」；5 是「騙過鑑定師」。四項損失的來源：兩個鑑別器各一項、兩個方向的循環各一項（identity 之後再補）。
+圖上是斑馬 → 馬 → 斑馬：只畫了一個方向，另一個方向對稱。圖上寫 L2，本課和原論文一樣用 L1，下一頁會說明。
+連結到 Measure：循環一致「逼」內容留下，但不保證；所以最後要直接量瑕疵存活。
 -->
 
 ---
@@ -202,7 +263,7 @@ loss_cyc = l1(Fb(G(b)), b) + l1(G(Fb(a)), a)     # 轉過去再轉回來，要�
 
 <div class="muted mt-1" style="font-size:16px">L1：每個像素差的絕對值，再平均（MSE 是差的平方再平均；L1 對少數大誤差比較不敏感）。程式裡 F 寫成 <code>Fb</code>，避免和 torch 的 F 撞名。</div>
 
-<div class="takeaway mt-2">循環一致逼 G 盡量保留內容，但不保證內容不變：第 13 頁要直接量瑕疵還在不在。</div>
+<div class="takeaway mt-2">循環一致逼 G 盡量保留內容，但不保證內容不變：第 15 頁要直接量瑕疵還在不在。</div>
 
 <!--
 ★ 循環一致（6 分）：L1 讀作「每個像素差的絕對值，再平均」。程式裡 F 叫 Fb（避免和 torch.nn.functional 的 F 撞名）。
@@ -271,7 +332,7 @@ loss_id = l1(G(a), a) + l1(Fb(b), b)
 </div>
 <div style="font-size:18px">
 
-- D3-1 的 D：整張圖 → **1 個**分數
+- L09 的 D：整張圖 → **1 個**分數
 - PatchGAN：整張圖 → **7 × 7 個**分數，每一格只看輸入的一塊（約 46 × 46，彼此重疊）
 - 高寬：64 → 32 → 16 → 8（三次 stride 2）→ 7（最後一層 kernel 4、stride 1）
 - 好處：專心看**紋理和顏色**（風格），參數少，不同大小的圖都能用
@@ -312,7 +373,7 @@ D_A(x).shape   # [B, 1, 7, 7]
 <FillClear group="loss" />
 
 <!--
-★ 無 AI 檢核點（5 分）：個人作業，不收回。最後一列：照第 10 頁 64 → 32 → 16 → 8 → 7 的算法做一次；可以在筆記本把 t 改成 128 × 128 驗證。
+★ 無 AI 檢核點（5 分）：個人作業，不收回。最後一列：照第 12 頁 64 → 32 → 16 → 8 → 7 的算法做一次；可以在筆記本把 t 改成 128 × 128 驗證。
 -->
 
 ---
@@ -347,7 +408,7 @@ hostOnly: true
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:270px;padding:16px 24px">A 線不良品 → B 線版本 → G(B) → 瑕疵遮罩（被轉換傷害最大的 4 張）<small>講師 T4 實跑後替換（lab10 <code>defect_survival.png</code>）</small></div>
+<img class="photo" src="/lab10-defect-survival.png" alt="4 列：A 線不良品、B 線版本、G(B)、瑕疵遮罩" style="height:300px;object-fit:contain;margin:0 auto"><div class="shot-cap" style="text-align:center">A 線不良品 → B 線版本 → G(B) → 瑕疵遮罩（lab10，T4 實跑）</div>
 
 </div>
 <div style="font-size:18px">
@@ -363,7 +424,7 @@ hostOnly: true
 <div class="takeaway mt-3">對檢測來說，抹掉瑕疵比誤報更糟：過殺降了，真瑕疵卻可能看不出來。</div>
 
 <!--
-★ 瑕疵存活（5 分）：這頁是今天最重要的「Measure」。和 D3-1 的假細節是同一件事的兩面：D3-1 是畫出不存在的東西，今天是擦掉存在的東西。
+★ 瑕疵存活（5 分）：這頁是今天最重要的「Measure」。和 L09 的假細節是同一件事的兩面：L09 是畫出不存在的東西，今天是擦掉存在的東西。
 -->
 
 ---
@@ -376,7 +437,7 @@ hostOnly: true
 <thead><tr><th style="width:24%">方法</th><th>做什麼</th><th style="width:30%">什麼時候夠用</th></tr></thead>
 <tbody>
 <tr><td>顏色正規化</td><td>把 B 線每個顏色通道的平均、標準差調成 A 線的（lab 第 4 部分）</td><td>差異主要是顏色、亮度</td></tr>
-<tr><td>用 B 線良品重新訓練 AE</td><td>收集幾百張 B 線良品（不用標註），重跑 D2-1</td><td>B 線已經開工一段時間</td></tr>
+<tr><td>用 B 線良品重新訓練 AE</td><td>收集幾百張 B 線良品（不用標註），重跑 L05</td><td>B 線已經開工一段時間</td></tr>
 <tr><td>CycleGAN</td><td>學出「B → A」的轉換</td><td>差異複雜（紋理、雜訊），又收不到 B 線良品</td></tr>
 </tbody>
 </table>
@@ -428,7 +489,15 @@ hostOnly: true
 </div>
 <div>
 
-<div class="placeholder" style="height:250px;padding:16px 24px">目標：轉換網格、四列對照表（過殺、漏檢、AUROC）、瑕疵存活圖<small>講師 T4 實跑後換成真實輸出（含 VRAM 峰值與總時間）</small></div>
+<table class="compact" style="font-size:14px;line-height:1.25;margin:0 0 4px">
+<tr><th>輸入</th><th>過殺</th><th>漏檢</th><th>AUROC</th><th>瑕疵被抹掉*</th></tr>
+<tr><td>A 線原圖</td><td>1.9%</td><td>88.0%</td><td>0.863</td><td>4／100</td></tr>
+<tr><td>B 線直接檢測</td><td>100.0%</td><td>0.0%</td><td>0.848</td><td>44／100</td></tr>
+<tr><td>B → 顏色正規化</td><td>8.7%</td><td>57.0%</td><td>0.856</td><td>21／100</td></tr>
+<tr><td>B → CycleGAN</td><td>0.0%</td><td>98.0%</td><td>0.874</td><td>27／100</td></tr>
+</table>
+<img class="photo" src="/lab10-epochs-strip.png" alt="轉換網格：B 線輸入、epoch 1、5、10、20 的 G(B)、A 線照片" style="height:120px;width:100%;object-fit:contain">
+<div class="shot-cap">* 瑕疵區誤差 ÷ 其他區 &lt; 1.5 的不良品張數。門檻＝A 線驗證良品第 95 百分位；CycleGAN 20 epochs 102 秒、VRAM 峰值 0.65 GB（lab10 T4 實跑）</div>
 
 </div>
 </div>
@@ -436,7 +505,7 @@ hostOnly: true
 <div class="takeaway mt-3">交付給 B 線品保：一張「過殺、漏檢、瑕疵存活」對照表，不是一句「轉得很像」。</div>
 
 <!--
-★ Lab 開始（3 分）：VisA 約 1.9 GB，D2-1 已下載過的話把 DATA_DIR 改成雲端硬碟的資料夾。下載、訓練時間與 VRAM 待 T4 實測（teaching-plan 課前清單）。沒有 GPU → EPOCHS_AE＝2、EPOCHS_GAN＝1。
+★ Lab 開始（3 分）：VisA 約 1.9 GB，L05 已下載過的話把 DATA_DIR 改成雲端硬碟的資料夾。下載、訓練時間與 VRAM 待 T4 實測（teaching-plan 課前清單）。沒有 GPU → EPOCHS_AE＝2、EPOCHS_GAN＝1。
 -->
 
 ---
@@ -447,7 +516,7 @@ hostOnly: true
 
 <div class="steps mt-2" style="font-size:18px">
   <div><span class="num">1</span><strong>資料</strong>：A 線 400、B 線 400（不同的板子）、A 線驗證 100、測試良品 104、不良品 100（附遮罩）；<code>to_line_b</code> 做出 B 線</div>
-  <div><span class="num">2</span><strong>A 線檢測器</strong>：D2-1 的 AE；門檻＝A 線驗證良品的第 95 百分位；<code>report</code> 算過殺、漏檢、AUROC</div>
+  <div><span class="num">2</span><strong>A 線檢測器</strong>：L05 的 AE；門檻＝A 線驗證良品的第 95 百分位；<code>report</code> 算過殺、漏檢、AUROC</div>
   <div><span class="num">3</span><strong>CycleGAN</strong>：<code>generator()</code>（殘差區塊）、<code>patch_d()</code>；每個 epoch 存 G(B) 快照</div>
   <div><span class="num">4</span><strong>驗收</strong>：顏色正規化 vs CycleGAN 的對照表；<code>defect_ratio</code> 瑕疵存活</div>
 </div>
@@ -455,7 +524,7 @@ hostOnly: true
 <div class="takeaway mt-4">兩個 TODO：<code>report</code> 裡的漏檢與 AUROC、生成器的循環一致與 identity 兩行。</div>
 
 <!--
-★ 拆塊（3 分）：第 2 部分是 D2-1 的濃縮版，不用重講；把時間留給第 3、4 部分。
+★ 拆塊（3 分）：第 2 部分是 L05 的濃縮版，不用重講；把時間留給第 3、4 部分。
 -->
 
 ---
@@ -521,7 +590,7 @@ hostOnly: true
 </div>
 <div>
 
-<div class="node node--primary"><strong>和隔壁同學比</strong><small>同樣的程式、不同的隨機性，轉換結果可能不一樣：這就是 D3-1 說的 GAN 不穩定</small></div>
+<div class="node node--primary"><strong>和隔壁同學比</strong><small>同樣的程式、不同的隨機性，轉換結果可能不一樣：這就是 L09 說的 GAN 不穩定</small></div>
 
 </div>
 </div>
@@ -594,10 +663,10 @@ hostOnly: true
 
 <div class="takeaway mt-4">轉換後的影像不是「原始證據」：品質紀錄、新聞、法律用途都要保留原圖。</div>
 
-<div class="src">deepfake 與同意：D6-1 會再談（聲音複製）</div>
+<div class="src">deepfake 與同意：L21 會再談（聲音複製）</div>
 
 <!--
-★ 風險（4 分）：deepfake（深度偽造）。和 D3-1 的假細節、今天的瑕疵存活連起來：生成模型改過的影像，都要能追溯到原圖。
+★ 風險（4 分）：deepfake（深度偽造）。和 L09 的假細節、今天的瑕疵存活連起來：生成模型改過的影像，都要能追溯到原圖。
 -->
 
 ---
@@ -682,16 +751,16 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D3-3：GAN 一直畫同樣的圖，換擴散模型？
+# 下一堂 L11：GAN 一直畫同樣的圖，換擴散模型？
 
 <div style="font-size:19px" class="mt-4">
 
-- 行銷部：GAN 生的商品情境圖都長得差不多（D3-1 的 mode collapse）
+- 行銷部：GAN 生的商品情境圖都長得差不多（L09 的 mode collapse）
 - 擴散模型：從雜訊一步一步去噪，多樣性好，但慢
 - 我們會從零寫一個小 DDPM
 
 </div>
 
 <!--
-★ 下一步（1 分）：預告。生成三難的第三列（擴散模型）下一堂（D3-3）填。
+★ 下一步（1 分）：預告。生成三難的第三列（擴散模型）下一堂（L11）填。
 -->

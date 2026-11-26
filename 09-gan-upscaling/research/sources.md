@@ -14,3 +14,4 @@
 | S8 | 不實廣告的法規 | 消費者保護法、公平交易法（全國法規資料庫） | 待確認（條號） | 2026-11-24 |
 | S9 | Fashion-MNIST，MIT 授權 | github.com/zalandoresearch/fashion-mnist | 待確認 | 2026-11-24 |
 | S10 | spandrel：MIT 授權，支援 ESRGAN 權重 | github.com/chaiNNer-org/spandrel | 待確認（授權）；載入已實測 | 2026-11-24 |
+| S11 | GAN 概念圖的標準畫法（z → G → 假圖；真圖與假圖進 D；回饋給兩邊） | Google ML「Overview of GAN Structure」；CMU 11-785 GAN 講義（2026-11-26 搜尋，未逐頁核對） | 已確認圖型；gan-noise-z.png、gan-fake-early-sketch.png 為 PIL 示意圖（非模型輸出） | 2026-11-26 |

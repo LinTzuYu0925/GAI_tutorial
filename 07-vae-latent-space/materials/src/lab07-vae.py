@@ -41,8 +41,8 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
 tf = transforms.ToTensor()                       # 0–1
-train_ds = datasets.FashionMNIST("data", train=True, download=True, transform=tf)
-test_ds = datasets.FashionMNIST("data", train=False, download=True, transform=tf)
+train_ds = datasets.FashionMNIST("data/download", train=True, download=True, transform=tf)
+test_ds = datasets.FashionMNIST("data/download", train=False, download=True, transform=tf)
 CLASSES = ["T-shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
 train_loader = DataLoader(train_ds, batch_size=128, shuffle=True)
 X_test = torch.stack([test_ds[i][0] for i in range(len(test_ds))])     # [10000, 1, 28, 28]
@@ -246,3 +246,16 @@ ax[1].imshow(r01[0].permute(1, 2, 0).cpu()); ax[1].set_title("after VAE round tr
 ax[2].imshow((r01 - x01).abs()[0].mean(0).cpu(), cmap="inferno"); ax[2].set_title("|difference|")
 for a in ax: a.axis("off")
 plt.tight_layout(); plt.savefig("sd_vae_roundtrip.png", dpi=120); plt.show()
+
+# %% [markdown]
+# ### 潛在表示長什麼樣子？
+# 4 × 64 × 64 的潛在表示有 4 個通道，各畫成一張 64 × 64 的灰階圖。先猜：還看得出街景的輪廓嗎？
+
+# %%
+# 潛在表示的 4 個通道，各畫成一張灰階圖（64 × 64）
+L = lat[0].float().cpu()
+fig, ax = plt.subplots(2, 2, figsize=(6, 6.2))
+for c, a in enumerate(ax.flat):
+    a.imshow(L[c], cmap="gray"); a.set_title(f"latent channel {c} (64x64)"); a.axis("off")
+plt.tight_layout(); plt.savefig("sd_latent_channels.png", dpi=120); plt.show()
+print("每個通道的數值範圍：", "｜".join(f"ch{c} {L[c].min():.1f}～{L[c].max():.1f}" for c in range(4)))

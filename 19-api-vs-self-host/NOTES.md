@@ -24,7 +24,7 @@
 
 | 日期 | 內容 |
 |---|---|
-| 2026-11-26 | 雲端模型預設 `claude-opus-5-5`（課程技能的預設），註解提供 `claude-haiku-5-5` 當便宜選項；單價寫在程式並標查價日期 |
+| 2026-11-26 | 依 polish_note19 改用 Gemini 免費 API（`gemini-3.5-flash-lite`，`google-genai`），不再用 Anthropic；成本欄用付費層單價換算，並標註免費層的限流與資料再利用 |
 | 2026-11-26 | 不在 API 呼叫送 `temperature`：2026-10-21 版 API 起會回 400；用 `output_config.effort="low"` |
 | 2026-11-26 | 回應可能含思考區塊，只取 `type == "text"` 的區塊 |
 | 2026-11-26 | 自架成本＝秒數 × 假設 GPU 租金（0.5 美元／小時），標示為假設 |

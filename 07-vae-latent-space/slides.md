@@ -2,7 +2,7 @@
 theme: default
 title: 一張 T4 跑得動 512px 嗎？
 info: |
-  生成式AI原理 · D2-3
+  生成式AI原理 · L07
   自編碼器的潛在空間有洞；VAE 讓瓶頸變成一團機率雲，把洞補起來，才能「隨便取一點」生成新東西。Stable Diffusion 先用 VAE 把 512px 照片壓小 48 倍。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D2-3</div>
+<div class="eyebrow">生成式AI原理 · L07</div>
 
 # 一張 T4 跑得動 512px 嗎？
 
@@ -45,19 +45,19 @@ class: cover
 # 行銷科技組：一週上千張 512px 商品圖
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D2-3】部門：行銷科技組<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L07】部門：行銷科技組<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>第四天要大量生成 512px 商品圖，一張 T4 跑得動嗎？</dd>
     <dt>現況痛點</dt><dd>直接在像素上生成太貴：一張 512×512 彩色圖有 786,432 個數字</dd>
     <dt>成功指標（KPI）</dt><dd>壓縮比與重建品質（PSNR：峰值訊噪比，越高越像）；潛在空間內插是否平滑</dd>
     <dt>可用資料</dt><dd>Fashion-MNIST（代替型錄縮圖）；一張 CC0 街景照片</dd>
     <dt>限制與法規</dt><dd>Colab T4；照片要自有或 CC0</dd>
-    <dt>為何現有工具不夠</dt><dd>D2-1 的自編碼器的潛在空間有「洞」：隨便取一點，解碼出來是垃圾</dd>
+    <dt>為何現有工具不夠</dt><dd>L05 的自編碼器的潛在空間有「洞」：隨便取一點，解碼出來是垃圾</dd>
   </dl>
 </div>
 
 <!--
-★ 需求單（3 分）：今天要回答兩件事：① 為什麼 Stable Diffusion 不直接在像素上生成；② 為什麼它的壓縮器是 VAE 而不是 D2-1 的 AE。
+★ 需求單（3 分）：今天要回答兩件事：① 為什麼 Stable Diffusion 不直接在像素上生成；② 為什麼它的壓縮器是 VAE 而不是 L05 的 AE。
 -->
 
 ---
@@ -93,7 +93,7 @@ class: cover
 **照著算**
 
 - 512 × 512 × 3（RGB）＝ **786,432** 個數字
-- fp16 每個 2 bytes → 約 1.5 MB（D1-4 的 N × b）
+- fp16 每個 2 bytes → 約 1.5 MB（L04 的 N × b）
 - 生成模型每一步都要處理這麼多數字，還要跑幾十步
 
 <div class="node node--primary mt-3"><strong>Stable Diffusion 的作法</strong><small>先壓成 4 × 64 × 64 ＝ 16,384 個數字，在小空間裡生成，最後才還原成照片</small></div>
@@ -104,7 +104,7 @@ class: cover
 <div class="takeaway mt-3">786,432 ÷ 16,384 ＝ 48：先壓縮，生成時每一步要處理的數字少 48 倍。</div>
 
 <!--
-★ Frame（4 分）：連回 D1-4 的 VRAM 估算：數字個數 × 每個的 bytes。只是一張圖的「資料」，還不含模型本身。
+★ Frame（4 分）：連回 L04 的 VRAM 估算：數字個數 × 每個的 bytes。只是一張圖的「資料」，還不含模型本身。
 壓縮器就是今天的 VAE。先不說為什麼一定要 VAE，第 6 頁看到 AE 的洞就懂了。
 -->
 
@@ -116,8 +116,8 @@ class: cover
 
 <div class="grid grid-cols-3 gap-4 mt-2">
 <div><img class="photo" src="/taipei-street.jpg" alt="原始街景照片" style="height:180px;width:100%"><div class="shot-cap">輸入：3 × 512 × 512</div></div>
-<div><div class="placeholder" style="height:180px">潛在表示 4 × 64 × 64<small>講師實跑後替換（四個通道的灰階圖）</small></div></div>
-<div><div class="placeholder" style="height:180px">還原的照片<small>講師實跑後替換（附 PSNR、秒數）</small></div></div>
+<div><img class="photo" src="/lab07-sd-latent-channels.png" alt="潛在表示的 4 個通道各畫成 64 乘 64 的灰階圖：看得出街景的建築輪廓，但很粗、像雜訊" style="height:180px;width:100%;object-fit:contain"><div class="shot-cap">潛在表示：4 個通道，各 64 × 64（T4）</div></div>
+<div><img class="photo" src="/lab07-sd-roundtrip.png" alt="經過 VAE 壓縮再還原的街景照片，招牌小字有些變形" style="height:180px;width:100%;object-fit:contain"><div class="shot-cap">還原：PSNR 20.6 dB，編碼＋解碼 0.36 秒（T4）</div></div>
 </div>
 
 <div class="takeaway mt-4">先猜：大部分看起來一樣——哪裡最容易壞掉？（提示：招牌上的小字）</div>
@@ -125,7 +125,7 @@ class: cover
 <div class="src">模型：stable-diffusion-v1-5 的 VAE（AutoencoderKL，S2）；照片 CC0（S1）；lab07 第 6 步</div>
 
 <!--
-★ 示範（5 分）：用 lab07 解答筆記本最後一格。講師本機 CPU 試跑時，招牌小字（例如「大苑子」）明顯變形，整體顏色和結構都保留——T4 實跑後放真實結果。
+★ 示範（5 分）：用 lab07 解答筆記本最後一格。T4 實跑：PSNR 20.6 dB、編碼＋解碼 0.36 秒、VRAM 峰值 0.86 GB；招牌小字（例如「大苑子」）明顯變形，整體顏色和結構都保留（右圖）。中間是潛在表示的 4 個通道：看得出建築輪廓，但每格只有 64 × 64、數值約 −17～18，不是給人看的圖。
 重點：這個 VAE 就是 Stable Diffusion 的一部分；第四天生成商品圖時，最後一步就是它的解碼器。
 -->
 
@@ -138,7 +138,7 @@ class: cover
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2 items-center">
 <div>
 
-<div class="placeholder" style="height:280px">Fashion-MNIST 測試集在 AE 2 維潛在空間的散佈圖（依類別上色）<small>講師實跑後替換（lab07 第 3 步）</small></div>
+<img class="photo" src="/lab07-ae-scatter.png" alt="Fashion-MNIST 測試集在 AE 的 2 維潛在空間的散佈圖，依類別上色：同類聚成一群，群與群之間是空的，座標範圍很大" style="height:280px;width:100%;object-fit:contain"><div class="shot-cap">AE 的 2 維潛在空間，依類別上色（lab07，T4 實跑）</div>
 
 </div>
 <div style="font-size:18px">
@@ -154,7 +154,7 @@ class: cover
 <div class="takeaway mt-3">AE 只學「壓縮再還原」，從沒被要求「每一點都要能解碼」。所以不能隨便取點生成。</div>
 
 <!--
-★ AE 的洞（5 分）：這是 D2-1 的 AE（只是換成 2 維，方便畫圖）。實際範圍等 T4 實跑後再說（第 11 頁練習會讓學員先預測）。
+★ AE 的洞（5 分）：這是 L05 的 AE（只是換成 2 維，方便畫圖）。實際範圍等 T4 實跑後再說（第 11 頁練習會讓學員先預測）。
 問學員：「如果要生成一雙新的鞋子，你要在這張圖的哪裡取點？」→ 不知道，因為沒有規則。
 -->
 
@@ -173,7 +173,7 @@ class: cover
 </div>
 
 <div class="grid grid-cols-2 gap-6 mt-6" style="font-size:18px">
-<div class="node"><strong>AE（D2-1）</strong><small>同一張圖 → 永遠同一個點；點和點之間沒人管</small></div>
+<div class="node"><strong>AE（L05）</strong><small>同一張圖 → 永遠同一個點；點和點之間沒人管</small></div>
 <div class="node node--primary"><strong>VAE</strong><small>同一張圖 → 一團雲裡的任一點都要能還原；雲會互相重疊，把洞填起來</small></div>
 </div>
 
@@ -216,7 +216,7 @@ z = mu + std * eps              # 從雲裡抽一點
 <div class="takeaway mt-3">一行程式解決「隨機」和「反向傳播」的衝突：這是 VAE 能用一般訓練迴圈訓練的原因。</div>
 
 <!--
-★ 重參數化（5 分）：reparameterization（重參數化）。D1-3 的五行迴圈完全不用改：loss.backward() 會經過 mu + std * eps 流回編碼器。
+★ 重參數化（5 分）：reparameterization（重參數化）。L03 的五行迴圈完全不用改：loss.backward() 會經過 mu + std * eps 流回編碼器。
 Lab 的第一個 TODO 就是這三行。
 -->
 
@@ -248,7 +248,7 @@ kl = -0.5 * torch.sum(1 + logvar - mu**2 - logvar.exp()) / len(x)
 loss = recon + beta * kl          # beta 預設 1
 ```
 
-- **重建**：和 D2-1 一樣，越像越好
+- **重建**：和 L05 一樣，越像越好
 - **KL（KL 散度）**：每團雲和「標準的雲」差多遠。讀法：<code>mu**2</code> 把中心拉向 0；<code>logvar</code> 那兩項把寬度拉向 1
 - 不是越小越好：KL ＝ 0 代表雲完全不看輸入
 
@@ -270,7 +270,7 @@ loss = recon + beta * kl          # beta 預設 1
 # 為什麼叫「變分」？它在最佳化一個下界
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
-<div class="node"><strong>真正想要的</strong><small>讓訓練資料出現的機率最大（D1-3 附錄的「最大概似」）；但對 VAE 來說，這個機率算不出來</small></div>
+<div class="node"><strong>真正想要的</strong><small>讓訓練資料出現的機率最大（L03 附錄的「最大概似」）；但對 VAE 來說，這個機率算不出來</small></div>
 <div class="node node--primary"><strong>退而求其次</strong><small>最佳化它的一個<strong>下界</strong>：ELBO（證據下界）。ELBO ＝ −重建損失 − KL，所以「損失＝重建損失＋KL」越小，下界就越高</small></div>
 </div>
 
@@ -352,8 +352,7 @@ strip = [vae.decode(za + (zb - za) * t)
 </div>
 <div>
 
-<div class="placeholder" style="height:90px;min-height:0">16 張取樣<small>講師實跑後替換</small></div>
-<div class="placeholder mt-2" style="height:90px;min-height:0">鞋子 → 毛衣 的 10 步內插<small>講師實跑後替換</small></div>
+<img class="photo" src="/lab07-samples-interp.png" alt="上排：VAE 從 N(0, I) 抽樣生成的 16 張；下排：短靴到套頭衫的 10 步內插" style="width:100%;object-fit:contain"><div class="shot-cap">上：z ~ N(0, I) 抽 16 個點；下：短靴 → 套頭衫的 10 步內插（lab07，T4 實跑）</div>
 
 </div>
 </div>
@@ -372,7 +371,7 @@ strip = [vae.decode(za + (zb - za) * t)
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
 <div class="node node--warm"><strong>原因</strong><small>不同圖片的雲會互相重疊：同一個 z 可能來自好幾張不同的圖，解碼器只好畫「它們的平均」，平均就會糊</small></div>
-<div class="node"><strong>後來的解法</strong><small>SD 的 VAE 解碼器多加了對抗損失（D3-1 的 GAN）和感知損失，讓細節銳利；真正的生成交給擴散模型（D3）</small></div>
+<div class="node"><strong>後來的解法</strong><small>SD 的 VAE 解碼器多加了對抗損失（L09 的 GAN）和感知損失，讓細節銳利；真正的生成交給擴散模型（D3）</small></div>
 </div>
 
 <div class="takeaway mt-6">VAE 適合當「壓縮器」：好壓、好還原、空間平滑；畫細節的工作交給別人。</div>
@@ -617,7 +616,7 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 <div class="grid grid-cols-[1.1fr_1fr] gap-6 mt-2">
 <div>
 
-<div class="placeholder" style="height:200px">上排：VAE 生成的 8 張；下排：訓練集裡最像的那張（附距離）<small>講師實跑後替換（lab07 第 5 步）</small></div>
+<img class="photo" src="/lab07-nearest.png" alt="上排：VAE 生成的 8 張；下排：訓練集裡最近的那一張，標示距離" style="width:100%;object-fit:contain"><div class="shot-cap">上排：生成；下排：訓練集最像的那張（d＝距離）。平均距離 2.72（lab07，T4 實跑）</div>
 
 </div>
 <div style="font-size:18px">
@@ -634,7 +633,7 @@ log p(x) ＝ log 𝔼<sub>q(z|x)</sub>&#91; p(x|z) p(z) ／ q(z|x) &#93;<br>
 <div class="src">大型擴散模型可重現訓練圖片的研究：Carlini et al., Extracting Training Data from Diffusion Models, 2023（S6）</div>
 
 <!--
-★ 風險（4 分）：今天的小 VAE 只有 2 維潛在空間，很難背下 60,000 張圖；但大模型會。這個檢查方法會在 D4-3（LoRA 品牌風格）再用一次。
+★ 風險（4 分）：今天的小 VAE 只有 2 維潛在空間，很難背下 60,000 張圖；但大模型會。這個檢查方法會在 L15（LoRA 品牌風格）再用一次。
 -->
 
 ---
@@ -718,7 +717,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D2-4：把影像和聲音變成編號
+# 下一堂 L08：把影像和聲音變成編號
 
 <div class="node node--primary mt-2">資訊部與客服中心要用低位元率儲存通話錄音與產線影像。VAE 的潛在表示是連續的小數，沒辦法變成固定位元數的「編號」；下一堂把瓶頸變成一本編碼簿（VQ-VAE），也聽聽 EnCodec 在不同位元率下的聲音。</div>
 

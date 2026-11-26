@@ -39,6 +39,7 @@ from PIL import Image
 from torchvision.transforms.functional import to_tensor, to_pil_image
 
 def fetch(url, path, tries=3):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     for attempt in range(tries):
         if os.path.exists(path):
             break
@@ -48,12 +49,12 @@ def fetch(url, path, tries=3):
         except Exception as e:
             print("下載失敗，10 秒後重試：", e); time.sleep(10)
     if not os.path.exists(path):
-        raise SystemExit(f"還是下載不到 {path}：請從左邊的「檔案」面板上傳課程資料夾 materials/headphones.jpg（同一張照片，CC0）")
+        raise SystemExit(f"還是下載不到 {path}：請從左邊的「檔案」面板上傳課程資料夾 data/download/headphones.jpg（同一張照片，CC0）")
     return path
 
-# 全班同時下載時，Wikimedia 可能回 HTTP 429（限流）；重試三次後還不行，就手動上傳 materials/headphones.jpg
-PHOTO = fetch("https://upload.wikimedia.org/wikipedia/commons/6/63/Headphones_on_white_background.jpg", "headphones.jpg")
-WEIGHTS = fetch("https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth", "RealESRGAN_x4plus.pth")
+# 全班同時下載時，Wikimedia 可能回 HTTP 429（限流）；重試三次後還不行，就手動上傳 data/download/headphones.jpg
+PHOTO = fetch("https://upload.wikimedia.org/wikipedia/commons/6/63/Headphones_on_white_background.jpg", "data/download/headphones.jpg")
+WEIGHTS = fetch("https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth", "data/download/RealESRGAN_x4plus.pth")
 low = Image.open(PHOTO).convert("RGB")
 print("原圖", low.size)
 
@@ -102,7 +103,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
 tf = transforms.Compose([transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])   # −1～1，配合 G 最後的 tanh
-train_ds = datasets.FashionMNIST("data", train=True, download=True, transform=tf)
+train_ds = datasets.FashionMNIST("data/download", train=True, download=True, transform=tf)
 loader = DataLoader(train_ds, batch_size=128, shuffle=True, drop_last=True)
 Z = 100
 

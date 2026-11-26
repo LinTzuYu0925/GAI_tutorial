@@ -275,3 +275,6 @@
 .mcq ol { margin-top: 2px; }
 .mcq .opts { color: var(--muted-text); font-size: 17px; }
 .nw { white-space: nowrap; }
+
+/* Compact code block (slide with a large image below) */
+.slidev-layout .smallcode pre, .slidev-layout .smallcode .slidev-code, .slidev-layout .smallcode code { font-size: 14px !important; line-height: 1.35 !important; }

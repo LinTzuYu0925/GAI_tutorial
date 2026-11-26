@@ -20,6 +20,7 @@
 # %%
 # 第 1 格：環境
 %pip install -q -U diffusers transformers accelerate peft
+%pip uninstall -y -q torchao   # Colab 預裝的 torchao 太舊，peft 會拒絕（ImportError）；本實驗用不到
 import torch, time, platform, gc, os, glob, random, urllib.request
 import numpy as np
 import matplotlib.pyplot as plt
@@ -60,12 +61,12 @@ def vram():
 # ## 0. 產品照
 
 # %%
-PHOTO_DIR = "backpack"
-if PHOTO_DIR == "backpack" and not os.path.isdir("backpack"):
-    os.makedirs("backpack")
+PHOTO_DIR = "data/download/backpack"
+if not os.path.isdir(PHOTO_DIR):
+    os.makedirs(PHOTO_DIR)
     for i in range(6):
         url = f"https://raw.githubusercontent.com/google/dreambooth/main/dataset/backpack/{i:02d}.jpg"
-        urllib.request.urlretrieve(url, f"backpack/{i:02d}.jpg")
+        urllib.request.urlretrieve(url, f"{PHOTO_DIR}/{i:02d}.jpg")
 
 def center_square(im, size=512):
     w, h = im.size; s = min(w, h)

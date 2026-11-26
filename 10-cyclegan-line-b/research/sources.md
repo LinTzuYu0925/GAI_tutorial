@@ -12,3 +12,5 @@
 | S8 | 斑馬的照片，CC0 | Agness Abubakar Saidi，Wikimedia Commons：File:Zebras_grazing_among_acacia_trees,_Serengeti_National_Park.jpg | 已確認（Commons API 授權欄位） | 2026-11-24 |
 | S9 | CycleGAN 可能把資訊藏在細微雜訊裡（steganography） | Chu, Zhmoginov, Sandler, *CycleGAN, a Master of Steganography*, 2017 | 待確認 | 2026-11-24 |
 | S10 | CyCADA | Hoffman et al., ICML 2018 | 待確認 | 2026-11-24 |
+| S11 | 馬→斑馬領域轉換動畫（domain-transfer.gif，448×128） | 教學網站轉載（i-blog.csdnimg.cn，blog_migrate/19ce757c…），內容出自 CycleGAN 專案；授權未確認，僅課堂教學引用 | 待確認授權（講師指定使用） | 2026-11-26 |
+| S12 | 四個願望／四項損失示意圖（cyclegan-losses.png，1346×662，右下角有轉載網站浮水印） | 同上（blog_migrate/fb340500…）；原理 Zhu et al., 2017 | 待確認授權（講師指定使用） | 2026-11-26 |

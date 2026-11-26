@@ -14,3 +14,4 @@
 | S8 | DeepPCB 授權標示不一致 | roadmap §9.2 記錄（徽章 MIT，README 寫研究用途） | 待確認 | 2026-11-23 |
 
 | S9 | anomalib 內建 PatchCore、EfficientAD 與 VisA 載入 | github.com/open-edge-platform/anomalib 文件 | 待確認 | 2026-11-24 |
+| S10 | 自編碼器示意圖（Encoder → Code → Decoder） | Michela Massi, *Autoencoder schema*, Wikimedia Commons, CC BY-SA 4.0（https://commons.wikimedia.org/wiki/File:Autoencoder_schema.png）；`public/ae-schema.png` 為 500px 縮圖，未修改 | 已確認（Commons 檔案頁） | 2026-11-26 |

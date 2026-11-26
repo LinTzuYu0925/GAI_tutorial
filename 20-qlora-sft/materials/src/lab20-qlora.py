@@ -19,16 +19,21 @@
 # 執行階段：**T4 GPU**（4-bit 需要 GPU）。資料全部是課程合成的。
 
 # %%
-# 第 1 格：環境（版本先不釘死：講師 T4 實跑後，把印出的版本寫進 research/lab-runs.md 再釘）
-%pip install -q peft trl bitsandbytes datasets opencc-python-reimplemented anthropic
+# 第 1 格：環境（peft、trl 釘成講師 2026-11-27 T4 實跑的版本；transformers、torch 用 Colab 內建）
+%pip install -q peft==0.21.2 trl==1.19.0 bitsandbytes datasets opencc-python-reimplemented google-genai python-dotenv
 import json, os, re, time, platform, urllib.request, gc
-import torch, transformers, peft, trl
+import torch, transformers, peft, trl, bitsandbytes, datasets
 print("torch", torch.__version__, "| transformers", transformers.__version__, "| peft", peft.__version__,
-      "| trl", trl.__version__, "| python", platform.python_version())
+      "| trl", trl.__version__, "| bitsandbytes", bitsandbytes.__version__, "| datasets", datasets.__version__,
+      "| python", platform.python_version())
 device = "cuda" if torch.cuda.is_available() else "cpu"
 if device == "cuda":
     free, total = torch.cuda.mem_get_info()
     print("GPU:", torch.cuda.get_device_name(0), f"| 可用 VRAM {free/1e9:.1f} / {total/1e9:.1f} GB")
+    if free < 10e9:                # 這個 lab 需要的 VRAM 比這個少很多；不夠，多半是別的筆記本還占著 GPU
+        print("⚠️ 可用 VRAM 不到 10 GB：同一台 Colab 伺服器上還有別的筆記本在跑（例如前幾堂的 lab）。\n"
+              "   先關掉它們：Colab 網頁版「執行階段 → 管理工作階段」終止其他工作階段；\n"
+              "   VS Code 連 Colab：其他筆記本按「Restart」或關掉 kernel。再執行 !nvidia-smi 確認。")
 SEED = 0
 torch.manual_seed(SEED)
 
@@ -168,16 +173,22 @@ from peft import LoraConfig, prepare_model_for_kbit_training
 from trl import SFTConfig, SFTTrainer
 MAX_STEPS = -1                 # -1＝跑完 EPOCHS；本機 CPU 測試會設成很小的數
 EPOCHS = 2
-model = base
-if device == "cuda":
-    model = prepare_model_for_kbit_training(model)
 lora = LoraConfig(r=16, lora_alpha=32, lora_dropout=0.05, task_type="CAUSAL_LM",
                   target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"])
+if "trainer" in globals():     # 重跑這格：模型已經加上 LoRA 了，沿用它，不要再加一次
+    model, peft_arg = trainer.model, None
+else:
+    model, peft_arg = base, lora
+    if device == "cuda":
+        model = prepare_model_for_kbit_training(model)
 args = SFTConfig(output_dir="qlora-out", num_train_epochs=EPOCHS, max_steps=MAX_STEPS,
                  per_device_train_batch_size=8, learning_rate=2e-4, max_length=384,
                  logging_steps=5, save_strategy="no", report_to="none", seed=SEED,
                  fp16=(device == "cuda"), bf16=False)
-trainer = SFTTrainer(model=model, args=args, train_dataset=ds, processing_class=tok, peft_config=lora)
+trainer = SFTTrainer(model=model, args=args, train_dataset=ds, processing_class=tok, peft_config=peft_arg)
+for p in trainer.model.parameters():   # fp16 混合精度：要訓練的參數（LoRA）必須是 fp32，梯度縮放才能運作
+    if p.requires_grad:
+        p.data = p.data.float()
 trainer.model.print_trainable_parameters()
 if device == "cuda":
     torch.cuda.reset_peak_memory_stats()
@@ -211,24 +222,42 @@ print(f"轉接器（adapter）只有 {size:.1f} MB；基礎模型不用另存")
 
 # %% [markdown]
 # ## 6. LLM 評審（有 API 金鑰才跑）
-# 請 Claude 比較「微調前」和「微調後」兩封回覆哪個比較好。**同一題問兩次、交換 A／B 順序**：
+# 請 Gemini（免費額度）比較「微調前」和「微調後」兩封回覆哪個比較好。**同一題問兩次、交換 A／B 順序**：
 # 如果評審只是偏好放在前面（或後面）的那一個，兩次的結論會互相矛盾。
+# 免費額度有每分鐘請求上限，程式遇到限流會等一下再試。
+# 金鑰**不寫在程式裡**。兩種放法，下面這格都會試：
+# 1. **Colab 網頁版**：左側 🔑「密鑰（Secrets）」→ 新增 `GEMINI_API_KEY` → 打開「筆記本存取權」。
+# 2. **`.env` 檔**（VS Code 連 Colab）：檔案內容一行 `GEMINI_API_KEY=你的金鑰`；在 VS Code 檔案總管對 `.env` 按右鍵 →「Upload to Colab」。VS Code 連 Colab **不支援**方法 1。
 
 # %%
-try:
+try:                                              # 方法 1：Colab 網頁版的密鑰
     from google.colab import userdata
-    os.environ.setdefault("ANTHROPIC_API_KEY", userdata.get("ANTHROPIC_API_KEY") or "")
+    if userdata.get("GEMINI_API_KEY"):
+        os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")
 except Exception:
     pass
-if os.environ.get("ANTHROPIC_API_KEY"):
-    import anthropic
-    client = anthropic.Anthropic()
+from dotenv import load_dotenv                    # 方法 2：.env 檔（VS Code 連 Colab 時上傳）
+load_dotenv()
+if os.environ.get("GEMINI_API_KEY"):
+    from google import genai
+    client = genai.Client()                       # 自動讀 GEMINI_API_KEY
+    JUDGE_MODEL = "gemini-3.5-flash-lite"         # 免費額度可用；名稱以 Google AI Studio 為準
     JUDGE = ("你是客服品質評審。比較兩封回覆，哪一封更適合台灣客人（正確、有禮貌、台灣用語、沒有簡體字）。"
              "只回答一個字母：A 或 B。")
     def judge(ticket, a, b):
-        r = client.messages.create(model="claude-opus-5-5", max_tokens=1024, system=JUDGE, output_config={"effort": "low"},
-                                   messages=[{"role": "user", "content": f"客服單：{ticket}\n\nA：{a}\n\nB：{b}"}])
-        return "".join(x.text for x in r.content if x.type == "text").strip()[:1]
+        for wait in (0, 15, 45):                  # 免費額度被限流時，等一下再試
+            time.sleep(wait)
+            try:
+                it = client.interactions.create(
+                    model=JUDGE_MODEL,
+                    system_instruction=JUDGE,
+                    input=f"客服單：{ticket}\n\nA：{a}\n\nB：{b}",
+                    generation_config={"max_output_tokens": 1024},
+                )
+                return (it.output_text or "").strip()[:1]
+            except Exception as e:
+                print("API 錯誤（可能是限流）：", str(e)[:80])
+        return "?"                                # 三次都失敗：這一題不算任何一方勝
     K = 10
     wins, flips = 0, 0
     for t, before, after in list(zip(eval_rows, out_base, out_tuned))[:K]:

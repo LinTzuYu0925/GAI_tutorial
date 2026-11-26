@@ -2,7 +2,7 @@
 theme: default
 title: 用中文搜尋商品照
 info: |
-  生成式AI原理 · D6-2
+  生成式AI原理 · L22
   電商部有一萬張沒有標籤的商品照，顧客用中文搜尋：用多語對比模型（SigLIP 2）做零樣本標籤與以文搜圖，量 precision@k；再用小型 VLM 寫繁中替代文字。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D6-2</div>
+<div class="eyebrow">生成式AI原理 · L22</div>
 
 # 用中文搜尋商品照
 
@@ -35,7 +35,7 @@ class: cover
 </div>
 
 <!--
-★ 開場（2 分）：D4-2 用 CLIP 量「圖和文字像不像」。今天把它反過來用：拿一句中文，從一堆圖裡找出最像的。
+★ 開場（2 分）：L14 用 CLIP 量「圖和文字像不像」。今天把它反過來用：拿一句中文，從一堆圖裡找出最像的。
 -->
 
 ---
@@ -45,7 +45,7 @@ class: cover
 # 電商部：一萬張沒有標籤的商品照，顧客用中文搜尋
 
 <div class="ticket mt-2">
-  <div class="ticket-head">【需求單 #D6-2】部門：電商部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
+  <div class="ticket-head">【需求單 #L22】部門：電商部<span>公司：曜嶼電子 <span class="fiction" style="color:#fff;border-color:#fff">虛構</span></span></div>
   <dl>
     <dt>問題</dt><dd>一萬張沒有標籤的商品照，顧客用中文搜尋</dd>
     <dt>現況痛點</dt><dd>只能靠檔名搜尋，找不到就不會買</dd>
@@ -57,7 +57,7 @@ class: cover
 </div>
 
 <!--
-★ 需求單（3 分）：一萬張用 40 張代表。照片是用 D4-4 的 SD1.5＋LCM-LoRA 生成的（授權單純、每個學員都能重現）；真實上線要用公司自己的商品照重新量。
+★ 需求單（3 分）：一萬張用 40 張代表。照片是用 L16 的 SD1.5＋LCM-LoRA 生成的（授權單純、每個學員都能重現）；真實上線要用公司自己的商品照重新量。
 -->
 
 ---
@@ -66,7 +66,7 @@ class: cover
 
 # 今天結束時，你能夠……
 
-1. **說明**對比學習怎麼把圖片和文字放進同一個空間（D4-2 的 CLIP）
+1. **說明**對比學習怎麼把圖片和文字放進同一個空間（L14 的 CLIP）
 2. **做出**零樣本標籤：把類別寫成一句話，不用訓練
 3. **做出**以文搜圖：查詢向量、cosine 相似度、前 k 名；並算 precision@k（前 k 名精確率）
 4. **選擇**懂中文的多語模型，並說出理由（tokenizer 是線索）
@@ -130,7 +130,7 @@ class: cover
 
 <div class="eyebrow">02 · Open（打開黑盒子）· 對比學習</div>
 
-# 對比學習：對的配對拉近，錯的推遠（D4-2）
+# 對比學習：對的配對拉近，錯的推遠（L14）
 
 <div class="grid grid-cols-[1fr_1.1fr] gap-6 mt-2 items-center">
 <div>
@@ -161,7 +161,7 @@ class: cover
 <div class="src">CLIP 論文圖 1 的相似度矩陣是最常見的畫法（Radford et al., 2021，S1）</div>
 
 <!--
-★ 對比學習（6 分）：D4-2 量 CLIP 分數時看過「圖和文字的 cosine 相似度」。這張表就是 CLIP 論文最有名的那張圖：對角線亮、其他暗。
+★ 對比學習（6 分）：L14 量 CLIP 分數時看過「圖和文字的 cosine 相似度」。這張表就是 CLIP 論文最有名的那張圖：對角線亮、其他暗。
 -->
 
 ---
@@ -186,7 +186,7 @@ top = torch.topk(scores, k)               # 取最高的 k 張
 <div class="takeaway mt-2">搜尋＝一次矩陣乘法＋排序：先在記憶體裡做到對，再談規模。</div>
 
 <!--
-★ 以文搜圖（5 分）：正規化（normalize）讓每個向量長度＝1，內積就等於 cosine 相似度（D4-2 學過）。
+★ 以文搜圖（5 分）：正規化（normalize）讓每個向量長度＝1，內積就等於 cosine 相似度（L14 學過）。
 -->
 
 ---
@@ -198,14 +198,14 @@ top = torch.topk(scores, k)               # 取最高的 k 張
 <table class="mt-2" style="font-size:17px">
 <thead><tr><th style="width:26%">模型</th><th style="width:30%">「一副耳機」被切成</th><th style="width:16%">授權</th><th>適合</th></tr></thead>
 <tbody>
-<tr><td>openai/clip-vit-base-patch32</td><td>一串位元組碎片（像 D5-1 的 ▯）</td><td>程式 MIT；模型卡限研究用途（待確認）</td><td>英文、研究比較</td></tr>
+<tr><td>openai/clip-vit-base-patch32</td><td>一串位元組碎片（像 L17 的 ▯）</td><td>程式 MIT；模型卡限研究用途（待確認）</td><td>英文、研究比較</td></tr>
 <tr><td>google/siglip2-base-patch16-224</td><td>一副｜耳｜機</td><td>Apache-2.0</td><td>多語、中文查詢</td></tr>
 </tbody>
 </table>
 
 <div class="mt-3" style="font-size:18px">
 
-- tokenizer 是第一個線索：把中文切成看不懂的位元組，文字編碼器就很難學到意思（D5-1）
+- tokenizer 是第一個線索：把中文切成看不懂的位元組，文字編碼器就很難學到意思（L17）
 - 授權也要看：SigLIP 2 是 Apache-2.0；CLIP 的模型卡把部署用途寫在範圍外（待確認）；有些多語模型是非商用授權
 
 </div>
@@ -293,13 +293,13 @@ hostOnly: true
 
 <div class="grid grid-cols-2 gap-5 mt-1" style="font-size:17px">
 <div class="node"><strong>替代文字（alt-text）</strong><small>給看不到圖的人（螢幕報讀）和搜尋引擎讀的一句說明</small></div>
-<div class="node node--warm"><strong>要檢查</strong><small>簡體字（D5-4 的老問題）、看錯顏色或類別、加了圖裡沒有的賣點</small></div>
+<div class="node node--warm"><strong>要檢查</strong><small>簡體字（L20 的老問題）、看錯顏色或類別、加了圖裡沒有的賣點</small></div>
 </div>
 
-<div class="takeaway mt-2">VLM ＝ D5-2 的接龍，只是開頭多了「圖片切成的 token」（和 D5-2 的 DiT 同一招）。</div>
+<div class="takeaway mt-2">VLM ＝ L18 的接龍，只是開頭多了「圖片切成的 token」（和 L18 的 DiT 同一招）。</div>
 
 <!--
-★ VLM（6 分）：lab 用 Qwen2-VL-2B-Instruct（Apache-2.0，模型卡 API 讀取確認）。它的輸出可能混入簡體字或大陸用語（D5-4、D5-3 都看過），所以要檢查。
+★ VLM（6 分）：lab 用 Qwen2-VL-2B-Instruct（Apache-2.0，模型卡 API 讀取確認）。它的輸出可能混入簡體字或大陸用語（L20、L19 都看過），所以要檢查。
 -->
 
 ---
@@ -320,7 +320,7 @@ hostOnly: true
 <div class="takeaway mt-2">字是繁體，用語不一定是台灣的：自動說明是草稿，上架前要檢查用語並抽查內容。</div>
 
 <!--
-★ VLM 輸出（4 分）：D5-4 的簡體字檢查抓不到「用語」：「音頻」字是繁體，用語卻是大陸的。所以檢查要加 D5-4 的用語詞表，最後還是要人工抽查。
+★ VLM 輸出（4 分）：L20 的簡體字檢查抓不到「用語」：「音頻」字是繁體，用語卻是大陸的。所以檢查要加 L20 的用語詞表，最後還是要人工抽查。
 -->
 
 ---
@@ -331,13 +331,13 @@ hostOnly: true
 
 <div class="grid grid-cols-2 gap-6 mt-4" style="font-size:18px">
 <div class="node"><strong>文字或圖片 → 影片</strong><small>把擴散模型（D3、D4）從「一張圖」延伸到「一連串圖」：多了時間這一維，要讓每一格前後連貫</small></div>
-<div class="node node--warm"><strong>代價</strong><small>計算量大、免費 T4 跑不動長影片；授權與肖像風險和圖片一樣（D6-3 檢查表）</small></div>
+<div class="node node--warm"><strong>代價</strong><small>計算量大、免費 T4 跑不動長影片；授權與肖像風險和圖片一樣（L23 檢查表）</small></div>
 </div>
 
 <div class="takeaway mt-4">影片＝多了時間軸的圖片生成：同一套去噪，加上「前後要一致」。</div>
 
 <!--
-○ 選修（2 分）：只認名字。多數新影片模型用 DiT（D5-2）。
+○ 選修（2 分）：只認名字。多數新影片模型用 DiT（L18）。
 -->
 
 ---
@@ -402,7 +402,7 @@ hostOnly: true
   <div><span class="num">1</span><strong>資料與模型</strong>：<code>catalog.csv</code>＋40 張圖；<code>MODELS</code>（CLIP、SigLIP 2）；<code>embed_images()</code>、<code>embed_texts()</code> → <code>IMG[name]</code> <code>[40, d]</code></div>
   <div><span class="num">2</span><strong>零樣本標籤</strong>：<code>LABEL_TEXT</code> 8 句 → <code>[40, 8]</code> 相似度 → 每列取最大</div>
   <div><span class="num">3</span><strong>以文搜圖</strong>：<code>search()</code> → 前 5 名；<code>precision_at_k()</code>；8 個查詢的平均</div>
-  <div><span class="num">4</span><strong>VLM 替代文字</strong>：Qwen2-VL-2B；<code>simplified_chars()</code>（D5-4）</div>
+  <div><span class="num">4</span><strong>VLM 替代文字</strong>：Qwen2-VL-2B；<code>simplified_chars()</code>（L20）</div>
   <div><span class="num">5</span><strong>Gradio 搜尋 App</strong>：輸入一句中文，回傳前 5 張圖</div>
 </div>
 
@@ -514,7 +514,8 @@ precision_at_k(retrieved, relevant_cat, k)：retrieved 是前幾名的圖片索�
 <div class="grid grid-cols-[1.2fr_1fr] gap-6 mt-2" style="font-size:18px">
 <div>
 
-<div class="placeholder" style="height:220px">Gradio 搜尋 App 畫面（輸入中文 → 5 張圖）<br>講師實跑後替換</div>
+<img class="photo" src="/lab22-gradio-ui.png" alt="Gradio 商品照搜尋畫面：左邊中文搜尋框與三個範例，右邊「前 5 名」圖片區" style="width:100%">
+<div class="shot-cap">Gradio 搜尋 App（實跑畫面，尚未送出搜尋）</div>
 
 </div>
 <div>
@@ -550,7 +551,7 @@ precision_at_k(retrieved, relevant_cat, k)：retrieved 是前幾名的圖片索�
 <div class="takeaway mt-3">自動標籤和說明會被顧客看到：錯誤和偏見會直接變成公司的形象。</div>
 
 <!--
-★ 風險（3 分）：「看平均不夠」接回 D4-1 的「少數類別」和 D5-4 的評估集設計。
+★ 風險（3 分）：「看平均不夠」接回 L13 的「少數類別」和 L20 的評估集設計。
 -->
 
 ---
@@ -579,20 +580,59 @@ precision_at_k(retrieved, relevant_cat, k)：retrieved 是前幾名的圖片索�
 
 <div class="eyebrow">隨堂檢核</div>
 
-# 選擇題（iPAS 題型）
+# 隨堂檢核 1／2（iPAS 題型）：點選答案
 
-<div class="mcq" style="font-size:17px">
+<Mcq id="quiz1.q1" :n="1" :answer="1"
+  :options="['先用標註資料訓練分類器', '把類別寫成句子，和圖片比相似度', '人工逐張標籤', '用檔名分類']"
+  :why="['那是有監督的分類器，需要標註資料。', '', '人工標籤不是零樣本。', '檔名不一定反映圖片內容。']"
+  explain="把類別寫成句子（例如「一張…的照片」），用 CLIP 比圖和句子的相似度，取最高的；不用另外訓練。">
+零樣本標籤（zero-shot）的做法是？
+</Mcq>
 
-1. 零樣本標籤（zero-shot）的做法是？（　）<br><span class="opts"><span class="nw">A. 先用標註資料訓練分類器</span>　<span class="nw">B. 把類別寫成句子，和圖片比相似度</span>　<span class="nw">C. 人工逐張標籤</span>　<span class="nw">D. 用檔名分類</span></span>
-2. 前 5 名搜尋結果有 3 張正確，precision@5 是？（　）<br><span class="opts"><span class="nw">A. 0.3</span>　<span class="nw">B. 0.5</span>　<span class="nw">C. 0.6</span>　<span class="nw">D. 3</span></span>
-3. 英文 CLIP 不適合中文搜尋，最直接的線索是？（　）<br><span class="opts"><span class="nw">A. 模型太小</span>　<span class="nw">B. tokenizer 把中文切成看不懂的位元組碎片</span>　<span class="nw">C. 圖片解析度</span>　<span class="nw">D. 沒有 GPU</span></span>
-4. VLM 寫的替代文字，上架前最需要做的是？（　）<br><span class="opts"><span class="nw">A. 直接上架</span>　<span class="nw">B. 抽查顏色、類別、規格，並檢查簡體字</span>　<span class="nw">C. 調高溫度</span>　<span class="nw">D. 換成英文</span></span>
+<Mcq id="quiz1.q2" :n="2" :answer="2"
+  :options="['0.3', '0.5', '0.6', '3']"
+  :why="['0.3 是把分母當成 10。', '0.5 是 3／6，分母不是 5。', '', '3 是正確張數，不是比例。']"
+  explain="precision@5 ＝ 前 5 名中正確的比例 ＝ 3／5 ＝ 0.6。">
+前 5 名搜尋結果有 3 張正確，precision@5 是？
+</Mcq>
 
-</div>
+<FillClear group="quiz1" corner />
 
 <!--
-★ 檢核（3 分）。答案：1 B、2 C、3 B、4 B。
+★ 檢核 1／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：1 B、2 C。
 -->
+
+---
+
+<div class="eyebrow">隨堂檢核</div>
+
+# 隨堂檢核 2／2（iPAS 題型）：點選答案
+
+<Mcq id="quiz2.q3" :n="3" :answer="1"
+  :options="['模型太小', 'tokenizer 把中文切成看不懂的位元組碎片', '圖片解析度', '沒有 GPU']"
+  :why="['模型大小不是主因。', '', '圖片解析度和文字無關。', '沒有 GPU 只會慢，不影響看不看得懂中文。']"
+  explain="英文 CLIP 的 tokenizer 沒收中文詞，中文被切成位元組碎片，文字向量沒意義；要換多語言的模型（本課比較 SigLIP 2）。">
+英文 CLIP 不適合中文搜尋，最直接的線索是？
+</Mcq>
+
+<Mcq id="quiz2.q4" :n="4" :answer="3"
+  :options="['直接上架', '調高溫度', '換成英文', '抽查顏色、類別、規格，並檢查簡體字']"
+  :why="['VLM 會看錯顏色、編造規格，直接上架有風險。', '調高溫度讓輸出更隨機，不會更準。', '換語言不能解決內容正確性。', '']"
+  explain="VLM 寫的文字可能看錯顏色、編造規格或混入簡體字，上架前要抽查。">
+VLM 寫的替代文字，上架前最需要做的是？
+</Mcq>
+
+<FillClear group="quiz2" corner />
+
+<!--
+★ 檢核 2／2（2 分）：學員自己點；點錯會出現「再想想」和該選項錯在哪，可再點一次。答案：3 B、4 D。
+全部答案與理由：
+1 B：把類別寫成句子（例如「一張…的照片」），用 CLIP 比圖和句子的相似度，取最高的；不用另外訓練。
+2 C：precision@5 ＝ 前 5 名中正確的比例 ＝ 3／5 ＝ 0.6。
+3 B：英文 CLIP 的 tokenizer 沒收中文詞，中文被切成位元組碎片，文字向量沒意義；要換多語言的模型（本課比較 SigLIP 2）。
+4 D：VLM 寫的文字可能看錯顏色、編造規格或混入簡體字，上架前要抽查。
+-->
+
 
 ---
 hostOnly: true
@@ -600,7 +640,7 @@ hostOnly: true
 
 <div class="eyebrow">下一步</div>
 
-# 下一堂 D6-3：上市前的合規與打包
+# 下一堂 L23：上市前的合規與打包
 
 <div style="font-size:19px" class="mt-4">
 

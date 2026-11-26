@@ -2,7 +2,7 @@
 theme: default
 title: 期末展示日
 info: |
-  生成式AI原理 · D6-4
+  生成式AI原理 · L24
   執行長室的展示日：每人 3 分鐘（需求單 → 模型 → 現場示範 → 一個數字 → 一個風險或成本），繳交學習評量，最終 iPAS 小考，用六步驟循環與生成三難回顧整門課，交接給 Agent 模組。
 colorSchema: light
 fonts:
@@ -19,7 +19,7 @@ layout: center
 class: cover
 ---
 
-<div class="eyebrow">生成式AI原理 · D6-4</div>
+<div class="eyebrow">生成式AI原理 · L24</div>
 
 # 期末展示日
 
@@ -54,7 +54,7 @@ class: cover
 <div class="takeaway mt-3">講不出「一個數字」的專題，等於還沒驗收：這是整門課的 Measure。</div>
 
 <!--
-★ 規則（3 分）：講師計時，2 分 30 秒舉牌提醒。示範失敗時，直接播放備用的錄影或截圖，不要現場除錯（D6-3 的「先求能點開」）。
+★ 規則（3 分）：講師計時，2 分 30 秒舉牌提醒。示範失敗時，直接播放備用的錄影或截圖，不要現場除錯（L23 的「先求能點開」）。
 評分依課程地圖 §12 的期末專題評分建議：商業框架 20%、技術 25%、量測 20%、風險與授權 15%、展示與溝通 20%（比重由講師調整）。
 -->
 
@@ -82,8 +82,8 @@ class: cover
 # 繳交學習評量
 
 <div class="grid grid-cols-2 gap-6 mt-3" style="font-size:18px">
-<div class="node node--primary"><strong>（a）說明 Diffusion vs GAN</strong><small>給技術長的 1～2 頁備忘錄（D4-4 開始寫）：建議、三難比較、你自己 lab 的證據（D3-1、D3-3、D4-1、D4-4）、風險與授權</small></div>
-<div class="node node--warm"><strong>（b）實作條件生成</strong><small>D4-1 的 <code>lab13-cfg.ipynb</code>（兩個 TODO 自己填、輸出保留）＋口頭說明 CFG 那一行（還沒口試的今天補）</small></div>
+<div class="node node--primary"><strong>（a）說明 Diffusion vs GAN</strong><small>給技術長的 1～2 頁備忘錄（L16 開始寫）：建議、三難比較、你自己 lab 的證據（L09、L11、L13、L16）、風險與授權</small></div>
+<div class="node node--warm"><strong>（b）實作條件生成</strong><small>L13 的 <code>lab13-cfg.ipynb</code>（兩個 TODO 自己填、輸出保留）＋口頭說明 CFG 那一行（還沒口試的今天補）</small></div>
 </div>
 
 <table class="fill tight vlines mt-3" style="font-size:16px">
@@ -118,7 +118,7 @@ class: cover
 </div>
 
 <!--
-★ 最終小考前半（4 分）。答案：1 C（D1-1）、2 A（D2-3）、3 D（D3-1）、4 A（D3-3；B 是常見誤解：網路猜的是雜訊，不是原圖）、5 B（D4-1；C 錯：太單調時 FID 反而可能變差）。
+★ 最終小考前半（4 分）。答案：1 C（L01）、2 A（L07）、3 D（L09）、4 A（L11；B 是常見誤解：網路猜的是雜訊，不是原圖）、5 B（L13；C 錯：太單調時 FID 反而可能變差）。
 -->
 
 ---
@@ -138,7 +138,7 @@ class: cover
 </div>
 
 <!--
-★ 最終小考後半（4 分）。答案：6 C（D2-3、D4-2）、7 D（D4-3、D5-4；C 是 QLoRA 的「Q」，不是被訓練的部分）、8 A（D5-1）、9 B（D5-3；A 是 fp16）、10 D（D6-1）。答案分布：A 3、B 2、C 2、D 3。
+★ 最終小考後半（4 分）。答案：6 C（L07、L14）、7 D（L15、L20；C 是 QLoRA 的「Q」，不是被訓練的部分）、8 A（L17）、9 B（L19；A 是 fp16）、10 D（L21）。答案分布：A 3、B 2、C 2、D 3。
 -->
 
 ---
@@ -167,7 +167,7 @@ class: cover
 <div class="takeaway mt-2">工具會換（GAN、擴散、LLM、MusicGen），循環不變：先定義問題，最後用數字交付。</div>
 
 <!--
-★ 六步驟（4 分）：D1-1 第一次出現這個循環。請學員用自己的期末專題，把六步各說一個字。
+★ 六步驟（4 分）：L01 第一次出現這個循環。請學員用自己的期末專題，把六步各說一個字。
 -->
 
 ---
@@ -179,10 +179,10 @@ class: cover
 <table class="mt-2" style="font-size:17px">
 <thead><tr><th style="width:18%">家族</th><th style="width:20%">品質</th><th style="width:22%">多樣性</th><th style="width:20%">速度</th><th>課堂上的證據</th></tr></thead>
 <tbody>
-<tr><td>VAE</td><td>偏模糊</td><td>高</td><td>快</td><td>D2-3 Fashion-MNIST 重建</td></tr>
-<tr><td>GAN</td><td>清楚</td><td>可能模式崩塌</td><td>快（一步）</td><td>D3-1 DCGAN、Real-ESRGAN</td></tr>
-<tr><td>擴散</td><td>清楚</td><td>高</td><td>慢（多步）→ 蒸餾變快</td><td>D3-3 DDPM、D4-1 CFG、D4-4 LCM</td></tr>
-<tr><td>自回歸（GPT 類）</td><td>規模越大越好（D5-3 0.5B vs 雲端大模型）</td><td>靠溫度控制</td><td>一個 token 一個 token</td><td>D5-2 迷你 GPT、D6-1 MusicGen</td></tr>
+<tr><td>VAE</td><td>偏模糊</td><td>高</td><td>快</td><td>L07 Fashion-MNIST 重建</td></tr>
+<tr><td>GAN</td><td>清楚</td><td>可能模式崩塌</td><td>快（一步）</td><td>L09 DCGAN、Real-ESRGAN</td></tr>
+<tr><td>擴散</td><td>清楚</td><td>高</td><td>慢（多步）→ 蒸餾變快</td><td>L11 DDPM、L13 CFG、L16 LCM</td></tr>
+<tr><td>自回歸（GPT 類）</td><td>規模越大越好（L19 0.5B vs 雲端大模型）</td><td>靠溫度控制</td><td>一個 token 一個 token</td><td>L18 迷你 GPT、L21 MusicGen</td></tr>
 </tbody>
 </table>
 
@@ -191,7 +191,7 @@ class: cover
 <div class="src">生成三難：Xiao et al., 2022（D3 引用，待確認）；自回歸一列是本課延伸</div>
 
 <!--
-★ 三難（4 分）：D3 建立的表，加上第五、六天的自回歸列。數字請學員回自己的 lab 找（備忘錄也用這張表）。GAN 不是過時：ADD／Turbo 和聲碼器都還在用對抗損失（D4-4、D6-1）。
+★ 三難（4 分）：D3 建立的表，加上第五、六天的自回歸列。數字請學員回自己的 lab 找（備忘錄也用這張表）。GAN 不是過時：ADD／Turbo 和聲碼器都還在用對抗損失（L16、L21）。
 -->
 
 ---
@@ -205,8 +205,8 @@ class: cover
 <tbody>
 <tr><td>LLM API</td><td>一次 SDK 呼叫、token 成本、JSON＋json.loads</td><td>結構化輸出（schema）、串流</td></tr>
 <tr><td>工具與外部系統</td><td>只認名字</td><td>tool calling、MCP</td></tr>
-<tr><td>知識</td><td>記憶體內的 cosine 搜尋（D6-2）</td><td>RAG、向量資料庫</td></tr>
-<tr><td>提示技巧</td><td>基本提示詞；推理模型是訓練出來的（D5-4）</td><td>CoT／ToT 等提示方法</td></tr>
+<tr><td>知識</td><td>記憶體內的 cosine 搜尋（L22）</td><td>RAG、向量資料庫</td></tr>
+<tr><td>提示技巧</td><td>基本提示詞；推理模型是訓練出來的（L20）</td><td>CoT／ToT 等提示方法</td></tr>
 <tr><td>上線</td><td>Gradio＋分享連結、模型卡</td><td>多代理人、部署、監控</td></tr>
 </tbody>
 </table>
@@ -214,7 +214,7 @@ class: cover
 <div class="takeaway mt-3">你已經懂模型裡面在做什麼：下一個模組，讓它會用工具、查資料、自己完成任務。</div>
 
 <!--
-★ 交接（3 分）：課程地圖 §13。Agent 模組的講師會建立在 D5-1／D5-2 的 Transformer 內部之上，不重講。
+★ 交接（3 分）：課程地圖 §13。Agent 模組的講師會建立在 L17／L18 的 Transformer 內部之上，不重講。
 -->
 
 ---

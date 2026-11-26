@@ -7,3 +7,6 @@ slides.web.md
 .claude/settings.local.json
 .ipynb_checkpoints/
 __pycache__/
+.env
+data/
+polish_note*.md
